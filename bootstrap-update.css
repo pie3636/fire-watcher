@@ -1,0 +1,80 @@
+body {
+  padding-top: 70px;
+  padding-bottom: 30px;
+}
+
+.theme-dropdown .dropdown-menu {
+  position: static;
+  display: block;
+  margin-bottom: 20px;
+}
+
+.theme-showcase > p > .btn {
+  margin: 5px 0;
+}
+
+.theme-showcase .navbar .container {
+  width: auto;
+}
+
+.btn, .btn:focus, .btn:active, .btn.active, .btn:focus:active {
+    background-image: none;
+      outline: 0;
+  -webkit-box-shadow: none;
+          box-shadow: none;
+}
+
+.split-left {
+    border-right: solid 1px #eee;
+}
+
+hr {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.col-md-center {
+    padding-left: 0px;
+    vertical-align: middle;
+}
+
+.float-right {
+    float: right;
+    padding-right: 10px;
+}
+
+.vcenter {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.text-glow {
+   font-size:4em;
+   color: #FFFFFF;
+   font-family:Arial;
+}
+
+.text-glow:hover, .text-glow:focus, .text-glow:active {
+   -webkit-stroke-width: 5.3px;
+   -webkit-stroke-color: #FFFFFF;
+   -webkit-fill-color: #FFFFFF;
+   text-shadow: 1px 0px 20px yellow;
+   -webkit-transition: width 0.3s; /*Safari & Chrome*/
+   transition: width 0.3s;
+   -moz-transition: width 0.3s; /* Firefox 4 */
+   -o-transition: width 0.3s; /* Opera */
+}
+   
+.text-glow a {
+   -webkit-transition: all 0.3s ease-in; /*Safari & Chrome*/
+   transition: all 0.3s ease-in;
+   -moz-transition: all 0.3s ease-in; /* Firefox 4 */
+   -o-transition: all 0.3s ease-in; /* Opera */
+   text-decoration:none;
+   color:white;
+}
+
+.text-gold-glow {
+    color: #FFA500;
+    text-shadow: 1px 0px 10px #FF7F50;
+}
