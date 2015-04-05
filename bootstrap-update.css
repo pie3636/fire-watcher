@@ -24,6 +24,11 @@ body {
           box-shadow: none;
 }
 
+.btn-cluster {
+    margin-bottom:5px;
+    margin-right:5px;
+}
+
 .split-left {
     border-right: solid 1px #eee;
 }
@@ -77,4 +82,9 @@ hr {
 .text-gold-glow {
     color: #FFA500;
     text-shadow: 1px 0px 10px #FF7F50;
+}
+
+b {
+    margin-left:2px;
+    margin-right:2px;
 }
