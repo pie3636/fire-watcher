@@ -45,7 +45,7 @@ var actions = {
             inside: "Takes <b><span id='fetchBrushwoodLoss'></span></b> to gather brushwood and makes the fire last an additional <b><span id='fetchBrushwoodGain'></span></b>."
         },
         effect: function() {
-            gD.brushwoodFatigue = Math.max(300, gD.brushwoodFatigue + 30);
+            gD.brushwoodFatigue = Math.min(300, gD.brushwoodFatigue + 30);
             gD.time += 300 - gD.brushwoodFatigue;
         },
         tick: function() {
