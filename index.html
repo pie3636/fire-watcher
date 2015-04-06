@@ -28,11 +28,12 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#" id="version"></a>
+            <a class="navbar-brand" href="#" id="version"><span class="glyphicon glyphicon-fire" aria-hidden="true"></span> Fire Watcher </a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li class="active"><a href="#">Play</a></li>
+                <li class="active"><a id="nav_play" href="#" onclick="changeTab('play')">Play</a></li>
+                <li><a href="#" id="nav_opt" onclick="changeTab('opt')">Options</a></li>
             </ul>
         </div>
     </div>
@@ -41,14 +42,12 @@
 <div class="container theme-showcase" role="main">
     <div class="row">
         <b>Announcement :</b> Bla, bla, bla...
-    </dib>
+    </div>
     <hr />
-    <div class="row">
+    <div class="row" id="main">
         <div class="col-md-8 split-left" id="actions"> <!-- Can be splitted into col-md-8 + another div -->
-            <div class="row" style="margin-left:15px">
-                <div class="col col-md-center">
-                    Time left : <span id="time">0</span>
-                </div>
+            <div style="margin-left:15px">
+                Time left : <span id="time">0</span>
             </div>
             <hr/>
             

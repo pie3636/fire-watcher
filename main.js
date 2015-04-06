@@ -1,4 +1,5 @@
 var version = "v0.3.0"; 
+var currentTab = "play";
 var gD = {
     tickDuration : 100,
     time: 60,
@@ -8,9 +9,33 @@ var gD = {
     fanTheFlamesUses: 0,
     //watchers: 0,
     //watcherPower: 1,
-    actions : {}
+    actions: {},
+    tabs: {
+        play: {
+            text: "",
+            initialized: true
+        },
+        opt: {
+            text: '<div class="col-md-12"><div style="margin-left:15px"><form class="form-horizontal">\
+        <div class="checkbox"><label><input type="checkbox" id="darkTheme"/>Use dark theme</label></div><br />\
+        <div class="checkbox"><label><input type="checkbox" id="1"/>Some</label></div><br />\
+        <div class="checkbox"><label><input type="checkbox" id="2"/>Other</label></div><br />\
+        <div class="checkbox"><label><input type="checkbox" id="2"/>Options</label></div><br />\
+        </form></div><hr/></div>\
+              <div class="col-md-12"><div style="margin-left:15px">Un panel quelconque à customiser parce que merde.</div><hr/></div>',
+              initialized: false,
+              darkTheme:false
+        }
+    },
 }
 
+/* unlock, cost : Object [~gD]                          Costs of unlocking and buying
+ * show : Object [type, tooltip, inside][text]          Items to be displayed
+ * effect : function                                    On buying
+ * tick : function                                      On tick
+ * repeatable : Boolean                                 Peristent
+ */
+ 
 var actions = {
     fanTheFlames: {
         repeatable: true,
@@ -54,7 +79,7 @@ var actions = {
             }
             actions.fetch_Brushwood.cost.time = 60 + gD.brushwoodFatigue;
             $("#fetchBrushwoodLoss").html(timify(prettify(actions.fetch_Brushwood.cost.time, 0)));
-            $("#fetchBrushwoodGain").html(timify(prettify(300 - gD.brushwoodFatigue, 0))); //TODO : EDIT
+            $("#fetchBrushwoodGain").html(timify(prettify(300 - gD.brushwoodFatigue, 0)));
             var color = (60 + gD.brushwoodFatigue < 300 - gD.brushwoodFatigue ? "#080" : "#800");
             $("#fetchBrushwoodLoss").attr("style", "color:" + color);
             $("#fetchBrushwoodGain").attr("style", "color:" + color);
@@ -107,10 +132,6 @@ function sumPrices(base, factor, owned, number) {
     return sum;
 }
 
-function prettify(input, digits) {
-	return input.toFixed((typeof digits === 'undefined' ? 9 : digits));
-}
-
 function timify(input, digits) {
     return Math.floor(1000000000*input)/1000000000 + " seconds"; //TODO : EDIT
 }
@@ -135,20 +156,34 @@ function tick() {
     //time += watchers * watcherPower * tickDuration/1000;
     $("#time").html(prettify(gD.time, 3));
     for (var i in actions) {
-        if (!gD.actions[i].unlocked && compare(actions[i].unlock, gD)) {
+        if (!gD.actions[i].unlocked && compare(actions[i].unlock, gD)) { // If new action unlocked
             gD.actions[i].unlocked = true;
-            switch (actions[i].show.type) {
+            switch (actions[i].show.type) { // Display it
             case "standardAction":
-                $("#actions").append('<div id="' + i + 'Div" class="row" style="margin-left:10px"><div class="col-md-3 col-md-center"><button id=' + i + ' type="button" class="btn btn-default" data-toggle="tooltip" data-placement="left" title="' + actions[i].show.tooltip + '" data-container="body">' + i.textify() + '</button></div><div class="col-md-9 vcenter">' + actions[i].show.inside + '</div></div><hr id="' + i + 'HR" />');
+                $("#actions").append('\
+                    <div id="' + i + 'Div" class="row" style="margin-left:10px">\
+                    <div class="col-md-3 col-md-center">\
+                    <button id=' + i + ' type="button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="' + actions[i].show.tooltip + '" data-container="body">\
+                    ' + i.textify() + '\
+                    </button>\
+                    </div>\
+                    <div class="col-md-9 vcenter">\
+                    ' + actions[i].show.inside + '\
+                    </div>\
+                    </div>\
+                    <hr id="' + i + 'HR" />');
                 break;
             case "standardUpgrade":
-                $("#upgrades").append('<button id="' + i + '" type="button" class="btn btn-default btn-cluster" data-toggle="tooltip" data-placement="top" title="' + actions[i].show.tooltip + '" data-container="body">' + i.textify() + ' ' + cost(i) + '</button>');
+                $("#upgrades").append('\
+                    <button id="' + i + '" type="button" class="btn btn-default btn-cluster" data-toggle="tooltip" data-placement="top" title="' + actions[i].show.tooltip + '" data-container="body">\
+                    ' + i.textify() + ' ' + cost(i) + '\
+                    </button>');
                 break;
             default:
                 $(actions[i].isUpgrade ? "#upgrades" : "#actions").after(actions[i].show.text);
                 break;
             }
-            if (actions[i].show.type == "standardAction" || actions[i].show.type == "standardUpgrade") {
+            if (actions[i].show.type == "standardAction" || actions[i].show.type == "standardUpgrade") { // Fix to prevent constant focus after clicking
                 $("#" + i).tooltip().mouseup(function() {
                     $(this).blur();
                 })
@@ -159,7 +194,7 @@ function tick() {
                 }(i))
             }
         }
-        if(gD.actions[i].unlocked) {
+        if(gD.actions[i].unlocked) { // Each action unlocked : grey if and only if not affordable
             greyOut(i, compare(actions[i].cost, gD));
         }
         if(typeof actions[i].tick !== 'undefined') { // && (!actions[i].tickIfBought || gD.actions[i].bought) && (!actions[i].tickIfUnlocked || gD.actions[i].unlocked)) {
@@ -200,7 +235,7 @@ function cost(upgrade) {
     return '(' + actions[upgrade].cost.time + ')'; //TODO : Modifier
 }
 
-function compare(cost, data, doSub, subStep) {
+function compare(cost, data, doSub, subStep) { // Returns (cost <= data), data -= cost if doSub, subStep means toplevel (nested objects)
     var ret = true;
     if(!subStep) {
         for (var i in cost) {
@@ -212,7 +247,7 @@ function compare(cost, data, doSub, subStep) {
                     ret = cost[i] == data[i];
                     break;
                 case "object":
-                    ret = compare(cost[i], data[i], doSub);
+                    ret = compare(cost[i], data[i], false); // doSub == false => compare only
                     break;
                 case "undefined":
                 default:
@@ -221,13 +256,14 @@ function compare(cost, data, doSub, subStep) {
             if (!ret) return false;
         }
     }
-    if (doSub) {
+    if (doSub) { // Can only possibly happen at toplevel
         for (var i in cost) {
             switch (typeof cost[i]) {
                 case "number":
                     data[i] -= cost[i];
                     break;
                 case "object":
+                    ret = compare(cost[i], data[i], true, true); // Transmit doSub, skip first step
                 case "boolean":
                 case "undefined":
                 default:
@@ -236,6 +272,11 @@ function compare(cost, data, doSub, subStep) {
         }
     }
     return true;
+}
+
+
+function prettify(input, digits) {
+	return input.toFixed((typeof digits === 'undefined' ? 9 : digits));
 }
 
 function show(id) { //TODO : Remove if unused
@@ -260,7 +301,7 @@ function intRandom(min, max) {
     return 1 + Math.round(Math.random()*(max-min));
 }
 
-String.prototype.textify = function() {
+String.prototype.textify = function() { // camelCaseObject,AnotherAnd_Escaping_or_Not__ -> Camel case object, another and Escapingor Not_
     var res = "";
     var up = false;
     if (this == "") {
@@ -286,11 +327,40 @@ String.prototype.textify = function() {
     return res + curWord;
 }
 
+function changeTab(newTab) {
+    $("#nav_" + currentTab).parent().removeClass("active");
+    $("#nav_" + newTab).parent().addClass("active");
+    gD.tabs[currentTab].text = $("#main").html();
+    $("#main").html(gD.tabs[newTab].text);
+    currentTab = newTab;
+    if (!gD.tabs[newTab].initialized) { // TODO : Set to true on game load/reset, etc, plus management general on load/reset
+        switch (newTab) {
+            case "play":
+                console.log("ERROR");
+                break;
+            case "opt":
+                $("#darkTheme").change(darkTheme);
+                break;
+            default:
+                break;
+        }
+        gD.tabs[newTab].initialized = true;
+    }
+}
+
+function darkTheme() {
+    gD.tabs.opt.darkTheme = !gD.tabs.opt.darkTheme;
+}
+
 window.setInterval(tick, gD.tickDuration);
 
 $(function () {
-    for (var i in actions) {
+    for (var i in actions) { // TODO : Fix on load game...
         gD.actions[i] = {unlocked: false, bought: false};
     }
-    $("#version").html("Fire Watcher " + version);
+    for (var i in gD.tabs) {
+        gD.tabs[i].initialized = false;
+    }
+    gD.tabs.play.initialized = true;
+    $("#version").append(version);
 });

@@ -11,9 +11,17 @@ Fire mastery                50 Fan_the_flames           t -= 500s               
 
 Explore the beach           300s                        t -= 300s                  [Loot]                       T
                                                                                    1~5 branches (10s)
-                                                                                   
-                                                                                   
-                                                                                   
+
+
+
+
+
+
+
+
+
+
+
 var tickDuration = 100;
 var time = 60;
 var timeSpeed = 1;

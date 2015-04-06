@@ -17,11 +17,11 @@ body {
   width: auto;
 }
 
-.btn, .btn:focus, .btn:active, .btn.active, .btn:focus:active {
+.btn, .btn:focus, .btn:active, .btn.active, .btn:focus:active, a, a:focus, a:active, a:focus:active { /* Disable outline */
     background-image: none;
-      outline: 0;
-  -webkit-box-shadow: none;
-          box-shadow: none;
+    outline: 0;
+    -webkit-box-shadow: none;
+    box-shadow: none;
 }
 
 .btn-cluster {
@@ -87,4 +87,9 @@ hr {
 b {
     margin-left:2px;
     margin-right:2px;
+}
+
+.checkbox {
+    display: inline;
+    vertical-align: top;
 }
