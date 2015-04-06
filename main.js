@@ -13,7 +13,6 @@ var gD = {
     tabs: {
         play: {
             text: "",
-            initialized: true
         },
         opt: {
             text: '<div class="col-md-12"><div style="margin-left:15px"><form class="form-horizontal">\
@@ -23,7 +22,6 @@ var gD = {
         <div class="checkbox"><label><input type="checkbox" id="2"/>Options</label></div><br />\
         </form></div><hr/></div>\
               <div class="col-md-12"><div style="margin-left:15px">Un panel quelconque à customiser parce que merde.</div><hr/></div>',
-              initialized: false,
               darkTheme:false
         }
     },
@@ -158,26 +156,23 @@ function tick() {
     for (var i in actions) {
         if (!gD.actions[i].unlocked && compare(actions[i].unlock, gD)) { // If new action unlocked
             gD.actions[i].unlocked = true;
+            var strButton = '<button id=' + i + ' type="button" class="btn btn-default' + (gD.tabs.opt.darkTheme ? "2" : "") + '" data-toggle="tooltip" data-placement="bottom" title="' + actions[i].show.tooltip + '" data-container="body">';
             switch (actions[i].show.type) { // Display it
             case "standardAction":
                 $("#actions").append('\
                     <div id="' + i + 'Div" class="row" style="margin-left:10px">\
-                    <div class="col-md-3 col-md-center">\
-                    <button id=' + i + ' type="button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="' + actions[i].show.tooltip + '" data-container="body">\
-                    ' + i.textify() + '\
-                    </button>\
-                    </div>\
-                    <div class="col-md-9 vcenter">\
-                    ' + actions[i].show.inside + '\
-                    </div>\
+                        <div class="col-md-3 col-md-center">\
+                            ' + strButton + i.textify() + '</button>\
+                        </div>\
+                        <div class="col-md-9 vcenter">\
+                            ' + actions[i].show.inside + '\
+                        </div>\
                     </div>\
                     <hr id="' + i + 'HR" />');
                 break;
             case "standardUpgrade":
-                $("#upgrades").append('\
-                    <button id="' + i + '" type="button" class="btn btn-default btn-cluster" data-toggle="tooltip" data-placement="top" title="' + actions[i].show.tooltip + '" data-container="body">\
-                    ' + i.textify() + ' ' + cost(i) + '\
-                    </button>');
+                $("#upgrades").append(
+                        strButton + i.textify() + ' ' + cost(i) + '</button>');
                 break;
             default:
                 $(actions[i].isUpgrade ? "#upgrades" : "#actions").after(actions[i].show.text);
@@ -195,7 +190,7 @@ function tick() {
             }
         }
         if(gD.actions[i].unlocked) { // Each action unlocked : grey if and only if not affordable
-            greyOut(i, compare(actions[i].cost, gD));
+            $("#" + i).css("background-color", (compare(actions[i].cost, gD) ? (gD.tabs.opt.darkTheme ? "#000" : "#fff") : (gD.tabs.opt.darkTheme ? "#333" : "#eee")));
         }
         if(typeof actions[i].tick !== 'undefined') { // && (!actions[i].tickIfBought || gD.actions[i].bought) && (!actions[i].tickIfUnlocked || gD.actions[i].unlocked)) {
             actions[i].tick();
@@ -287,8 +282,8 @@ function hide(id) { //TODO : Remove if unused
     $("#" + id).css("display", "none");
 }
 
-function greyOut(id, back) {
-    $("#" + id).css("background-color", (back ? "#fff" : "#eee"));
+function greyOut(id, back, theme) {
+    $("#" + id).css("background-color", (back ? (theme ? "#000" : "#fff") : (theme ? "#222" : "#eee")));
 }
 
 function tooltip(id, title, show) { //TODO : Remove if unused
@@ -333,23 +328,28 @@ function changeTab(newTab) {
     gD.tabs[currentTab].text = $("#main").html();
     $("#main").html(gD.tabs[newTab].text);
     currentTab = newTab;
-    if (!gD.tabs[newTab].initialized) { // TODO : Set to true on game load/reset, etc, plus management general on load/reset
-        switch (newTab) {
-            case "play":
-                console.log("ERROR");
-                break;
-            case "opt":
-                $("#darkTheme").change(darkTheme);
-                break;
-            default:
-                break;
-        }
-        gD.tabs[newTab].initialized = true;
+    switch (newTab) { // TODO : Remove switch if pointless
+        case "play":
+            break;
+        case "opt":
+            $("#darkTheme").change(darkTheme).prop("checked", gD.tabs.opt.darkTheme);
+            break;
+        default:
+            break;
     }
 }
 
 function darkTheme() {
+console.log(12);
+    gD.tabs.play.text = gD.tabs.play.text.replace(/btn-default2/g, "btn-P2").replace(/btn-default/g, "btn-default2").replace(/btn-P2/g, "btn-default");
+    gD.tabs.play.text = gD.tabs.play.text.replace(/split-left2/g, "split-P2").replace(/split-left/g, "split-left2").replace(/split-P2/g, "split-left");
+    gD.tabs.play.text = gD.tabs.play.text.replace(/hr class="HR2"/g, "HR-HR2").replace(/hr/g, 'hr class="HR2"').replace(/HR-HR2/g, "hr");
+    $("#main").html($("#main").html().replace(/hr class="HR2"/g, "HR-HR2").replace(/hr/g, 'hr class="HR2"').replace(/HR-HR2/g, "hr")); // Need to replace the HRs here too
+    $("#navbar").html($("#navbar").html().replace(/navbar-inverse/g, "navbar-P2").replace(/navbar-default/g, "navbar-inverse").replace(/navbar-P2/g, "navbar-default")); // Not on body or ajax async request fails
+    $("body").css("background-color", (gD.tabs.opt.darkTheme ? "#FFF" : "#000"));
+    $("body").css("color", (gD.tabs.opt.darkTheme ? "#000" : "#FFF"));
     gD.tabs.opt.darkTheme = !gD.tabs.opt.darkTheme;
+    $("#darkTheme").change(darkTheme).prop("checked", gD.tabs.opt.darkTheme);
 }
 
 window.setInterval(tick, gD.tickDuration);
@@ -358,9 +358,5 @@ $(function () {
     for (var i in actions) { // TODO : Fix on load game...
         gD.actions[i] = {unlocked: false, bought: false};
     }
-    for (var i in gD.tabs) {
-        gD.tabs[i].initialized = false;
-    }
-    gD.tabs.play.initialized = true;
     $("#version").append(version);
 });
