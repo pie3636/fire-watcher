@@ -1,4 +1,4 @@
-var version = "v0.3.0"; 
+var version = "v0.3.1"; 
 var currentTab = "play";
 var gD = {
     tickDuration : 100,
@@ -17,11 +17,20 @@ var gD = {
         opt: {
             text: '<div class="col-md-12"><div style="margin-left:15px"><form class="form-horizontal">\
         <div class="checkbox"><label><input type="checkbox" id="darkTheme"/>Use dark theme</label></div><br />\
-        <div class="checkbox"><label><input type="checkbox" id="1"/>Some</label></div><br />\
-        <div class="checkbox"><label><input type="checkbox" id="2"/>Other</label></div><br />\
-        <div class="checkbox"><label><input type="checkbox" id="2"/>Options</label></div><br />\
+        <div class="checkbox"><label><input type="checkbox" id="1"/>Enable autosave (WIP)</label></div><br />\
+        <div class="checkbox"><label><input type="checkbox" id="2"/>And some</label></div><br />\
+        <div class="checkbox"><label><input type="checkbox" id="3"/>Other options</label></div><br />\
         </form></div><hr/></div>\
-              <div class="col-md-12"><div style="margin-left:15px">Un panel quelconque à customiser parce que merde.</div><hr/></div>',
+        <div class="col-md-12"><div style="margin-left:15px">Un panel quelconque à customiser parce que merde.</div><hr/></div>\
+        <div class="row" style="margin-left:10px">\
+        <div class="col-md-2 col-md-center">\
+        <button id="myOption" type="button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="This is a fucking tooltip" data-container="body">Pointless button</button>\
+                        </div>\
+                        <div class="col-md-9 vcenter">\
+                            See this button? Well, it does absolutely nothing.\
+                        </div>\
+                    </div>\
+                    <hr id="myHR" />',
               darkTheme:false
         }
     },
@@ -32,6 +41,7 @@ var gD = {
  * effect : function                                    On buying
  * tick : function                                      On tick
  * repeatable : Boolean                                 Peristent
+ * nocenter : Boolean                                   Multiline (action)
  */
  
 var actions = {
@@ -64,6 +74,7 @@ var actions = {
         repeatable: true,
         show: {
             type: "standardAction",
+            nocenter: true,
             tooltip: "Take some time to fetch brushwood on the beach, increasing the duration of the fire",
             inside: "Takes <b><span id='fetchBrushwoodLoss'></span></b> to gather brushwood and makes the fire last an additional <b><span id='fetchBrushwoodGain'></span></b>."
         },
@@ -164,11 +175,11 @@ function tick() {
                         <div class="col-md-3 col-md-center">\
                             ' + strButton + i.textify() + '</button>\
                         </div>\
-                        <div class="col-md-9 vcenter">\
+                        <div class="col-md-9' + (actions[i].show.nocenter ? '' : ' vcenter') + '">\
                             ' + actions[i].show.inside + '\
                         </div>\
                     </div>\
-                    <hr id="' + i + 'HR" />');
+                    <hr id="' + i + 'HR"' + (gD.tabs.opt.darkTheme ? 'div="HR2"' : "") + ' />');
                 break;
             case "standardUpgrade":
                 $("#upgrades").append(
@@ -340,14 +351,18 @@ function changeTab(newTab) {
 }
 
 function darkTheme() {
-console.log(12);
-    gD.tabs.play.text = gD.tabs.play.text.replace(/btn-default2/g, "btn-P2").replace(/btn-default/g, "btn-default2").replace(/btn-P2/g, "btn-default");
+    gD.tabs.play.text = gD.tabs.play.text.replace(/btn-default2/g, "btn-P2").replace(/btn-default/g, "btn-default2").replace(/btn-P2/g, "btn-default"); // Play
     gD.tabs.play.text = gD.tabs.play.text.replace(/split-left2/g, "split-P2").replace(/split-left/g, "split-left2").replace(/split-P2/g, "split-left");
     gD.tabs.play.text = gD.tabs.play.text.replace(/hr class="HR2"/g, "HR-HR2").replace(/hr/g, 'hr class="HR2"').replace(/HR-HR2/g, "hr");
-    $("#main").html($("#main").html().replace(/hr class="HR2"/g, "HR-HR2").replace(/hr/g, 'hr class="HR2"').replace(/HR-HR2/g, "hr")); // Need to replace the HRs here too
+    $("#main").html($("#main").html().replace(/hr class="HR2"/g, "HR-HR2").replace(/hr/g, 'hr class="HR2"').replace(/HR-HR2/g, "hr")); // Opt
+    $("#main").html($("#main").html().replace(/btn-default2/g, "btn-P2").replace(/btn-default/g, "btn-default2").replace(/btn-P2/g, "btn-default"));
+    // Global
     $("#navbar").html($("#navbar").html().replace(/navbar-inverse/g, "navbar-P2").replace(/navbar-default/g, "navbar-inverse").replace(/navbar-P2/g, "navbar-default")); // Not on body or ajax async request fails
     $("body").css("background-color", (gD.tabs.opt.darkTheme ? "#FFF" : "#000"));
     $("body").css("color", (gD.tabs.opt.darkTheme ? "#000" : "#FFF"));
+    //$("#main").html(gD.tabs.opt.text.replace(/btn-default2/g, "btn-P2").replace(/btn-default/g, "btn-default2").replace(/btn-P2/g, "btn-default"));
+    // TODO on load game/reset ^ v
+    //$("myHR").addClass("HR2");
     gD.tabs.opt.darkTheme = !gD.tabs.opt.darkTheme;
     $("#darkTheme").change(darkTheme).prop("checked", gD.tabs.opt.darkTheme);
 }

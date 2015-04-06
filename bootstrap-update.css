@@ -49,8 +49,7 @@ hr {
 }
 
 .vcenter {
-    display: table-cell;
-    vertical-align: middle;
+    margin-top:6px;
 }
 
 .text-glow {
