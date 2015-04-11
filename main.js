@@ -378,9 +378,9 @@ function load() {
     }
     reset = false;
     if(saveTheme != gD.options.darkTheme) {
-        $("#darkTheme").prop("checked", saveTheme);
+        $("#darkTheme").prop("checked", !saveTheme);
         gD.options.darkTheme = saveTheme;
-        setTheme(); //RESET CHANGE DE THEME A CHAQUE FOIS //LOAD -> THEME NOIR
+        setTheme(); // Changes theme from gD.options.saveTheme to its opposite
     }
 }
 
