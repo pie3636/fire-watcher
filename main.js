@@ -374,14 +374,15 @@ function load() {
         gD.options.darkTheme = saveTheme;
         gD.currentTab = "opt"; // Needed to change tab
         changeTab("play");
+        $("#darkTheme").prop("checked", saveTheme);
     } else {
         loadRec(JSON.parse(localStorage.getItem("save")), gD);
     }
     if (gD.options.darkTheme && !reset) {
         $("#darkTheme").prop("checked", true);
         gD.options.darkTheme = false;
-        reset = false;
     }
+    reset = false;
     setTheme();
 }
 
