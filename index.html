@@ -46,7 +46,7 @@
         <b>Announcement :</b> Bla, bla, bla...
     </div>
     <hr />
-    <div class="row">
+    <div class="row" id="play">
         <div class="col-md-8 split-left" id="actions"> <!-- Can be splitted into col-md-8 + another div -->
             <div style="margin-left:15px">
                 Time left : <span id="time">0</span>
@@ -74,16 +74,57 @@
                 </div>
                 <hr />
                 -->
+                
+                    
+                    
             </div>
         <div class="col-md-4" id="upgrades">
             <p class="text-center">Upgrades :</p>
         </div>
     </div>
-</div>
+
+
+    <div class="row" id="opt" style="display:none">
+        <div class="col-md-12">
+            <div style="margin-left:36px">
+                <label class="checkbox">
+                    <input type="checkbox" id="darkTheme"/>
+                </label>Use dark theme
+                <br />
+                <label class="checkbox">
+                    <input type="checkbox" id="1"/>
+                </label>Enable autosave (WIP)
+                <br />
+                <label class="checkbox">
+                    <input type="checkbox" id="2"/>
+                </label>And some
+                <br />
+                <label class="checkbox">
+                    <input type="checkbox" id="3"/>
+                </label>Other options
+            </div><hr/>
+
+            <div class="col-md-12"style="margin-left:-15px">
+                <div style="margin-left:15px">Un panel quelconque à customiser parce que merde.
+                </div><hr/>
+            </div>
+            <div class="row" style="margin-left:10px">
+                <div class="col-md-2 col-md-center">
+                <button id="myOption" type="button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="This is a fucking tooltip" data-container="body">Pointless button</button>
+                </div>
+                <div class="col-md-10 vcenter">
+                    See this button? Well, it does absolutely nothing.
+                </div>
+            </div>
+            <hr id="myHR" />
+        </div>
+    </div>
+</div>                    
+                    
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 <script src="jquery-2.1.1.min.js"></script> <!-- TODO : REMOVE -->
 <script type="text/javascript" src="main.js"></script>
 <script src="js/bootstrap.min.js"></script>
 </body>
 </head>
-</html> 
+</html>

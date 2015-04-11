@@ -124,7 +124,7 @@ b {
 
 .btn-default2:hover, .btn-default2:focus, .btn-default2.focus, .btn-default2:active, .btn-default2.active, .open > .dropdown-toggle.btn-default2 {
   color: #ccc;
-  background-color: #f9f9f9;
+  background-color: #060606;
   border-color: #525252;
 }
 

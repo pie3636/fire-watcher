@@ -1,7 +1,7 @@
 var version = "v0.3.1"; 
 var currentTab = "play";
 var gD = {
-    tickDuration : 100,
+    tickDuration : 25,
     time: 60,
     timeSpeed: 1,
     firePower: 5,
@@ -10,30 +10,10 @@ var gD = {
     //watchers: 0,
     //watcherPower: 1,
     actions: {},
-    tabs: {
-        play: {
-            text: "",
-        },
-        opt: {
-            text: '<div class="col-md-12"><div style="margin-left:15px"><form class="form-horizontal">\
-        <div class="checkbox"><label><input type="checkbox" id="darkTheme"/>Use dark theme</label></div><br />\
-        <div class="checkbox"><label><input type="checkbox" id="1"/>Enable autosave (WIP)</label></div><br />\
-        <div class="checkbox"><label><input type="checkbox" id="2"/>And some</label></div><br />\
-        <div class="checkbox"><label><input type="checkbox" id="3"/>Other options</label></div><br />\
-        </form></div><hr/></div>\
-        <div class="col-md-12"><div style="margin-left:15px">Un panel quelconque à customiser parce que merde.</div><hr/></div>\
-        <div class="row" style="margin-left:10px">\
-        <div class="col-md-2 col-md-center">\
-        <button id="myOption" type="button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="This is a fucking tooltip" data-container="body">Pointless button</button>\
-                        </div>\
-                        <div class="col-md-9 vcenter">\
-                            See this button? Well, it does absolutely nothing.\
-                        </div>\
-                    </div>\
-                    <hr id="myHR" />',
-              darkTheme:false
-        }
-    },
+    currentTab: "play",
+    options: {
+        darkTheme: false
+    }
 }
 
 /* unlock, cost : Object [~gD]                          Costs of unlocking and buying
@@ -167,7 +147,7 @@ function tick() {
     for (var i in actions) {
         if (!gD.actions[i].unlocked && compare(actions[i].unlock, gD)) { // If new action unlocked
             gD.actions[i].unlocked = true;
-            var strButton = '<button id=' + i + ' type="button" class="btn btn-default' + (gD.tabs.opt.darkTheme ? "2" : "") + '" data-toggle="tooltip" data-placement="bottom" title="' + actions[i].show.tooltip + '" data-container="body">';
+            var strButton = '<button id=' + i + ' type="button" class="btn btn-default' + (gD.options.darkTheme ? "2" : "") + '" data-toggle="tooltip" data-placement="bottom" title="' + actions[i].show.tooltip + '" data-container="body">';
             switch (actions[i].show.type) { // Display it
             case "standardAction":
                 $("#actions").append('\
@@ -179,7 +159,7 @@ function tick() {
                             ' + actions[i].show.inside + '\
                         </div>\
                     </div>\
-                    <hr id="' + i + 'HR"' + (gD.tabs.opt.darkTheme ? 'div="HR2"' : "") + ' />');
+                    <hr id="' + i + 'HR"' + (gD.options.darkTheme ? 'class="HR2"' : "") + ' />');
                 break;
             case "standardUpgrade":
                 $("#upgrades").append(
@@ -201,7 +181,7 @@ function tick() {
             }
         }
         if(gD.actions[i].unlocked) { // Each action unlocked : grey if and only if not affordable
-            $("#" + i).css("background-color", (compare(actions[i].cost, gD) ? (gD.tabs.opt.darkTheme ? "#000" : "#fff") : (gD.tabs.opt.darkTheme ? "#333" : "#eee")));
+            $("#" + i).css("background-color", (compare(actions[i].cost, gD) ? (gD.options.darkTheme ? "#000" : "#fff") : (gD.options.darkTheme ? "#333" : "#eee")));
         }
         if(typeof actions[i].tick !== 'undefined') { // && (!actions[i].tickIfBought || gD.actions[i].bought) && (!actions[i].tickIfUnlocked || gD.actions[i].unlocked)) {
             actions[i].tick();
@@ -334,16 +314,15 @@ String.prototype.textify = function() { // camelCaseObject,AnotherAnd_Escaping_o
 }
 
 function changeTab(newTab) {
-    $("#nav_" + currentTab).parent().removeClass("active");
+    $("#nav_" + gD.currentTab).parent().removeClass("active");
     $("#nav_" + newTab).parent().addClass("active");
-    gD.tabs[currentTab].text = $("#main").html();
-    $("#main").html(gD.tabs[newTab].text);
-    currentTab = newTab;
+    $("#" + gD.currentTab).css("display", "none");
+    $("#" + newTab).css("display", "block");
+    gD.currentTab = newTab;
     switch (newTab) { // TODO : Remove switch if pointless
         case "play":
             break;
         case "opt":
-            $("#darkTheme").change(darkTheme).prop("checked", gD.tabs.opt.darkTheme);
             break;
         default:
             break;
@@ -351,20 +330,21 @@ function changeTab(newTab) {
 }
 
 function darkTheme() {
-    gD.tabs.play.text = gD.tabs.play.text.replace(/btn-default2/g, "btn-P2").replace(/btn-default/g, "btn-default2").replace(/btn-P2/g, "btn-default"); // Play
-    gD.tabs.play.text = gD.tabs.play.text.replace(/split-left2/g, "split-P2").replace(/split-left/g, "split-left2").replace(/split-P2/g, "split-left");
-    gD.tabs.play.text = gD.tabs.play.text.replace(/hr class="HR2"/g, "HR-HR2").replace(/hr/g, 'hr class="HR2"').replace(/HR-HR2/g, "hr");
-    $("#main").html($("#main").html().replace(/hr class="HR2"/g, "HR-HR2").replace(/hr/g, 'hr class="HR2"').replace(/HR-HR2/g, "hr")); // Opt
-    $("#main").html($("#main").html().replace(/btn-default2/g, "btn-P2").replace(/btn-default/g, "btn-default2").replace(/btn-P2/g, "btn-default"));
-    // Global
+    if (gD.options.darkTheme) {
+        $(".btn-default2").removeClass("btn-default2").addClass("btn-default");
+        $(".split-left2").removeClass("split-left2").addClass("split-left");
+        $("hr").removeClass("HR2");
+    } else {
+        $(".btn-default").removeClass("btn-default").addClass("btn-default2");
+        $(".split-left").removeClass("split-left").addClass("split-left2");
+        $("hr").addClass("HR2");
+    }
     $("#navbar").html($("#navbar").html().replace(/navbar-inverse/g, "navbar-P2").replace(/navbar-default/g, "navbar-inverse").replace(/navbar-P2/g, "navbar-default")); // Not on body or ajax async request fails
-    $("body").css("background-color", (gD.tabs.opt.darkTheme ? "#FFF" : "#000"));
-    $("body").css("color", (gD.tabs.opt.darkTheme ? "#000" : "#FFF"));
-    //$("#main").html(gD.tabs.opt.text.replace(/btn-default2/g, "btn-P2").replace(/btn-default/g, "btn-default2").replace(/btn-P2/g, "btn-default"));
+    $("body").css("background-color", (gD.options.darkTheme ? "#FFF" : "#000"));
+    $("body").css("color", (gD.options.darkTheme ? "#000" : "#FFF"));
     // TODO on load game/reset ^ v
     //$("myHR").addClass("HR2");
-    gD.tabs.opt.darkTheme = !gD.tabs.opt.darkTheme;
-    $("#darkTheme").change(darkTheme).prop("checked", gD.tabs.opt.darkTheme);
+    gD.options.darkTheme = !gD.options.darkTheme;
 }
 
 window.setInterval(tick, gD.tickDuration);
@@ -374,4 +354,9 @@ $(function () {
         gD.actions[i] = {unlocked: false, bought: false};
     }
     $("#version").append(version);
+    $("#darkTheme").change(darkTheme).prop("checked", gD.options.darkTheme);
+    $("#myOption").tooltip().mouseup(function() {
+        $(this).blur();
+    })
 });
+
