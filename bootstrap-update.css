@@ -104,7 +104,15 @@ b {
   border-color: #606060;
 }
 
+.greyedOut {
+    background-color: #eee;
+}
+
 /************************************************************* DARK THEME *************************************************************/
+
+.greyedOut2 {
+    background-color: #333;
+}
 
 .split-left2 {
     border-right: solid 1px #111;

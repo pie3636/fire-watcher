@@ -1,6 +1,7 @@
-var version = "v0.3.5"; 
+var version = "v0.3.7"; 
 var currentTab = "play";
 var onLoad = false;
+var reset = false;
 var gD = {
     tickDuration : 25,
     time: 60,
@@ -180,10 +181,17 @@ function tick() {
                 }(i));
             }
         }
-        if(gD.actions[i].unlocked && !compare(actions[i].cost, gD)) { // Each action unlocked : grey if and only if not affordable
-            $("#" + i).css("background-color", gD.options.darkTheme ? "#333" : "#eee");
+        var greyOut = "greyedOut" + (gD.options.darkTheme ? "2" : "");
+        if (!$("#" + i + ":hover").length) {
+            if(gD.actions[i].unlocked && !compare(actions[i].cost, gD)) { // Each action unlocked : grey if and only if not affordable
+                if (!$("#" + i).hasClass(greyOut)) {
+                    $("#" + i).addClass(greyOut);
+                }
+            } else {
+                $("#" + i).removeClass(greyOut);
+            }
         } else {
-            $("#" + i).css("background-color", gD.options.darkTheme ? "#000" : "#FFF") //TODO : Modifier avec event sur hover
+            $("#" + i).removeClass(greyOut);
         }
         if(typeof actions[i].tick !== 'undefined' && (!onLoad || gD.actions[i].unlocked)) { // && (!actions[i].tickIfBought || gD.actions[i].bought) && (!actions[i].tickIfUnlocked || gD.actions[i].unlocked)) { // No tick if loading game and not unlocked
             actions[i].tick();
@@ -325,7 +333,7 @@ function changeTab(newTab) {
     gD.currentTab = newTab;
 }
 
-function darkTheme() {
+function setTheme() {
     var fg = (gD.options.darkTheme ? "#000" : "#FFF");
     if (gD.options.darkTheme) {
         $("#navbar").removeClass("navbar-inverse");
@@ -357,12 +365,21 @@ function load() {
             buyUpgrade(i, true); // Delete everything
         }
     }
-    loadRec(JSON.parse(localStorage.getItem("save")), gD);
-    if (gD.options.darkTheme) {
+    if (reset) {
+        var saveTheme = gD.options.darkTheme;
+        gD = JSON.parse(localStorage.getItem("initValues"));
+        gD.options.darkTheme = saveTheme;
+        gD.currentTab = "opt"; // Needed to change tab
+        changeTab("play");
+    } else {
+        loadRec(JSON.parse(localStorage.getItem("save")), gD);
+    }
+    if (gD.options.darkTheme && !reset) {
         $("#darkTheme").prop("checked", true);
         gD.options.darkTheme = false;
-        darkTheme();
+        reset = false;
     }
+    setTheme();
 }
 
 function loadRec(save, data) {
@@ -390,6 +407,11 @@ function themeTooltip() {
     changeTooltipColorTo((gD.options.darkTheme ? "#FFF" : "#000"), (gD.options.darkTheme ? "#000" : "#FFF"));
 }
 
+function wipe() {
+    reset = true;
+    load();
+}
+
 function changeTooltipColorTo(color, fgcolor) {
     $(".tooltip-inner").css("background-color", color).css("color", fgcolor);
     $(".tooltip.top .tooltip-arrow").css("border-top-color", color);
@@ -402,12 +424,15 @@ $(function () {
     for (var i in actions) {
         gD.actions[i] = {unlocked: false, bought: false};
     }
+    localStorage.setItem("initValues", JSON.stringify(gD));
+    load();
     $("#version").append(version);
-    $("#darkTheme").change(darkTheme).prop("checked", gD.options.darkTheme);
+    $("#darkTheme").change(setTheme).prop("checked", gD.options.darkTheme);
     $("#saveSave").tooltip().mouseup(toBlur).hover(themeTooltip).click(save);
     $("#loadSave").tooltip().mouseup(toBlur).hover(themeTooltip).click(load);
     $("#deleteSave").tooltip().mouseup(toBlur).hover(themeTooltip).click(function() {
-        localStorage.removeItem("save");
+        localStorage.setItem("save", JSON.stringify(JSON.parse(localStorage.getItem("initValues"))));
     });
+    $("#wipeSave").tooltip().mouseup(toBlur).hover(themeTooltip).click(wipe);
 });
 
