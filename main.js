@@ -1,4 +1,4 @@
-var version = "v0.3.3"; 
+var version = "v0.3.5"; 
 var currentTab = "play";
 var onLoad = false;
 var gD = {
@@ -172,12 +172,12 @@ function tick() {
                 break;
             }
             if (actions[i].show.type == "standardAction" || actions[i].show.type == "standardUpgrade") { // Fix to prevent constant focus after clicking
-                $("#" + i).tooltip().mouseup(toBlur);
+                $("#" + i).tooltip().mouseup(toBlur).hover(themeTooltip);
                 $("#" + i).on('click', function(_i){
                     return function() { // Clooooooosure :D
                         buyUpgrade(_i);
                     };
-                }(i))
+                }(i));
             }
         }
         if(gD.actions[i].unlocked && !compare(actions[i].cost, gD)) { // Each action unlocked : grey if and only if not affordable
@@ -324,6 +324,7 @@ function changeTab(newTab) {
 }
 
 function darkTheme() {
+    var fg = (gD.options.darkTheme ? "#000" : "#FFF");
     if (gD.options.darkTheme) {
         $("#navbar").removeClass("navbar-inverse");
         $(".btn-default2").removeClass("btn-default2").addClass("btn-default");
@@ -332,11 +333,11 @@ function darkTheme() {
     } else {
         $("#navbar").addClass("navbar-inverse");
         $(".btn-default").removeClass("btn-default").addClass("btn-default2");
-        $(".split-left").removeClass("split-left").addClass("split-left2");
+        $(".split-left").removeClass("split-left").addClass("split-left2");;
         $("hr").addClass("HR2");
     }
     $("body").css("background-color", (gD.options.darkTheme ? "#FFF" : "#000"));
-    $("body").css("color", (gD.options.darkTheme ? "#000" : "#FFF"));
+    $("body").css("color", fg);
     // TODO reset ^ v
     gD.options.darkTheme = !gD.options.darkTheme;
 }
@@ -383,15 +384,27 @@ function toBlur() {
     $(this).blur();
 }
 
+function themeTooltip() {
+    changeTooltipColorTo((gD.options.darkTheme ? "#FFF" : "#000"), (gD.options.darkTheme ? "#000" : "#FFF"));
+}
+
+function changeTooltipColorTo(color, fgcolor) {
+    $(".tooltip-inner").css("background-color", color).css("color", fgcolor);
+    $(".tooltip.top .tooltip-arrow").css("border-top-color", color);
+    $(".tooltip.right .tooltip-arrow").css("border-right-color", color);
+    $(".tooltip.left .tooltip-arrow").css("border-left-color", color);
+    $(".tooltip.bottom .tooltip-arrow").css("border-bottom-color", color);
+}
+
 $(function () {
     for (var i in actions) { // TODO : Fix on load game...
         gD.actions[i] = {unlocked: false, bought: false};
     }
     $("#version").append(version);
     $("#darkTheme").change(darkTheme).prop("checked", gD.options.darkTheme);
-    $("#saveSave").tooltip().mouseup(toBlur).click(save);
-    $("#loadSave").tooltip().mouseup(toBlur).click(load);
-    $("#deleteSave").tooltip().mouseup(toBlur).click(function() {
+    $("#saveSave").tooltip().mouseup(toBlur).hover(themeTooltip).click(save);
+    $("#loadSave").tooltip().mouseup(toBlur).hover(themeTooltip).click(load);
+    $("#deleteSave").tooltip().mouseup(toBlur).hover(themeTooltip).click(function() {
         localStorage.removeItem("save");
     });
 });
