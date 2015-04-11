@@ -110,10 +110,6 @@ b {
 
 /************************************************************* DARK THEME *************************************************************/
 
-.greyedOut2 {
-    background-color: #333;
-}
-
 .split-left2 {
     border-right: solid 1px #111;
 }
@@ -159,4 +155,8 @@ b {
 .btn-default2 .badge {
   color: #000;
   background-color: #ccc;
+}
+
+.greyedOut2 {
+    background-color: #333;
 }

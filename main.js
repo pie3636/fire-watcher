@@ -24,6 +24,7 @@ var gD = {
  * tick : function                                      On tick
  * repeatable : Boolean                                 Peristent
  * nocenter : Boolean                                   Multiline (action)
+ * isUpgrade : Boolean                                  In case of unhandled show type
  */
  
 var actions = {
@@ -173,7 +174,7 @@ function tick() {
                 break;
             }
             if (actions[i].show.type == "standardAction" || actions[i].show.type == "standardUpgrade") { // Fix to prevent constant focus after clicking
-                $("#" + i).tooltip().mouseup(toBlur).hover(themeTooltip);
+                $("#" + i).tooltip().mouseup(toBlur).hover(themeTooltip); // Changes tooltip theme as needed
                 $("#" + i).on('click', function(_i){
                     return function() { // Clooooooosure :D
                         buyUpgrade(_i);
@@ -340,11 +341,13 @@ function setTheme() {
         $(".btn-default2").removeClass("btn-default2").addClass("btn-default");
         $(".split-left2").removeClass("split-left2").addClass("split-left");
         $("hr").removeClass("HR2");
+        $(".btn").removeClass("greyedOut2");
     } else {
         $("#navbar").addClass("navbar-inverse");
         $(".btn-default").removeClass("btn-default").addClass("btn-default2");
         $(".split-left").removeClass("split-left").addClass("split-left2");;
         $("hr").addClass("HR2");
+        $(".btn").removeClass("greyedOut");
     }
     $("body").css("background-color", (gD.options.darkTheme ? "#FFF" : "#000"));
     $("body").css("color", fg);
