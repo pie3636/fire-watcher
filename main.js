@@ -1,7 +1,9 @@
 var version = "v0.3.7"; 
 var currentTab = "play";
 var onLoad = false;
-var reset = false;
+var onImport = false;
+var onReset = false;
+var newSave = {};
 var gD = {
     tickDuration : 25,
     time: 60,
@@ -342,20 +344,19 @@ function setTheme() {
     var fg = (gD.options.darkTheme ? "#000" : "#FFF");
     if (gD.options.darkTheme) {
         $("#navbar").removeClass("navbar-inverse");
-        $(".btn-default2").removeClass("btn-default2").addClass("btn-default");
+        $(".btn-default2").not(document.getElementById("importNow")).removeClass("btn-default2").addClass("btn-default");
         $(".split-left2").removeClass("split-left2").addClass("split-left");
         $("hr").removeClass("HR2");
         $(".btn").removeClass("greyedOut2");
     } else {
         $("#navbar").addClass("navbar-inverse");
-        $(".btn-default").removeClass("btn-default").addClass("btn-default2");
+        $(".btn-default").not(document.getElementById("importNow")).removeClass("btn-default").addClass("btn-default2");
         $(".split-left").removeClass("split-left").addClass("split-left2");;
         $("hr").addClass("HR2");
         $(".btn").removeClass("greyedOut");
     }
     $("body").css("background-color", (gD.options.darkTheme ? "#FFF" : "#000"));
     $("body").css("color", fg);
-    // TODO reset ^ v
     gD.options.darkTheme = !gD.options.darkTheme;
 }
 
@@ -373,14 +374,19 @@ function load() {
             buyUpgrade(i, true); // Delete everything
         }
     }
-    if (reset) {
+    if (onReset) {
         gD = JSON.parse(localStorage.getItem("initValues"));
         gD.currentTab = "opt"; // Needed to change tab
+        changeTab("play");
+    } else if (onImport) {
+        loadRec(newSave, gD);
+        gD.currentTab = "opt";
         changeTab("play");
     } else {
         loadRec(JSON.parse(localStorage.getItem("save")), gD);
     }
-    reset = false;
+    onReset = false;
+    onImport = false;
     if(saveTheme != gD.options.darkTheme) {
         $("#darkTheme").prop("checked", !saveTheme);
         gD.options.darkTheme = saveTheme;
@@ -396,7 +402,9 @@ function loadRec(save, data) {
                 data[i] = save[i];
                 break;
             case "object":
-                loadRec(save[i], data[i]);
+                if (typeof data[i] !== 'undefined') {
+                    loadRec(save[i], data[i]);
+                }
                 break;
             case "undefined":
             default:
@@ -414,17 +422,38 @@ function themeTooltip() {
 }
 
 function wipe() {
-    reset = true;
+    onReset = true;
     load();
 }
 
 function exportSave() {
     $("#containerExport").html(Base64.encode(JSON.stringify(gD)));
-    $("#exportSave").blur();
+    $("#containerExport").focus();
+}
+
+function importSaveRec() {
+    try {
+        newSave = JSON.parse(Base64.decode($('#containerImport').val()));
+        $('#importGame').modal('hide');
+    }
+    catch(err) {
+        $("#importError").css("display", "block");
+        $("#importNow").css("margin-bottom", "15px");
+        return false;
+    }
+    return true;
 }
 
 function importSave() {
-
+    $("#containerImport").focus();
+    if (importSaveRec()) {
+        onReset = true;
+        load();
+        onImport = true;
+        load();
+        $("#importError").css("display", "none");
+        $("#importNow").css("margin-bottom", "0px");
+    }  
 }
 
 function changeTooltipColorTo(color, fgcolor) {
@@ -449,8 +478,20 @@ $(function () {
         localStorage.setItem("save", JSON.stringify(JSON.parse(localStorage.getItem("initValues"))));
     });
     $("#wipeSave").tooltip().mouseup(toBlur).hover(themeTooltip).click(wipe);
-    $("#exportSave").tooltip().mouseup(toBlur).hover(themeTooltip).click(exportSave).attr("data-toggle", "modal").attr("data-target","#exportGame");
-    $("#importSave").tooltip().mouseup(toBlur).hover(themeTooltip).click(importSave);
+    $("#exportSave").tooltip().mouseup(toBlur).hover(themeTooltip).click(exportSave).attr("data-toggle", "modal").attr("data-target","#exportGame").focus(toBlur);
+    $("#importSave").tooltip().mouseup(toBlur).hover(themeTooltip).attr("data-toggle", "modal").attr("data-target","#importGame").focus(toBlur); // Or it stays focused after the modal is closed
+    $("#importNow").tooltip().mouseup(toBlur).click(importSave);
+    $('.modal').on('show.bs.modal', centerModal);
+    $(window).on("resize", function() {
+        $('.modal:visible').each(centerModal);
+    });
+    $('#exportGame').on('shown.bs.modal', function() {
+        $('#containerExport').focus().select();
+    });
+    $('#importGame').on('shown.bs.modal', function() {
+        $('#containerImport').focus();
+    });
+    console.log("DONE");
 });
 
 
@@ -460,8 +501,3 @@ function centerModal() {
     var offset = ($(window).height() - $dialog.height()) / 2;
     $dialog.css("margin-top", offset);
 }
-
-$('.modal').on('show.bs.modal', centerModal);
-$(window).on("resize", function () {
-    $('.modal:visible').each(centerModal);
-});

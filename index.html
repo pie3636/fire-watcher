@@ -139,10 +139,26 @@
       <div class="modal-dialog">
         <div class="modal-content" style="color:#000">
             <div class="modal-body">
-                <b>Save export :</b><br />
+                <b>Export save :</b><br />
                 Copy this string and save it to a file on your computer. You will be able to use it to load the current game anytime, anywhere.
                 <br /><br />
                 <textarea id="containerExport" readonly class="form-control"></textarea>
+            </div>
+        </div>
+      </div>
+    </div>
+    <div id="importGame" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="Export game" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content" style="color:#000">
+            <div class="modal-body">
+                <b>Import save :</b><br />
+                Paste here a previously exported game, then press the "Import" button below.
+                <br /><br />
+                <textarea id="containerImport" class="form-control"></textarea>
+                <div id="importError" style="color:#800; display:none">
+                    <br /><b>Error while parsing save, please try again.</b><br />
+                </div>
+                <button id="importNow" type="button" class="btn btn-default center-block" data-toggle="tooltip" data-placement="top" title="Import the game now" data-container="body" style="margin-top:15px">Import</button>
             </div>
         </div>
       </div>
