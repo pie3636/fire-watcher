@@ -165,15 +165,14 @@ function tick() {
             case "standardUpgrade":
                 $("#upgrades").append(
                         strButton + i.textify() + ' ' + cost(i) + '</button>');
+                $("#" + i).css("margin-right", 10);
                 break;
             default:
                 $(actions[i].isUpgrade ? "#upgrades" : "#actions").after(actions[i].show.text);
                 break;
             }
             if (actions[i].show.type == "standardAction" || actions[i].show.type == "standardUpgrade") { // Fix to prevent constant focus after clicking
-                $("#" + i).tooltip().mouseup(function() {
-                    $(this).blur();
-                })
+                $("#" + i).tooltip().mouseup(toBlur);
                 $("#" + i).on('click', function(_i){
                     return function() { // Clooooooosure :D
                         buyUpgrade(_i);
@@ -181,10 +180,10 @@ function tick() {
                 }(i))
             }
         }
-        if(gD.actions[i].unlocked) { // Each action unlocked : grey if and only if not affordable
-            $("#" + i).css("background-color", (compare(actions[i].cost, gD) ? (gD.options.darkTheme ? "#000" : "#fff") : (gD.options.darkTheme ? "#333" : "#eee")));
+        if(gD.actions[i].unlocked && !compare(actions[i].cost, gD)) { // Each action unlocked : grey if and only if not affordable
+            $("#" + i).css("background-color", gD.options.darkTheme ? "#333" : "#eee");
         }
-        if(typeof actions[i].tick !== 'undefined' && (!onLoad || gD.actions[i].unlocked)) { // && (!actions[i].tickIfBought || gD.actions[i].bought) && (!actions[i].tickIfUnlocked || gD.actions[i].unlocked)) {
+        if(typeof actions[i].tick !== 'undefined' && (!onLoad || gD.actions[i].unlocked)) { // && (!actions[i].tickIfBought || gD.actions[i].bought) && (!actions[i].tickIfUnlocked || gD.actions[i].unlocked)) { // No tick if loading game and not unlocked
             actions[i].tick();
         }
         
@@ -195,7 +194,7 @@ function tick() {
     greyOut("buyWatcher3", time >= sumPrices(10, 1.1, watchers, 100)); */
 }
 
-function buyUpgrade(upgrade, isOnLoad) {
+function buyUpgrade(upgrade, isOnLoad) { // isOnLoad => deletion
     if (isOnLoad || !gD.actions[upgrade].bought && compare(actions[upgrade].cost, gD, true)) { // First condition isn't mandatory
         if (typeof actions[upgrade].effect !== 'undefined' && !isOnLoad) {
             actions[upgrade].effect();
@@ -322,31 +321,23 @@ function changeTab(newTab) {
     $("#" + gD.currentTab).css("display", "none");
     $("#" + newTab).css("display", "block");
     gD.currentTab = newTab;
-    switch (newTab) { // TODO : Remove switch if pointless
-        case "play":
-            break;
-        case "opt":
-            break;
-        default:
-            break;
-    }
 }
 
 function darkTheme() {
     if (gD.options.darkTheme) {
+        $("#navbar").removeClass("navbar-inverse");
         $(".btn-default2").removeClass("btn-default2").addClass("btn-default");
         $(".split-left2").removeClass("split-left2").addClass("split-left");
         $("hr").removeClass("HR2");
     } else {
+        $("#navbar").addClass("navbar-inverse");
         $(".btn-default").removeClass("btn-default").addClass("btn-default2");
         $(".split-left").removeClass("split-left").addClass("split-left2");
         $("hr").addClass("HR2");
     }
-    $("#navbar").html($("#navbar").html().replace(/navbar-inverse/g, "navbar-P2").replace(/navbar-default/g, "navbar-inverse").replace(/navbar-P2/g, "navbar-default")); // Not on body or ajax async request fails
     $("body").css("background-color", (gD.options.darkTheme ? "#FFF" : "#000"));
     $("body").css("color", (gD.options.darkTheme ? "#000" : "#FFF"));
-    // TODO on load game/reset ^ v
-    //$("myHR").addClass("HR2");
+    // TODO reset ^ v
     gD.options.darkTheme = !gD.options.darkTheme;
 }
 
@@ -357,10 +348,10 @@ function save() {
 }
 
 function load() {
-    onLoad = true;
+    onLoad = true; // Restore actions on next tick
     for (var i in gD.actions) {
         if (gD.actions[i].unlocked) {
-            buyUpgrade(i, true);
+            buyUpgrade(i, true); // Delete everything
         }
     }
     loadRec(JSON.parse(localStorage.getItem("save")), gD);
@@ -388,22 +379,20 @@ function loadRec(save, data) {
     }
 }
 
+function toBlur() {
+    $(this).blur();
+}
+
 $(function () {
     for (var i in actions) { // TODO : Fix on load game...
         gD.actions[i] = {unlocked: false, bought: false};
     }
     $("#version").append(version);
     $("#darkTheme").change(darkTheme).prop("checked", gD.options.darkTheme);
-    $("#saveSave").tooltip().click(save).mouseup(function() {
-        $(this).blur();
-    });
-    $("#loadSave").tooltip().click(load).mouseup(function() {
-        $(this).blur();
-    });
-    $("#deleteSave").tooltip().click(function() {
+    $("#saveSave").tooltip().mouseup(toBlur).click(save);
+    $("#loadSave").tooltip().mouseup(toBlur).click(load);
+    $("#deleteSave").tooltip().mouseup(toBlur).click(function() {
         localStorage.removeItem("save");
-    }).mouseup(function() {
-        $(this).blur();
     });
 });
 

@@ -19,27 +19,25 @@
                                                       <![endif]-->
 </head>
 <body role="document">
-<span id="navbar">
-    <nav class="navbar navbar-default navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="#" id="version"><span class="glyphicon glyphicon-fire" aria-hidden="true"></span> Fire Watcher </a>
-            </div>
-            <div id="navbar" class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li class="active"><a id="nav_play" href="#" onclick="changeTab('play')">Play</a></li>
-                    <li><a href="#" id="nav_opt" onclick="changeTab('opt')">Options</a></li>
-                </ul>
-            </div>
+<nav class="navbar navbar-default navbar-fixed-top" id="navbar">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#" id="version"><span class="glyphicon glyphicon-fire" aria-hidden="true"></span> Fire Watcher </a>
         </div>
-    </nav>
-</span>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li class="active"><a id="nav_play" href="#" onclick="changeTab('play')">Play</a></li>
+                <li><a href="#" id="nav_opt" onclick="changeTab('opt')">Options</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
 
 <div class="container theme-showcase" role="main" id="main">
     <div class="row">
@@ -116,7 +114,7 @@
                     <button id="deleteSave" type="button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Delete the saved game" data-container="body">Delete save</button>
                 </div>
             </div>
-                <div class="col-md-9 vcenter">
+                <div class="col-md-9 vcenter" style="margin-left:-70px">
                     The game is saved through localStorage. To prevent data corruption or deletion, <b>backup your savefile</b>!
                 </div>
             </div>

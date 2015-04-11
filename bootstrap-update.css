@@ -93,6 +93,17 @@ b {
     vertical-align: top;
 }
 
+.btn-default:hover, .btn-default:focus, .btn-default.focus, .btn-default:active, .btn-default.active, .open > .dropdown-toggle.btn-default {
+  color: #333;
+  background-color: #ececec;
+  border-color: #adadad;
+}
+
+.btn-default:active, .btn-default.active {
+  background-color: #d9d9d9;
+  border-color: #606060;
+}
+
 /************************************************************* DARK THEME *************************************************************/
 
 .split-left2 {
@@ -124,8 +135,13 @@ b {
 
 .btn-default2:hover, .btn-default2:focus, .btn-default2.focus, .btn-default2:active, .btn-default2.active, .open > .dropdown-toggle.btn-default2 {
   color: #ccc;
-  background-color: #060606;
+  background-color: #131313;
   border-color: #525252;
+}
+
+.btn-default2:active, .btn-default2.active {
+  background-color: #262626;
+  border-color: #909090;
 }
 
 .btn-default2.disabled, .btn-default2[disabled], fieldset[disabled] .btn-default2, .btn-default2.disabled:hover, .btn-default2[disabled]:hover, fieldset[disabled] .btn-default2:hover, .btn-default2.disabled:focus, .btn-default2[disabled]:focus, fieldset[disabled] .btn-default2:focus, .btn-default2.disabled.focus, .btn-default2[disabled].focus, fieldset[disabled] .btn-default2.focus, .btn-default2.disabled:active, .btn-default2[disabled]:active, fieldset[disabled] .btn-default2:active, .btn-default2.disabled.active, .btn-default2[disabled].active, fieldset[disabled] .btn-default2.active {
