@@ -88,6 +88,12 @@ b {
     margin-right:2px;
 }
 
+.form-control {
+    width: 100%;
+    min-height: 200px;
+    height: 100%;
+}
+
 .checkbox {
     display: inline;
     vertical-align: top;

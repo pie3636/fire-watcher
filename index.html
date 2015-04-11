@@ -107,22 +107,47 @@
                 </div><hr/>
             </div>
             <div class="row" style="margin-left:10px">
-            <div class="col-md-4 col-md-center">
-                <div class="btn-group float-left">
-                    <button id="saveSave" type="button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Save your current progress" data-container="body">Save</button>
-                    <button id="loadSave" type="button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Load the saved game" data-container="body">Load</button>
-                    <button id="deleteSave" type="button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Delete the saved game" data-container="body">Delete save</button>
-                    <button id="wipeSave" type="button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Reset your current progress (doesn't erase the savefile)" data-container="body">Reset</button>
+                <div class="col-md-3 col-md-center">
+                    <div class="btn-group float-left">
+                        <button id="saveSave" type="button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Save your current progress" data-container="body">Save</button>
+                        <button id="loadSave" type="button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Load the saved game" data-container="body">Load</button>
+                    </div>
+                    <div class="btn-group float-left">
+                        <button id="exportSave" type="button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Export the savefile" data-container="body">Export</button>
+                        <button id="importSave" type="button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Import a previously exported save" data-container="body">Import</button>
+                    </div>
+                </div>
+                <div class="col-md-9 vcenter" style="margin-left:-40px">
+                    The game is saved through localStorage. To prevent data corruption or deletion, <b>regularly export your savefile</b>!
                 </div>
             </div>
-                <div class="col-md-8 vcenter" style="margin-left:-70px">
-                    The game is saved through localStorage. To prevent data corruption or deletion, <b>backup your savefile</b>!
+            <hr id="myHR" />
+            <div class="row" style="margin-left:10px">
+                <div class="col-md-2 col-md-center">
+                    <button id="deleteSave" type="button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Delete the saved game" data-container="body">Delete save</button>
+                        <button id="wipeSave" type="button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Reset your current progress (doesn't erase the savefile)" data-container="body">Reset</button>
+                </div>
+                <div class="col-md-10 vcenter" style="margin-left:-25px">
+                    Be careful when using those. Deleting the savefile doesn't reset the game, nor does resetting update/delete your savefile.
                 </div>
             </div>
             <hr id="myHR" />
         </div>
     </div>
-</div>                    
+    
+    <div id="exportGame" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="Export game" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content" style="color:#000">
+            <div class="modal-body">
+                <b>Save export :</b><br />
+                Copy this string and save it to a file on your computer. You will be able to use it to load the current game anytime, anywhere.
+                <br /><br />
+                <textarea id="containerExport" readonly class="form-control"></textarea>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
                     
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 <script src="jquery-2.1.1.min.js"></script> <!-- TODO : REMOVE -->
