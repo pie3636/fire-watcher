@@ -182,6 +182,8 @@ function tick() {
         }
         if(gD.actions[i].unlocked && !compare(actions[i].cost, gD)) { // Each action unlocked : grey if and only if not affordable
             $("#" + i).css("background-color", gD.options.darkTheme ? "#333" : "#eee");
+        } else {
+            $("#" + i).css("background-color", gD.options.darkTheme ? "#000" : "#FFF") //TODO : Modifier avec event sur hover
         }
         if(typeof actions[i].tick !== 'undefined' && (!onLoad || gD.actions[i].unlocked)) { // && (!actions[i].tickIfBought || gD.actions[i].bought) && (!actions[i].tickIfUnlocked || gD.actions[i].unlocked)) { // No tick if loading game and not unlocked
             actions[i].tick();
@@ -318,8 +320,8 @@ String.prototype.textify = function() { // camelCaseObject,AnotherAnd_Escaping_o
 function changeTab(newTab) {
     $("#nav_" + gD.currentTab).parent().removeClass("active");
     $("#nav_" + newTab).parent().addClass("active");
-    $("#" + gD.currentTab).css("display", "none");
-    $("#" + newTab).css("display", "block");
+    hide(gD.currentTab);
+    show(newTab);
     gD.currentTab = newTab;
 }
 
@@ -397,7 +399,7 @@ function changeTooltipColorTo(color, fgcolor) {
 }
 
 $(function () {
-    for (var i in actions) { // TODO : Fix on load game...
+    for (var i in actions) {
         gD.actions[i] = {unlocked: false, bought: false};
     }
     $("#version").append(version);
