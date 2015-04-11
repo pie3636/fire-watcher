@@ -1,5 +1,6 @@
-var version = "v0.3.1"; 
+var version = "v0.3.3"; 
 var currentTab = "play";
+var onLoad = false;
 var gD = {
     tickDuration : 25,
     time: 60,
@@ -10,7 +11,7 @@ var gD = {
     //watchers: 0,
     //watcherPower: 1,
     actions: {},
-    currentTab: "play",
+    currentTab: "play",    
     options: {
         darkTheme: false
     }
@@ -145,7 +146,7 @@ function tick() {
     //time += watchers * watcherPower * tickDuration/1000;
     $("#time").html(prettify(gD.time, 3));
     for (var i in actions) {
-        if (!gD.actions[i].unlocked && compare(actions[i].unlock, gD)) { // If new action unlocked
+        if (!gD.actions[i].unlocked && compare(actions[i].unlock, gD) || gD.actions[i].unlocked && onLoad && !gD.actions[i].bought) { // If new action unlocked or unlocked in loaded game
             gD.actions[i].unlocked = true;
             var strButton = '<button id=' + i + ' type="button" class="btn btn-default' + (gD.options.darkTheme ? "2" : "") + '" data-toggle="tooltip" data-placement="bottom" title="' + actions[i].show.tooltip + '" data-container="body">';
             switch (actions[i].show.type) { // Display it
@@ -183,21 +184,23 @@ function tick() {
         if(gD.actions[i].unlocked) { // Each action unlocked : grey if and only if not affordable
             $("#" + i).css("background-color", (compare(actions[i].cost, gD) ? (gD.options.darkTheme ? "#000" : "#fff") : (gD.options.darkTheme ? "#333" : "#eee")));
         }
-        if(typeof actions[i].tick !== 'undefined') { // && (!actions[i].tickIfBought || gD.actions[i].bought) && (!actions[i].tickIfUnlocked || gD.actions[i].unlocked)) {
+        if(typeof actions[i].tick !== 'undefined' && (!onLoad || gD.actions[i].unlocked)) { // && (!actions[i].tickIfBought || gD.actions[i].bought) && (!actions[i].tickIfUnlocked || gD.actions[i].unlocked)) {
             actions[i].tick();
         }
+        
     }
+    onLoad = false;
     /* greyOut("buyWatcher1", time >= sumPrices(10, 1.1, watchers, 1));
     greyOut("buyWatcher2", time >= sumPrices(10, 1.1, watchers, 10));
     greyOut("buyWatcher3", time >= sumPrices(10, 1.1, watchers, 100)); */
 }
 
-function buyUpgrade(upgrade) {
-    if (!gD.actions[upgrade].bought && compare(actions[upgrade].cost, gD, true)) { // First condition isn't mandatory
-        if (typeof actions[upgrade].effect !== 'undefined') {
+function buyUpgrade(upgrade, isOnLoad) {
+    if (isOnLoad || !gD.actions[upgrade].bought && compare(actions[upgrade].cost, gD, true)) { // First condition isn't mandatory
+        if (typeof actions[upgrade].effect !== 'undefined' && !isOnLoad) {
             actions[upgrade].effect();
         }
-        if (!actions[upgrade].repeatable) {
+        if (!actions[upgrade].repeatable || isOnLoad) {
             gD.actions[upgrade].bought = true;
             switch (actions[upgrade].show.type) {
                 case "standardAction":
@@ -349,14 +352,58 @@ function darkTheme() {
 
 window.setInterval(tick, gD.tickDuration);
 
+function save() {
+    localStorage.setItem("save", JSON.stringify(gD));
+}
+
+function load() {
+    onLoad = true;
+    for (var i in gD.actions) {
+        if (gD.actions[i].unlocked) {
+            buyUpgrade(i, true);
+        }
+    }
+    loadRec(JSON.parse(localStorage.getItem("save")), gD);
+    if (gD.options.darkTheme) {
+        $("#darkTheme").prop("checked", true);
+        gD.options.darkTheme = false;
+        darkTheme();
+    }
+}
+
+function loadRec(save, data) {
+    for (var i in save) {
+        switch (typeof save[i]) {
+            case "number":
+            case "boolean":
+                data[i] = save[i];
+                break;
+            case "object":
+                loadRec(save[i], data[i]);
+                break;
+            case "undefined":
+            default:
+                break;
+        }
+    }
+}
+
 $(function () {
     for (var i in actions) { // TODO : Fix on load game...
         gD.actions[i] = {unlocked: false, bought: false};
     }
     $("#version").append(version);
     $("#darkTheme").change(darkTheme).prop("checked", gD.options.darkTheme);
-    $("#myOption").tooltip().mouseup(function() {
+    $("#saveSave").tooltip().click(save).mouseup(function() {
         $(this).blur();
-    })
+    });
+    $("#loadSave").tooltip().click(load).mouseup(function() {
+        $(this).blur();
+    });
+    $("#deleteSave").tooltip().click(function() {
+        localStorage.removeItem("save");
+    }).mouseup(function() {
+        $(this).blur();
+    });
 });
 
