@@ -363,27 +363,25 @@ function save() {
 
 function load() {
     onLoad = true; // Restore actions on next tick
+    var saveTheme = gD.options.darkTheme;
     for (var i in gD.actions) {
         if (gD.actions[i].unlocked) {
             buyUpgrade(i, true); // Delete everything
         }
     }
     if (reset) {
-        var saveTheme = gD.options.darkTheme;
         gD = JSON.parse(localStorage.getItem("initValues"));
-        gD.options.darkTheme = saveTheme;
         gD.currentTab = "opt"; // Needed to change tab
         changeTab("play");
-        $("#darkTheme").prop("checked", saveTheme);
     } else {
         loadRec(JSON.parse(localStorage.getItem("save")), gD);
     }
-    if (gD.options.darkTheme && !reset) {
-        $("#darkTheme").prop("checked", true);
-        gD.options.darkTheme = false;
-    }
     reset = false;
-    setTheme();
+    if(saveTheme != gD.options.darkTheme) {
+        $("#darkTheme").prop("checked", saveTheme);
+        gD.options.darkTheme = saveTheme;
+        setTheme(); //RESET CHANGE DE THEME A CHAQUE FOIS //LOAD -> THEME NOIR
+    }
 }
 
 function loadRec(save, data) {
