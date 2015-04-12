@@ -534,7 +534,11 @@ $(function () {
     localStorage.setItem("initValues", JSON.stringify(gD));
     load();
     $("#version").append(version);
-    $("#darkTheme").change(setTheme).prop("checked", gD.options.darkTheme);
+    $("#darkTheme").change(setTheme).prop("checked", false);
+    if (gD.options.darkTheme) {
+        gD.options.darkTheme = false;
+        setTheme();
+    }
     $("#autoSave").change(autoSave).prop("checked", gD.options.autoSave.enabled);
     $("#saveSave").tooltip().mouseup(toBlur).hover(themeTooltip).click(save);
     $("#loadSave").tooltip().mouseup(toBlur).hover(themeTooltip).click(load);
