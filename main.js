@@ -1,8 +1,11 @@
-var version = "v0.3.7"; 
+var version = "v0.4.0"; 
 var currentTab = "play";
 var onLoad = false;
 var onImport = false;
 var onReset = false;
+var logTimeout = {};
+var logDuration = 10000;
+var latestLog = 5;
 var newSave = {};
 var gD = {
     tickDuration : 25,
@@ -16,7 +19,9 @@ var gD = {
     actions: {},
     currentTab: "play",    
     options: {
-        darkTheme: false
+        logDuration: 1, //TODO : Make editable
+        darkTheme: false,
+        autoSave: 0
     }
 }
 
@@ -280,8 +285,16 @@ function compare(cost, data, doSub, subStep) { // Returns (cost <= data), data -
 }
 
 
-function prettify(input, digits) {
-	return input.toFixed((typeof digits === 'undefined' ? 9 : digits));
+function prettify(input, digits, before) {
+	var out = input.toFixed((typeof digits === 'undefined' ? 9 : digits));
+	var str = "";
+	before = (typeof before === 'undefined' ? 0 : before);
+	for (var i = 1; i < before; i++) {
+	    if(input < Math.pow(10, i)) {
+	        str += "0";
+	    }
+	}
+	return str + out;
 }
 
 function show(id) { //TODO : Remove if unused
@@ -343,24 +356,59 @@ function changeTab(newTab) {
 function setTheme() {
     var fg = (gD.options.darkTheme ? "#000" : "#FFF");
     if (gD.options.darkTheme) {
-        $("#navbar").removeClass("navbar-inverse");
+        $("#navbar, #logger").removeClass("navbar-inverse");
         $(".btn-default2").not(document.getElementById("importNow")).removeClass("btn-default2").addClass("btn-default");
         $(".split-left2").removeClass("split-left2").addClass("split-left");
         $("hr").removeClass("HR2");
         $(".btn").removeClass("greyedOut2");
+        $(".navbar-fixed-bottom").css("color", "#777");
+        $(".navbar-fixed-bottom").css("text-shadow", "0 1px 0 rgba(255, 255, 255, .25)");
+        $("#logger").css("background-color", "#eee");
     } else {
-        $("#navbar").addClass("navbar-inverse");
+        $("#navbar, #logger").addClass("navbar-inverse");
         $(".btn-default").not(document.getElementById("importNow")).removeClass("btn-default").addClass("btn-default2");
         $(".split-left").removeClass("split-left").addClass("split-left2");;
         $("hr").addClass("HR2");
         $(".btn").removeClass("greyedOut");
+        $(".navbar-fixed-bottom").css("color", "#9d9d9d");
+        $(".navbar-fixed-bottom").css("text-shadow", "0 -1px 0 rgba(0, 0, 0, .25)");
+        $("#logger").css("background-color", "#111");
     }
     $("body").css("background-color", (gD.options.darkTheme ? "#FFF" : "#000"));
     $("body").css("color", fg);
     gD.options.darkTheme = !gD.options.darkTheme;
 }
 
-window.setInterval(tick, gD.tickDuration);
+function log(str) {
+    var d = new Date;
+    var date = "<span style='color:#700'>[" + prettify(d.getHours(), 0, 2) + ":" + prettify(d.getMinutes(), 0, 2) + ":" + prettify(d.getSeconds(), 0, 2) + "." + prettify(d.getMilliseconds(), 0, 3) + "]</span> ";
+    latestLog = Math.min(5, latestLog + 1);
+    clearTimeout(logTimeout.l5);
+    for (var i = 5; i > 1; i--) {
+        $("#l" + i).html($("#l" + (i - 1)).html());
+        if ($("#l" + (i - 1)).css("font-weight") == "bold") {
+            $("#l" + i).css("color", (gD.options.darkTheme ? "#FF0" : "#08F")).css("font-weight", "bold");
+            logTimeout["l" + i] = logTimeout["l" + (i - 1)];
+        }
+    }
+    $("#l1").html(date + str);
+    $("#l1").css("color", (gD.options.darkTheme ? "#FF0" : "#08F")).css("font-weight", "bold");
+    logTimeout.l1 = setTimeout(unhighlightLastLog, logDuration); //TODO : Transition, bitstorm?
+}
+
+function unhighlightLastLog() {
+    $("#l" + latestLog).css("color", (gD.options.darkTheme ? "#9d9d9d" : "#777")).css("font-weight", "normal");
+    latestLog--;
+}
+
+function autoSave() {
+    if (gD.options.autoSave) {
+        clearInterval(gD.options.autoSave);
+        gD.options.autoSave = 0;
+    } else {
+        gD.options.autoSave = setInterval(autoSave, 60000);
+    }
+}
 
 function save() {
     localStorage.setItem("save", JSON.stringify(gD));
@@ -413,7 +461,7 @@ function loadRec(save, data) {
     }
 }
 
-function toBlur() {
+function toBlur() { // Lose focus
     $(this).blur();
 }
 
@@ -434,11 +482,10 @@ function exportSave() {
 function importSaveRec() {
     try {
         newSave = JSON.parse(Base64.decode($('#containerImport').val()));
-        $('#importGame').modal('hide');
+        $('#importGame').modal('hide'); // Doesn't happen if error
     }
     catch(err) {
-        $("#importError").css("display", "block");
-        $("#importNow").css("margin-bottom", "15px");
+        $("#importError").css("display", "block"); // Error message
         return false;
     }
     return true;
@@ -447,12 +494,10 @@ function importSaveRec() {
 function importSave() {
     $("#containerImport").focus();
     if (importSaveRec()) {
-        onReset = true;
+        onReset = true; // Set minimal values
         load();
         onImport = true;
         load();
-        $("#importError").css("display", "none");
-        $("#importNow").css("margin-bottom", "0px");
     }  
 }
 
@@ -472,6 +517,7 @@ $(function () {
     load();
     $("#version").append(version);
     $("#darkTheme").change(setTheme).prop("checked", gD.options.darkTheme);
+    $("#autoSave").change(autoSave).prop("checked", gD.options.autoSave);
     $("#saveSave").tooltip().mouseup(toBlur).hover(themeTooltip).click(save);
     $("#loadSave").tooltip().mouseup(toBlur).hover(themeTooltip).click(load);
     $("#deleteSave").tooltip().mouseup(toBlur).hover(themeTooltip).click(function() {
@@ -485,15 +531,23 @@ $(function () {
     $(window).on("resize", function() {
         $('.modal:visible').each(centerModal);
     });
-    $('#exportGame').on('shown.bs.modal', function() {
+    $('#exportGame').on('shown.bs.modal', function() { // Select and focus text
         $('#containerExport').focus().select();
+    });
+    $('#importGame').on('hidden.bs.modal', function() {
+        $("#importError").css("display", "none");
     });
     $('#importGame').on('shown.bs.modal', function() {
         $('#containerImport').focus();
     });
-    console.log("DONE");
+    for(var i = 1; i <= 5; i++) {
+        $("#l" + i).css("color", (gD.options.darkTheme ? "#FF0" : "#08F")).css("font-weight", "bold");
+        logTimeout["l" + i] = setTimeout(unhighlightLastLog, 1000 + 1000 * i);
+    }
+    setTimeout(function(){log("This is just a test, but if you see it, it means you've spent at least 60 seconds playing. Given the fact that there's basically nothing to do, either you're a bugtracker, or you must be really bored.")}, 60000);
 });
 
+window.setInterval(tick, gD.tickDuration);
 
 function centerModal() {
     $(this).css('display', 'block');

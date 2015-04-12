@@ -114,6 +114,19 @@ b {
     background-color: #eee;
 }
 
+.navbar-fixed-bottom {
+    -webkit-box-shadow: inset 1px 1px 0 rgba(255, 255, 255, .15), inset -1px -1px 0 rgba(255, 255, 255, .15), 1px 1px 5px rgba(0, 0, 0, .3), -1px -1px 5px rgba(0, 0, 0, .3);
+    box-shadow: inset 1px 1px 0 rgba(255, 255, 255, .15), inset -1px -1px 0 rgba(255, 255, 255, .15), 1px 1px 5px rgba(0, 0, 0, .3), -1px -1px 5px rgba(0, 0, 0, .3);
+    border-radius: 4px;
+    padding-left: 5px;
+    padding-right: 5px;
+    color: #777;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, .25);
+    background-image: none;
+    min-height: 12%;
+    margin-bottom: 1px;
+}
+
 /************************************************************* DARK THEME *************************************************************/
 
 .split-left2 {
