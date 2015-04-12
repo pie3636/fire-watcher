@@ -1,4 +1,4 @@
-var version = "v0.4.0"; 
+var version = "v0.4.1"; 
 var currentTab = "play";
 var onLoad = false;
 var onImport = false;
@@ -6,6 +6,7 @@ var onReset = false;
 var logTimeout = {};
 var logDuration = 10000;
 var latestLog = 5;
+var numLogs = 5;
 var newSave = {};
 var gD = {
     tickDuration : 25,
@@ -21,7 +22,10 @@ var gD = {
     options: {
         logDuration: 1, //TODO : Make editable
         darkTheme: false,
-        autoSave: 0
+        autoSave: {
+            enabled: setInterval(save, 60000),
+            interval: 60000 //TODO : Make editable
+        }
     }
 }
 
@@ -382,9 +386,9 @@ function setTheme() {
 function log(str) {
     var d = new Date;
     var date = "<span style='color:#700'>[" + prettify(d.getHours(), 0, 2) + ":" + prettify(d.getMinutes(), 0, 2) + ":" + prettify(d.getSeconds(), 0, 2) + "." + prettify(d.getMilliseconds(), 0, 3) + "]</span> ";
-    latestLog = Math.min(5, latestLog + 1);
-    clearTimeout(logTimeout.l5);
-    for (var i = 5; i > 1; i--) {
+    latestLog = Math.min(numLogs, latestLog + 1);
+    clearTimeout(logTimeout["l" + numLogs]);
+    for (var i = numLogs; i > 1; i--) {
         $("#l" + i).html($("#l" + (i - 1)).html());
         if ($("#l" + (i - 1)).css("font-weight") == "bold") {
             $("#l" + i).css("color", (gD.options.darkTheme ? "#FF0" : "#08F")).css("font-weight", "bold");
@@ -401,17 +405,25 @@ function unhighlightLastLog() {
     latestLog--;
 }
 
+function clearLogs() {
+    for (var i = 1; i <= numLogs; i++) {
+        clearTimeout(logTimeout["l" + i]);
+        $("#l" + i).html("");
+    }
+}
+
 function autoSave() {
-    if (gD.options.autoSave) {
-        clearInterval(gD.options.autoSave);
-        gD.options.autoSave = 0;
+    if (gD.options.autoSave.enabled) {
+        clearInterval(gD.options.autoSave.enabled);
+        gD.options.autoSave.enabled = 0;
     } else {
-        gD.options.autoSave = setInterval(autoSave, 60000);
+        gD.options.autoSave.enabled = setInterval(save, gD.options.autoSave.interval);
     }
 }
 
 function save() {
     localStorage.setItem("save", JSON.stringify(gD));
+    log("Game saved");
 }
 
 function load() {
@@ -426,12 +438,16 @@ function load() {
         gD = JSON.parse(localStorage.getItem("initValues"));
         gD.currentTab = "opt"; // Needed to change tab
         changeTab("play");
+        log("Game resetted!");
     } else if (onImport) {
         loadRec(newSave, gD);
         gD.currentTab = "opt";
         changeTab("play");
+        log("Succesfully imported savefile.")
     } else {
+        clearLogs();
         loadRec(JSON.parse(localStorage.getItem("save")), gD);
+        log("Game loaded.");
     }
     onReset = false;
     onImport = false;
@@ -517,11 +533,12 @@ $(function () {
     load();
     $("#version").append(version);
     $("#darkTheme").change(setTheme).prop("checked", gD.options.darkTheme);
-    $("#autoSave").change(autoSave).prop("checked", gD.options.autoSave);
+    $("#autoSave").change(autoSave).prop("checked", gD.options.autoSave.enabled);
     $("#saveSave").tooltip().mouseup(toBlur).hover(themeTooltip).click(save);
     $("#loadSave").tooltip().mouseup(toBlur).hover(themeTooltip).click(load);
     $("#deleteSave").tooltip().mouseup(toBlur).hover(themeTooltip).click(function() {
         localStorage.setItem("save", JSON.stringify(JSON.parse(localStorage.getItem("initValues"))));
+        log("Savefile successfully deleted.");
     });
     $("#wipeSave").tooltip().mouseup(toBlur).hover(themeTooltip).click(wipe);
     $("#exportSave").tooltip().mouseup(toBlur).hover(themeTooltip).click(exportSave).attr("data-toggle", "modal").attr("data-target","#exportGame").focus(toBlur);
@@ -540,7 +557,7 @@ $(function () {
     $('#importGame').on('shown.bs.modal', function() {
         $('#containerImport').focus();
     });
-    for(var i = 1; i <= 5; i++) {
+    for(var i = 1; i <= numLogs; i++) {
         $("#l" + i).css("color", (gD.options.darkTheme ? "#FF0" : "#08F")).css("font-weight", "bold");
         logTimeout["l" + i] = setTimeout(unhighlightLastLog, 1000 + 1000 * i);
     }
