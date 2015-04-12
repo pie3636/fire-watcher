@@ -365,21 +365,23 @@ function setTheme() {
         $(".split-left2").removeClass("split-left2").addClass("split-left");
         $("hr").removeClass("HR2");
         $(".btn").removeClass("greyedOut2");
-        $(".navbar-fixed-bottom").css("color", "#777");
-        $(".navbar-fixed-bottom").css("text-shadow", "0 1px 0 rgba(255, 255, 255, .25)");
-        $("#logger").css("background-color", "#eee");
     } else {
         $("#navbar, #logger").addClass("navbar-inverse");
         $(".btn-default").not(document.getElementById("importNow")).removeClass("btn-default").addClass("btn-default2");
         $(".split-left").removeClass("split-left").addClass("split-left2");;
         $("hr").addClass("HR2");
         $(".btn").removeClass("greyedOut");
-        $(".navbar-fixed-bottom").css("color", "#9d9d9d");
-        $(".navbar-fixed-bottom").css("text-shadow", "0 -1px 0 rgba(0, 0, 0, .25)");
-        $("#logger").css("background-color", "#111");
     }
+    $(".navbar-fixed-bottom").css("color", (gD.options.darkTheme ? "#777" : "9d9d9d"));
+    $(".navbar-fixed-bottom").css("text-shadow", (gD.options.darkTheme ? "0 1px 0 rgba(255, 255, 255, .25)" : "0 -1px 0 rgba(0, 0, 0, .25)"));
+    $("#logger").css("background-color", (gD.options.darkTheme ? "#eee" : "#111"));
     $("body").css("background-color", (gD.options.darkTheme ? "#FFF" : "#000"));
     $("body").css("color", fg);
+    for (var i = 1; i <= numLogs; i++) {
+        if ($("#l" + i).css("font-weight") == "bold") {
+            $("#l" + i).css("color", (gD.options.darkTheme ? "#08F" : "#FF0"));
+        }
+    }
     gD.options.darkTheme = !gD.options.darkTheme;
 }
 
@@ -410,6 +412,7 @@ function clearLogs() {
         clearTimeout(logTimeout["l" + i]);
         $("#l" + i).html("");
     }
+    latestLog = 0;
 }
 
 function autoSave() {
@@ -423,6 +426,8 @@ function autoSave() {
 
 function save() {
     localStorage.setItem("save", JSON.stringify(gD));
+    var str = (gD.options.autoSave ? "Auto" : "Manual");
+    _gaq.push(['_trackEvent', 'Fire Watcher', 'Save']);
     log("Game saved");
 }
 
@@ -534,7 +539,7 @@ $(function () {
     localStorage.setItem("initValues", JSON.stringify(gD));
     load();
     $("#version").append(version);
-    $("#darkTheme").change(setTheme).prop("checked", false);
+    $("#darkTheme").change(setTheme).prop("checked", gD.options.darkTheme);
     if (gD.options.darkTheme) {
         gD.options.darkTheme = false;
         setTheme();
