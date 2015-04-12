@@ -447,7 +447,9 @@ function load() {
     } else {
         clearLogs();
         loadRec(JSON.parse(localStorage.getItem("save")), gD);
-        log("Game loaded.");
+        if (localStorage.getItem("save") != localStorage.getItem("initValues")) {
+            log("Game loaded.");
+        }
     }
     onReset = false;
     onImport = false;
