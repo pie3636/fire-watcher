@@ -445,9 +445,9 @@ function load() {
         changeTab("play");
         log("Succesfully imported savefile.")
     } else {
-        clearLogs();
         loadRec(JSON.parse(localStorage.getItem("save")), gD);
         if (localStorage.getItem("save") != localStorage.getItem("initValues")) {
+            clearLogs();
             log("Game loaded.");
         }
     }
