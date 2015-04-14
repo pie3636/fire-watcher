@@ -34,6 +34,7 @@
             <ul class="nav navbar-nav">
                 <li class="active"><a id="nav_play" href="#" onclick="changeTab('play')">Play</a></li>
                 <li><a href="#" id="nav_opt" onclick="changeTab('opt')">Options</a></li>
+                <li><a href="#" id="nav_stats" onclick="changeTab('stats')">Stats</a></li>
             </ul>
         </div>
     </div>
@@ -41,9 +42,15 @@
 
 <div class="container theme-showcase" role="main" id="main">
     <div class="row">
-        <b>Announcement :</b> Bla, bla, bla...
+        <b>Announcement :</b> I'm not too sure what to put here, to be honest.
     </div>
     <hr />
+    <div class="alert alert-danger" id="announcement">
+    <button type="button" class="close" data-dismiss="alert">x</button>
+    <b>Announcement :</b> v0.4.2 is out!<br />
+        - Tweaked the options tab<br/>
+        - Added the stats menu (to be continued)
+    </div>
     <div class="row" id="play">
         <div class="col-md-8 split-left" id="actions"> <!-- Can be splitted into col-md-8 + another div -->
             <div style="margin-left:15px">
@@ -77,7 +84,7 @@
                     
             </div>
         <div class="col-md-4" id="upgrades">
-            <p class="text-center">Upgrades :</p>
+            <!--<p class="text-center">--><p>Upgrades :</p>
         </div>
         <hr/>
     </div>
@@ -91,20 +98,7 @@
                 <label class="checkbox">
                     <input type="checkbox" id="autoSave"/>
                 </label>Enable autosave (every minute)
-                <br />
-                <label class="checkbox">
-                    <input type="checkbox" id="2"/>
-                </label>And some
-                <br />
-                <label class="checkbox">
-                    <input type="checkbox" id="3"/>
-                </label>Other options
             </div><hr/>
-
-            <div class="col-md-12"style="margin-left:-15px">
-                <div style="margin-left:15px">Un panel quelconque à customiser parce que merde.
-                </div><hr/>
-            </div>
             <div class="row" style="margin-left:10px">
                 <div class="col-md-3 col-md-center">
                     <div class="btn-group float-left">
@@ -133,6 +127,14 @@
             <hr id="myHR" />
         </div>
     </div>
+    <div class="row" id="stats" style="display:none">
+        <div class="col-md-12">
+            <div class="col-md-12"style="margin-left:-15px">
+                <div style="margin-left:15px">Yay, you've found the stats menu! Your mom should be proud of you.
+                </div><hr/>
+            </div>
+        </div>
+    </div>
     
     <div id="exportGame" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="Export game" aria-hidden="true">
       <div class="modal-dialog">
@@ -154,7 +156,7 @@
                 Paste here a previously exported game, then press the "Import" button below.
                 <br /><br />
                 <textarea id="containerImport" class="form-control"></textarea>
-                <div id="importError" style="color:#800; display:none">
+                <div id="importError" style="color:#A00; display:none">
                     <br /><b>Error while parsing save, please try again.</b><br />
                 </div>
                 <button id="importNow" type="button" class="btn btn-default center-block" data-toggle="tooltip" data-placement="top" title="Import the game now" data-container="body" style="margin-top:15px">Import</button>

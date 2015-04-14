@@ -1,4 +1,4 @@
-var version = "v0.4.1"; 
+var version = "v0.4.2"; 
 var currentTab = "play";
 var onLoad = false;
 var onImport = false;
@@ -28,6 +28,8 @@ var gD = {
         }
     }
 }
+
+//TODO: Stats, achievements, upgrades bought etc. Move uses to stats objects, edit dark theme for announcements
 
 // Created by ncerminara - https://gist.github.com/ncerminara/11257943
 
@@ -87,7 +89,7 @@ var actions = {
             actions.fetch_Brushwood.cost.time = 60 + gD.brushwoodFatigue;
             $("#fetchBrushwoodLoss").html(timify(prettify(actions.fetch_Brushwood.cost.time, 0)));
             $("#fetchBrushwoodGain").html(timify(prettify(300 - gD.brushwoodFatigue, 0)));
-            var color = (60 + gD.brushwoodFatigue < 300 - gD.brushwoodFatigue ? "#080" : "#800");
+            var color = (60 + gD.brushwoodFatigue < 300 - gD.brushwoodFatigue ? "#080" : "#A00");
             $("#fetchBrushwoodLoss").attr("style", "color:" + color);
             $("#fetchBrushwoodGain").attr("style", "color:" + color);
         }
@@ -365,12 +367,20 @@ function setTheme() {
         $(".split-left2").removeClass("split-left2").addClass("split-left");
         $("hr").removeClass("HR2");
         $(".btn").removeClass("greyedOut2");
+        $(".alert-info2").removeClass("alert-info2").addClass("alert-info");
+        $(".alert-danger2").removeClass("alert-danger2").addClass("alert-danger");
+        $(".alert-warning2").removeClass("alert-warning2").addClass("alert-warning");
+        $(".alert-success2").removeClass("alert-success2").addClass("alert-success");
     } else {
         $("#navbar, #logger").addClass("navbar-inverse");
         $(".btn-default").not(document.getElementById("importNow")).removeClass("btn-default").addClass("btn-default2");
         $(".split-left").removeClass("split-left").addClass("split-left2");;
         $("hr").addClass("HR2");
         $(".btn").removeClass("greyedOut");
+        $(".alert-info").removeClass("alert-info").addClass("alert-info2");
+        $(".alert-danger").removeClass("alert-danger").addClass("alert-danger2");
+        $(".alert-warning").removeClass("alert-warning").addClass("alert-warning2");
+        $(".alert-success").removeClass("alert-success").addClass("alert-success2");
     }
     $(".navbar-fixed-bottom").css("color", (gD.options.darkTheme ? "#777" : "9d9d9d"));
     $(".navbar-fixed-bottom").css("text-shadow", (gD.options.darkTheme ? "0 1px 0 rgba(255, 255, 255, .25)" : "0 -1px 0 rgba(0, 0, 0, .25)"));
@@ -387,7 +397,7 @@ function setTheme() {
 
 function log(str) {
     var d = new Date;
-    var date = "<span style='color:#700'>[" + prettify(d.getHours(), 0, 2) + ":" + prettify(d.getMinutes(), 0, 2) + ":" + prettify(d.getSeconds(), 0, 2) + "." + prettify(d.getMilliseconds(), 0, 3) + "]</span> ";
+    var date = "<span style='color:#A00'>[" + prettify(d.getHours(), 0, 2) + ":" + prettify(d.getMinutes(), 0, 2) + ":" + prettify(d.getSeconds(), 0, 2) + "." + prettify(d.getMilliseconds(), 0, 3) + "]</span> ";
     latestLog = Math.min(numLogs, latestLog + 1);
     clearTimeout(logTimeout["l" + numLogs]);
     for (var i = numLogs; i > 1; i--) {
@@ -544,7 +554,7 @@ $(function () {
         gD.options.darkTheme = false;
         setTheme();
     }
-    $("#autoSave").change(autoSave).prop("checked", gD.options.autoSave.enabled);
+    $("#autoSave").change(autoSave).prop("checked", gD.options.autoSave.enabled != 0);
     $("#saveSave").tooltip().mouseup(toBlur).hover(themeTooltip).click(save);
     $("#loadSave").tooltip().mouseup(toBlur).hover(themeTooltip).click(load);
     $("#deleteSave").tooltip().mouseup(toBlur).hover(themeTooltip).click(function() {
