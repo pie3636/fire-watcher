@@ -9,8 +9,24 @@ function sumPrices(base, factor, owned, number) {
     return sum;
 }
 
-function timify(input, digits) {
-    return Math.floor(1000000000*input)/1000000000 + " seconds"; //TODO : EDIT
+function timify(input, digits) { // TODO Add options : rough (~ 3 hours), long (3 hours 5 minutes 43 seconds), scientific (1e+02s), horloge (00:05:17.123)->reuse in log etc
+    digits = (typeof digits === 'undefined' ? 0 : digits); //TODO : Use Date package, + options pour afficher temps complets/autres
+    var out = prettify(input, digits, 0);
+    if (out <= 300) {
+        return out + " seconds";
+    } else {
+        var outmin = Math.floor(out/60);
+        out = out % 60;
+        if (outmin <= 60) {
+            return outmin + " min " + Math.floor(out) + " sec";
+        } else {
+            var outhour = Math.floor(outmin/60);
+            outmin = outmin % 60;
+            if (outhour <= 48) {
+                return outhour + " hr " + outmin + " min"
+            }
+        }
+    }
 }
 
 function cost(upgrade) {

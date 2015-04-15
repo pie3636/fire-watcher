@@ -1,4 +1,4 @@
-//TODO: Stats, achievements, upgrades bought etc. Edit dark theme for announcements
+//TODO: Stats, achievements, upgrades bought etc. Edit dark theme for announcements. hasOwnProperty -> optimisation
 
 /*function buyWatcher(number) {
     for (var i = 1; i <= number; i++) {
@@ -17,10 +17,11 @@
 
 function tick() {
     gD.time -= gD.timeSpeed * gD.tickDuration/1000;
+    gD.stats.playTime++;
     //time += watchers * watcherPower * tickDuration/1000;
-    $("#time").html(prettify(gD.time, 3));
+    $("#time").html(timify(gD.time, 3));
     for (var i in actions) {
-        if (!gD.actions[i].unlocked && compare(actions[i].unlock, gD) || gD.actions[i].unlocked && onLoad && !gD.actions[i].bought) { // If new action unlocked or unlocked in loaded game
+        if (!gD.actions[i].unlocked && compare(actions[i].unlock, gD) || gD.actions[i].unlocked && game.onLoad && !gD.actions[i].bought) { // If new action unlocked or unlocked in loaded game
             gD.actions[i].unlocked = true;
             var strButton = '<button id=' + i + ' type="button" class="btn btn-default' + (gD.options.darkTheme ? "2" : "") + '" data-toggle="tooltip" data-placement="bottom" title="' + actions[i].show.tooltip + '" data-container="body">';
             switch (actions[i].show.type) { // Display it
@@ -66,12 +67,15 @@ function tick() {
         } else {
             $("#" + i).removeClass(greyOut);
         }
-        if(typeof actions[i].tick !== 'undefined' && (!onLoad || gD.actions[i].unlocked)) { // && (!actions[i].tickIfBought || gD.actions[i].bought) && (!actions[i].tickIfUnlocked || gD.actions[i].unlocked)) { // No tick if loading game and not unlocked
+        if(typeof actions[i].tick !== 'undefined' && (!game.onLoad || gD.actions[i].unlocked)) { // && (!actions[i].tickIfBought || gD.actions[i].bought) && (!actions[i].tickIfUnlocked || gD.actions[i].unlocked)) { // No tick if loading game and not unlocked
             actions[i].tick();
         }
-        
     }
-    onLoad = false;
+    if (gD.currentTab == "stats") {
+        $("#stats_sessionTime").html(timify(gD.stats.playTime*gD.tickDuration/1000, 2));
+        $("#stats_fanTheFlamesUses").html(gD.actions.fanTheFlames.uses);
+    }
+    game.onLoad = false;
     /* greyOut("buyWatcher1", time >= sumPrices(10, 1.1, watchers, 1));
     greyOut("buyWatcher2", time >= sumPrices(10, 1.1, watchers, 10));
     greyOut("buyWatcher3", time >= sumPrices(10, 1.1, watchers, 100)); */
@@ -177,7 +181,7 @@ function setTheme() {
     $("#logger").css("background-color", (gD.options.darkTheme ? "#eee" : "#111"));
     $("body").css("background-color", (gD.options.darkTheme ? "#FFF" : "#000"));
     $("body").css("color", fg);
-    for (var i = 1; i <= numLogs; i++) {
+    for (var i = 1; i <= game.numLogs; i++) {
         if ($("#l" + i).css("font-weight") == "bold") {
             $("#l" + i).css("color", (gD.options.darkTheme ? "#08F" : "#FF0"));
         }
@@ -196,7 +200,7 @@ $(function () {
     }
     localStorage.setItem("initValues", JSON.stringify(gD));
     load();
-    $("#version").append(version);
+    $("#version").append(game.version);
     $("#darkTheme").change(setTheme).prop("checked", gD.options.darkTheme);
     if (gD.options.darkTheme) {
         gD.options.darkTheme = false;
@@ -226,9 +230,9 @@ $(function () {
     $('#importGame').on('shown.bs.modal', function() {
         $('#containerImport').focus();
     });
-    for(var i = 1; i <= numLogs; i++) {
+    for(var i = 1; i <= game.numLogs; i++) {
         $("#l" + i).css("color", (gD.options.darkTheme ? "#FF0" : "#08F")).css("font-weight", "bold");
-        logTimeout["l" + i] = setTimeout(unhighlightLastLog, 1000 + 1000 * i);
+        game.logTimeout["l" + i] = setTimeout(unhighlightLastLog, 1000 + 1000 * i);
     }
     setTimeout(function(){log("This is just a test, but if you see it, it means you've spent at least 60 seconds playing. Given the fact that there's basically nothing to do, either you're a bugtracker, or you must be really bored.")}, 60000);
 });

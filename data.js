@@ -1,13 +1,14 @@
-var version = "v0.4.2"; 
-var currentTab = "play";
-var onLoad = false;
-var onImport = false;
-var onReset = false;
-var logTimeout = {};
-var logDuration = 10000;
-var latestLog = 5;
-var numLogs = 5;
-var newSave = {};
+var game = {
+    version : "v0.4.4",
+    onLoad : false,
+    onImport : false,
+    onReset : false,
+    logTimeout : {},
+    logDuration : 10000,
+    latestLog : 5,
+    numLogs : 5,
+    newSave : {}
+};
 var gD = {
     tickDuration: 25,
     time: 60,
@@ -33,6 +34,7 @@ var gD = {
         }
     },
     stats: {
+        playTime: 0,
         uses: {
             fanTheFlames: 0
         }
@@ -71,7 +73,7 @@ var actions = {
             if (gD.actions.fireMastery.bought) {
                 gain += 0.001 * gD.actions.fanTheFlames.uses;
             }
-            $("#firePower").html(timify(gain));
+            $("#firePower").html(timify(gain, 3));
         }
     },
     fetch_Brushwood: {
@@ -94,8 +96,8 @@ var actions = {
                 gD.actions.fetch_Brushwood.fatigue -= gD.tickDuration/1000;
             }
             actions.fetch_Brushwood.cost.time = 60 + fatigue;
-            $("#fetchBrushwoodLoss").html(timify(prettify(actions.fetch_Brushwood.cost.time, 0)));
-            $("#fetchBrushwoodGain").html(timify(prettify(300 - fatigue, 0)));
+            $("#fetchBrushwoodLoss").html(timify(actions.fetch_Brushwood.cost.time));
+            $("#fetchBrushwoodGain").html(timify(300 - fatigue));
             var color = (fatigue < 120 ? "#080" : "#A00"); // Cost < Gain
             $("#fetchBrushwoodLoss").attr("style", "color:" + color);
             $("#fetchBrushwoodGain").attr("style", "color:" + color);

@@ -47,9 +47,9 @@
     <hr />
     <div class="alert alert-danger" id="announcement">
     <button type="button" class="close" data-dismiss="alert">x</button>
-    <b>Announcement :</b> v0.4.2 is out!<br />
-        - Tweaked the options tab<br/>
-        - Added the stats menu (to be continued)
+    <b>Announcement :</b> v0.4.3 is out!<br />
+        - Improved logger compatibility<br/>
+        - Added basic stats and display functions
     </div>
     <div class="row" id="play">
         <div class="col-md-8 split-left" id="actions"> <!-- Can be splitted into col-md-8 + another div -->
@@ -130,8 +130,10 @@
     <div class="row" id="stats" style="display:none">
         <div class="col-md-12">
             <div class="col-md-12"style="margin-left:-15px">
-                <div style="margin-left:15px">Yay, you've found the stats menu! Your mom should be proud of you.
+                <div style="margin-left:15px">Overall stats :
                 </div><hr/>
+                Time played : <span id="stats_sessionTime"></span><br />
+                Flames fanning : <span id="stats_fanTheFlamesUses"></span><br />
             </div>
         </div>
     </div>
@@ -173,16 +175,10 @@
     </nav>
 </div>
 
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','http://www.google-analytics.com/analytics.js','ga');
-
-  ga('create', 'UA-61821309-1', 'auto');
-  ga('send', 'pageview');
-
+<script>/*  Google Analytics */
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','http://www.google-analytics.com/analytics.js','ga');ga('create', 'UA-61821309-1', 'auto');ga('send', 'pageview');
 </script>
+
 <script type="text/javascript" src="io.js"></script>
 <script type="text/javascript" src="utilities.js"></script>
 <script type="text/javascript" src="data.js"></script>

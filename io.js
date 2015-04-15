@@ -1,25 +1,25 @@
 function save() {
     localStorage.setItem("save", JSON.stringify(gD));
     var str = (gD.options.autoSave ? "Auto" : "Manual");
-    _gaq.push(['_trackEvent', 'Fire Watcher', 'Save']);
     log("Game saved");
+    _gaq.push(['_trackEvent', 'Fire Watcher', 'Save']);
 }
 
 function load() {
-    onLoad = true; // Restore actions on next tick
+    game.onLoad = true; // Restore actions on next tick
     var saveTheme = gD.options.darkTheme;
     for (var i in gD.actions) {
         if (gD.actions[i].unlocked) {
             buyUpgrade(i, true); // Delete everything
         }
     }
-    if (onReset) {
+    if (game.onReset) {
         gD = JSON.parse(localStorage.getItem("initValues"));
         gD.currentTab = "opt"; // Needed to change tab
         changeTab("play");
         log("Game resetted!");
-    } else if (onImport) {
-        loadRec(newSave, gD);
+    } else if (game.onImport) {
+        loadRec(game.newSave, gD);
         gD.currentTab = "opt";
         changeTab("play");
         log("Succesfully imported savefile.")
@@ -30,8 +30,8 @@ function load() {
             log("Game loaded.");
         }
     }
-    onReset = false;
-    onImport = false;
+    game.onReset = false;
+    game.onImport = false;
     if(saveTheme != gD.options.darkTheme) {
         $("#darkTheme").prop("checked", !saveTheme);
         gD.options.darkTheme = saveTheme;
@@ -68,7 +68,7 @@ function autoSave() {
 }
 
 function wipe() {
-    onReset = true;
+    game.onReset = true;
     load();
 }
 
@@ -79,7 +79,7 @@ function exportSave() {
 
 function importSaveRec() {
     try {
-        newSave = JSON.parse(Base64.decode($('#containerImport').val()));
+        game.newSave = JSON.parse(Base64.decode($('#containerImport').val()));
         $('#importGame').modal('hide'); // Doesn't happen if error
     }
     catch(err) {
@@ -92,9 +92,9 @@ function importSaveRec() {
 function importSave() {
     $("#containerImport").focus();
     if (importSaveRec()) {
-        onReset = true; // Set minimal values
+        game.onReset = true; // Set minimal values
         load();
-        onImport = true;
+        game.onImport = true;
         load();
     }  
 }
@@ -104,29 +104,29 @@ function importSave() {
 function log(str) {
     var d = new Date;
     var date = "<span style='color:#A00'>[" + prettify(d.getHours(), 0, 2) + ":" + prettify(d.getMinutes(), 0, 2) + ":" + prettify(d.getSeconds(), 0, 2) + "." + prettify(d.getMilliseconds(), 0, 3) + "]</span> ";
-    latestLog = Math.min(numLogs, latestLog + 1);
-    clearTimeout(logTimeout["l" + numLogs]);
-    for (var i = numLogs; i > 1; i--) {
+    game.latestLog = Math.min(game.numLogs, game.latestLog + 1);
+    clearTimeout(game.logTimeout["l" + game.numLogs]);
+    for (var i = game.numLogs; i > 1; i--) {
         $("#l" + i).html($("#l" + (i - 1)).html());
         if ($("#l" + (i - 1)).css("font-weight") == "bold") {
             $("#l" + i).css("color", (gD.options.darkTheme ? "#FF0" : "#08F")).css("font-weight", "bold");
-            logTimeout["l" + i] = logTimeout["l" + (i - 1)];
+            game.logTimeout["l" + i] = game.logTimeout["l" + (i - 1)];
         }
     }
     $("#l1").html(date + str);
     $("#l1").css("color", (gD.options.darkTheme ? "#FF0" : "#08F")).css("font-weight", "bold");
-    logTimeout.l1 = setTimeout(unhighlightLastLog, logDuration); //TODO : Transition, bitstorm?
+    game.logTimeout.l1 = setTimeout(unhighlightLastLog, game.logDuration); //TODO : Transition, bitstorm?
 }
 
 function unhighlightLastLog() {
-    $("#l" + latestLog).css("color", (gD.options.darkTheme ? "#9d9d9d" : "#777")).css("font-weight", "normal");
-    latestLog--;
+    $("#l" + game.latestLog).css("color", (gD.options.darkTheme ? "#9d9d9d" : "#777")).css("font-weight", "normal");
+    game.latestLog--;
 }
 
 function clearLogs() {
-    for (var i = 1; i <= numLogs; i++) {
-        clearTimeout(logTimeout["l" + i]);
+    for (var i = 1; i <= game.numLogs; i++) {
+        clearTimeout(game.logTimeout["l" + i]);
         $("#l" + i).html("");
     }
-    latestLog = 0;
+    game.latestLog = 0;
 }
