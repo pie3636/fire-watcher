@@ -1,5 +1,5 @@
 var game = {
-    version : "v0.4.4",
+    version : "v0.4.4w",
     onLoad : false,
     onImport : false,
     onReset : false,
