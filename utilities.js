@@ -29,16 +29,28 @@ function timify(input, digits) { // TODO Add options : rough (~ 3 hours), long (
     }
 }
 
-function validateNumber(callback) { // TODO : If used only once, pointless
+function validateNumber(callback) {
     return function(e) {
-        if ($.inArray(e.keyCode, [43, 8, 9, 27, 13, 110, 190, 35, 36, 37, 38, 39, 40]) !== -1 || e.ctrlKey === true && $.inArray(e.keyCode, [65, 67, 68]) !== -1) { // Ctrl A, C, X. 37-40 = arrow keys
-            setTimeout(callback, 100); // Necessary, otherwise the value doesn't update (autoSaveTimer)
+        if ($.inArray(e.keyCode, [43, 8, 9, 27, 13, 110, 190, 35, 36, 37, 38, 39, 40, 46]) !== -1 || e.ctrlKey === true && $.inArray(e.keyCode, [65, 67, 68]) !== -1) { // Ctrl A, C, X. 37-40 = arrow keys
+            setTimeout(validateBounds(callback, this), 100); // Necessary, otherwise the value doesn't update (autoSaveTimer)
             return;
         }
-        if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105) || Number($("#" + this.id).val()) > this.max/10) {
+        if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105) || Number($("#" + this.id).val()) > this.max) {
             e.preventDefault();
         }
-    setTimeout(callback, 100);
+    setTimeout(validateBounds(callback, this), 100);
+    };
+}
+
+function validateBounds(callback, ptr) {
+    return function() {
+        if (Number($("#" + ptr.id).val()) < ptr.min) {
+            $("#" + ptr.id).val(ptr.min);
+        }
+        if (Number($("#" + ptr.id).val()) > ptr.max) {
+            $("#" + ptr.id).val(ptr.max);
+        }
+        callback();
     };
 }
 
@@ -58,11 +70,11 @@ function prettify(input, digits, before) {
     return str + out;
 }
 
-function show(id) { //TODO : Remove if unused
+function show(id) {
     $("#" + id).css("display", "block");
 }
 
-function hide(id) { //TODO : Remove if unused
+function hide(id) {
     $("#" + id).css("display", "none");
 }
 
@@ -70,7 +82,7 @@ function greyOut(id, back, theme) {
     $("#" + id).css("background-color", (back ? (theme ? "#000" : "#fff") : (theme ? "#222" : "#eee")));
 }
 
-function tooltip(id, title, show) { //TODO : Remove if unused
+function tooltip(id, title, show) {
     show = (typeof show === 'undefined' ? true : show);
     $("#" + id).attr("title", title).tooltip('fixTitle');
     if (show) $("#" + id).tooltip('show');

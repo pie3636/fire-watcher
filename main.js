@@ -1,4 +1,4 @@
-//TODO: Stats, achievements, upgrades bought etc. Edit dark theme for announcements. hasOwnProperty -> optimisation
+//TODO: Stats, achievements, upgrades bought etc. Edit dark theme for announcements. hasOwnProperty -> optimisation, log_tab + customizable line number
 
 /*function buyWatcher(number) {
     for (var i = 1; i <= number; i++) {
@@ -28,7 +28,7 @@ function tick() {
             case "standardAction":
                 $("#actions").append('\
                     <div id="' + i + 'Div" class="row" style="margin-left:10px">\
-                        <div class="col-md-3 col-md-center">\
+                        <div class="col-md-3 col-md-center' + (actions[i].show.nocenter ? ' vcenterbtn' : '') + '">\
                             ' + strButton + i.textify() + '</button>\
                         </div>\
                         <div class="col-md-9' + (actions[i].show.nocenter ? '' : ' vcenter') + '">\
@@ -112,9 +112,44 @@ function compare(cost, data, doSub, subStep) { // Returns (cost <= data), data -
         for (var i in cost) {
             switch (typeof cost[i]) {
                 case "number":
-                    ret = cost[i] <= data[i];
+                    if (typeof data[i] === "number") {
+                        ret = cost[i] <= data[i];
+                    } else {
+                        switch (cost[i].operator) {
+                            case game.operator.EQ:
+                                ret = cost[i].value == data[i];
+                                break;
+                            case game.operator.LT:
+                                ret = cost[i].value > data[i];
+                                break;
+                            case game.operator.LE:
+                                ret = cost[i].value >= data[i];
+                                break;
+                            case game.operator.GT:
+                                ret = cost[i].value < data[i];
+                                break;
+                            case game.operator.GE:
+                                ret = cost[i].value <= data[i];
+                                break;
+                            case game.operator.NE:
+                                ret = cost[i].value != data[i];
+                                break;
+                        }
+                    }
                     break;
                 case "boolean":
+                    if (typeof data[i] === "boolean") {
+                        ret = cost[i] == data[i];
+                    } else {
+                        switch (cost[i].operator) {
+                            case game.operator.EQ:
+                                ret = cost[i].value == data[i];
+                                break;
+                            case game.operator.NE:
+                                ret = cost[i].value != data[i];
+                                break;
+                        }
+                    }
                     ret = cost[i] == data[i];
                     break;
                 case "object":
@@ -131,11 +166,16 @@ function compare(cost, data, doSub, subStep) { // Returns (cost <= data), data -
         for (var i in cost) {
             switch (typeof cost[i]) {
                 case "number":
-                    data[i] -= cost[i];
+                    if (typeof data[i] === "number" || cost[i].isConsumed) {
+                        data[i] -= cost[i];
+                    }
                     break;
                 case "object":
                     ret = compare(cost[i], data[i], true, true); // Transmit doSub, skip first step
                 case "boolean":
+                    if (typeof data[i] === "object" || cost[i].isConsumed) {
+                        data[i] = !data[i];
+                    }
                 case "undefined":
                 default:
                     break;
@@ -165,6 +205,7 @@ function setTheme() {
         $(".alert-danger2").removeClass("alert-danger2").addClass("alert-danger");
         $(".alert-warning2").removeClass("alert-warning2").addClass("alert-warning");
         $(".alert-success2").removeClass("alert-success2").addClass("alert-success");
+        $(".alert-purple2").removeClass("alert-purple2").addClass("alert-purple");
     } else {
         $("#navbar, #logger").addClass("navbar-inverse");
         $(".btn-default").not(document.getElementById("importNow")).removeClass("btn-default").addClass("btn-default2");
@@ -175,6 +216,7 @@ function setTheme() {
         $(".alert-danger").removeClass("alert-danger").addClass("alert-danger2");
         $(".alert-warning").removeClass("alert-warning").addClass("alert-warning2");
         $(".alert-success").removeClass("alert-success").addClass("alert-success2");
+        $(".alert-purple").removeClass("alert-purple").addClass("alert-purple2");
     }
     $(".navbar-fixed-bottom").css("color", (gD.options.darkTheme ? "#777" : "9d9d9d"));
     $(".navbar-fixed-bottom").css("text-shadow", (gD.options.darkTheme ? "0 1px 0 rgba(255, 255, 255, .25)" : "0 -1px 0 rgba(0, 0, 0, .25)"));
@@ -199,6 +241,10 @@ $(function () {
         }
     }
     localStorage.setItem("initValues", JSON.stringify(gD));
+    for(var i = 1; i <= game.numLogs; i++) {
+        $("#l" + i).css("color", (gD.options.darkTheme ? "#FF0" : "#08F")).css("font-weight", "bold");
+        game.logTimeout["l" + i] = setTimeout(unhighlightLastLog, 10000 + 1000 * i);
+    }
     load();
     $("#version").append(game.version);
     $("#darkTheme").change(setTheme).prop("checked", gD.options.darkTheme);
@@ -231,10 +277,6 @@ $(function () {
     $('#importGame').on('shown.bs.modal', function() {
         $('#containerImport').focus();
     });
-    for(var i = 1; i <= game.numLogs; i++) {
-        $("#l" + i).css("color", (gD.options.darkTheme ? "#FF0" : "#08F")).css("font-weight", "bold");
-        game.logTimeout["l" + i] = setTimeout(unhighlightLastLog, 1000 + 1000 * i);
-    }
     setTimeout(function(){log("This is just a test, but if you see it, it means you've spent at least 60 seconds playing. Given the fact that there's basically nothing to do, either you're a bugtracker, or you must be really bored.")}, 60000);
 });
 

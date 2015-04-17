@@ -1,13 +1,21 @@
 var game = {
-    version : "v0.4.4",
-    onLoad : false,
-    onImport : false,
-    onReset : false,
-    logTimeout : {},
-    logDuration : 10000,
-    latestLog : 5,
-    numLogs : 5,
-    newSave : {}
+    version: "v0.4.4",
+    onLoad: false,
+    onImport: false,
+    onReset: false,
+    logTimeout: {},
+    logDuration: 10000,
+    latestLog: 5,
+    numLogs: 5,
+    newSave: {},
+    operator: {
+        EQ: 1, // =
+        LT: 2, // <
+        LE: 3, // <=
+        GT: 4, // >
+        GE: 5, // >=
+        NE: 6  // !=
+    }
 };
 var gD = {
     tickDuration: 25,
@@ -30,7 +38,7 @@ var gD = {
         darkTheme: false,
         autoSave: {
             enabled: setInterval(save, 60000),
-            interval: 60000 //TODO : Make editable
+            interval: 60000
         }
     },
     stats: {
@@ -43,7 +51,8 @@ var gD = {
 
 
 
-/* unlock, cost : Object [~gD]                          Costs of unlocking and buying
+/* unlock, cost : Object [~gD]                          Costs of unlocking and buying, default: {operator: game.operator.GE, value: cost[î], isConsumed: true}
+ * -> unlock : {time: 50} ~ {time: {operator: game.operator.GE, value: 50, isConsumed: true}}
  * show : Object [type, tooltip, inside][text]          Items to be displayed
  * effect : function                                    On buying
  * tick : function                                      On tick

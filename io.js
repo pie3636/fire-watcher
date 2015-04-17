@@ -2,7 +2,9 @@ function save() {
     localStorage.setItem("save", JSON.stringify(gD));
     var str = (gD.options.autoSave ? "Auto" : "Manual");
     log("Game saved");
-    _gaq.push(['_trackEvent', 'Fire Watcher', 'Save']);
+    if(typeof _gaq !== 'undefined') { // Prevent logger failure
+        _gaq.push(['_trackEvent', 'Fire Watcher', 'Save']);
+    }
 }
 
 function load() {
@@ -129,13 +131,15 @@ function log(str) {
 
 function unhighlightLastLog() {
     $("#l" + game.latestLog).css("color", (gD.options.darkTheme ? "#9d9d9d" : "#777")).css("font-weight", "normal");
+    game.logTimeout["l" + game.latestLog] = 0;
     game.latestLog--;
 }
 
 function clearLogs() {
     for (var i = 1; i <= game.numLogs; i++) {
         clearTimeout(game.logTimeout["l" + i]);
-        $("#l" + i).html("");
+        game.logTimeout["l" + i] = 0;
+        $("#l" + i).html("").css("color", (gD.options.darkTheme ? "#9d9d9d" : "#777")).css("font-weight", "normal");
     }
     game.latestLog = 0;
 }
