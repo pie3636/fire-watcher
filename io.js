@@ -67,6 +67,15 @@ function autoSave() {
     }
 }
 
+function autoSaveTimer() {
+    var interval = Number($("#autoSaveTimer").val());
+    if (gD.options.autoSave.enabled && interval >= 10 && interval <= 3600) {
+        clearInterval(gD.options.autoSave.enabled);
+        gD.options.autoSave.enabled = setInterval(save, interval*1000);
+        gD.options.autoSave.interval = interval*1000;
+    }
+}
+
 function wipe() {
     game.onReset = true;
     load();

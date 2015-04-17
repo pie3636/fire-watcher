@@ -207,6 +207,7 @@ $(function () {
         setTheme();
     }
     $("#autoSave").change(autoSave).prop("checked", gD.options.autoSave.enabled != 0);
+    $("#autoSaveTimer").keydown(validateNumber(autoSaveTimer)).change(autoSaveTimer);
     $("#saveSave").tooltip().mouseup(toBlur).hover(themeTooltip).click(save);
     $("#loadSave").tooltip().mouseup(toBlur).hover(themeTooltip).click(load);
     $("#deleteSave").tooltip().mouseup(toBlur).hover(themeTooltip).click(function() {

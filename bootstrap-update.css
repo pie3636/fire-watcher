@@ -127,6 +127,17 @@ b {
     margin-bottom: 1px;
 }
 
+input[type="number"] {
+    color: #000;
+    width: 53px;
+}
+
+input:invalid {
+    border: 1px solid red;
+    border-radius: 3px;
+}
+
+
 /************************************************************* DARK THEME *************************************************************/
 
 .split-left2 {
@@ -226,3 +237,4 @@ b {
   background-color: #f2dede;
 }
 
+.input

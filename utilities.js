@@ -9,8 +9,8 @@ function sumPrices(base, factor, owned, number) {
     return sum;
 }
 
-function timify(input, digits) { // TODO Add options : rough (~ 3 hours), long (3 hours 5 minutes 43 seconds), scientific (1e+02s), horloge (00:05:17.123)->reuse in log etc
-    digits = (typeof digits === 'undefined' ? 0 : digits); //TODO : Use Date package, + options pour afficher temps complets/autres
+function timify(input, digits) { // TODO Add options : rough (~ 3 hours), long (3 hours 5 minutes 43 seconds), scientific (1e+02s), prefixes, horloge (00:05:17.123)->reuse in log etc
+    digits = (typeof digits === 'undefined' ? 0 : digits); //TODO : Use Date package, + options pour afficher temps complets/autres -> short mid long (3s 3 sec 3 seconds), + precision, default = 2 (H:M, M:S; etc), use extra units. Units = SMHDMYCM, SMHDWMYQCM (Q = bissextiles), yzafpnµmskMGTPEZY, dnosxfqtbµm.KMBTQFXSOND, z..aA..Z
     var out = prettify(input, digits, 0);
     if (out <= 300) {
         return out + " seconds";
@@ -27,6 +27,19 @@ function timify(input, digits) { // TODO Add options : rough (~ 3 hours), long (
             }
         }
     }
+}
+
+function validateNumber(callback) { // TODO : If used only once, pointless
+    return function(e) {
+        if ($.inArray(e.keyCode, [43, 8, 9, 27, 13, 110, 190, 35, 36, 37, 38, 39, 40]) !== -1 || e.ctrlKey === true && $.inArray(e.keyCode, [65, 67, 68]) !== -1) { // Ctrl A, C, X. 37-40 = arrow keys
+            setTimeout(callback, 100); // Necessary, otherwise the value doesn't update (autoSaveTimer)
+            return;
+        }
+        if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105) || Number($("#" + this.id).val()) > this.max/10) {
+            e.preventDefault();
+        }
+    setTimeout(callback, 100);
+    };
 }
 
 function cost(upgrade) {
@@ -107,7 +120,6 @@ function toBlur() { // Lose focus
 function themeTooltip() {
     changeTooltipColorTo((gD.options.darkTheme ? "#FFF" : "#000"), (gD.options.darkTheme ? "#000" : "#FFF"));
 }
-
 
 function changeTooltipColorTo(color, fgcolor) {
     $(".tooltip-inner").css("background-color", color).css("color", fgcolor);

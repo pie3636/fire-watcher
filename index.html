@@ -49,7 +49,8 @@
     <button type="button" class="close" data-dismiss="alert">x</button>
     <b>Announcement :</b> v0.4.4 is out!<br />
         - Improved logger compatibility<br/>
-        - Added basic stats and display functions
+        - Added basic stats and display functions<br />
+        - Customizable autosave!
     </div>
     <div class="row" id="play">
         <div class="col-md-8 split-left" id="actions"> <!-- Can be splitted into col-md-8 + another div -->
@@ -97,7 +98,9 @@
                 <br />
                 <label class="checkbox">
                     <input type="checkbox" id="autoSave"/>
-                </label>Enable autosave (every minute)
+                </label>Enable autosave (every 
+                <input type="number" id="autoSaveTimer" value="60" min="10" max="3600" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+                  seconds)<br />
             </div><hr/>
             <div class="row" style="margin-left:10px">
                 <div class="col-md-3 col-md-center">

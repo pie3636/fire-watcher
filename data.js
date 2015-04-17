@@ -1,5 +1,5 @@
 var game = {
-    version : "v0.4.4w",
+    version : "v0.4.4",
     onLoad : false,
     onImport : false,
     onReset : false,
@@ -26,7 +26,7 @@ var gD = {
         }
     },
     options: {
-        logDuration: 1, //TODO : Make editable
+        logDuration: 10, //TODO : Make editable
         darkTheme: false,
         autoSave: {
             enabled: setInterval(save, 60000),
