@@ -34,11 +34,27 @@ function load() {
     }
     game.onReset = false;
     game.onImport = false;
-    if(saveTheme != gD.options.darkTheme) {
+    if (saveTheme != gD.options.darkTheme) {
         $("#darkTheme").prop("checked", !saveTheme);
         gD.options.darkTheme = saveTheme;
         setTheme(); // Changes theme from gD.options.saveTheme to its opposite
     }
+        console.log(gD.announcements.update);
+        console.log(gD.announcements);
+        console.log(gD.announcements.update);
+        console.log("CHECK" + gD.announcements.update.version + "/" + game.version + " DISMISSED " + gD.announcements.update.dismissed);
+    if (gD.announcements.update.version == game.version && gD.announcements.update.dismissed) {
+        $("#updateAnnouncement").css("display", "none");
+    }
+    if (gD.announcements.update.version != game.version) {
+        gD.announcements.update.dismissed = false;
+    }
+    gD.announcements.update.version = game.version;
+    $("#updateAnnouncementClose").click(function() {
+        gD.announcements.update.dismissed = true;
+        console.log("CLICK" + gD.announcements.update.version + "/" + game.version + " DISMISSED " + gD.announcements.update.dismissed);
+    });
+    console.log("AFTER" + gD.announcements.update.version + "/" + game.version + " DISMISSED " + gD.announcements.update.dismissed);
 }
 
 function loadRec(save, data) {
@@ -142,4 +158,14 @@ function clearLogs() {
         $("#l" + i).html("").css("color", (gD.options.darkTheme ? "#9d9d9d" : "#777")).css("font-weight", "normal");
     }
     game.latestLog = 0;
+}
+
+function logDurationSetting() {
+    game.logDuration = Number(1000 * $("#logDuration").val());
+    for (var i = 1; i <= game.numLogs; i++) {
+        clearTimeout(game.logTimeout["l" + i]);
+        if ($("#l" + i).css("font-weight") == "bold") {
+            game.logTimeout["l" + i] = setTimeout(unhighlightLastLog, game.logDuration);
+        }
+    }
 }

@@ -1,5 +1,5 @@
 var game = {
-    version: "v0.4.4",
+    version: "v0.4.5",
     onLoad: false,
     onImport: false,
     onReset: false,
@@ -24,6 +24,12 @@ var gD = {
     //watchers: 0,
     //watcherPower: 1,
     currentTab: "play",
+    announcements: {
+        update: {
+            version: "v0.4.4",
+            dismissed: true
+        }
+    },
     actions: {
         fanTheFlames: {
             uses: 0,

@@ -1,4 +1,4 @@
-//TODO: Stats, achievements, upgrades bought etc. Edit dark theme for announcements. hasOwnProperty -> optimisation, log_tab + customizable line number
+//TODO: Stats, achievements, upgrades bought etc. hasOwnProperty -> optimisation, log_tab + customizable line number
 
 /*function buyWatcher(number) {
     for (var i = 1; i <= number; i++) {
@@ -201,22 +201,12 @@ function setTheme() {
         $(".split-left2").removeClass("split-left2").addClass("split-left");
         $("hr").removeClass("HR2");
         $(".btn").removeClass("greyedOut2");
-        $(".alert-info2").removeClass("alert-info2").addClass("alert-info");
-        $(".alert-danger2").removeClass("alert-danger2").addClass("alert-danger");
-        $(".alert-warning2").removeClass("alert-warning2").addClass("alert-warning");
-        $(".alert-success2").removeClass("alert-success2").addClass("alert-success");
-        $(".alert-purple2").removeClass("alert-purple2").addClass("alert-purple");
     } else {
         $("#navbar, #logger").addClass("navbar-inverse");
         $(".btn-default").not(document.getElementById("importNow")).removeClass("btn-default").addClass("btn-default2");
         $(".split-left").removeClass("split-left").addClass("split-left2");;
         $("hr").addClass("HR2");
         $(".btn").removeClass("greyedOut");
-        $(".alert-info").removeClass("alert-info").addClass("alert-info2");
-        $(".alert-danger").removeClass("alert-danger").addClass("alert-danger2");
-        $(".alert-warning").removeClass("alert-warning").addClass("alert-warning2");
-        $(".alert-success").removeClass("alert-success").addClass("alert-success2");
-        $(".alert-purple").removeClass("alert-purple").addClass("alert-purple2");
     }
     $(".navbar-fixed-bottom").css("color", (gD.options.darkTheme ? "#777" : "9d9d9d"));
     $(".navbar-fixed-bottom").css("text-shadow", (gD.options.darkTheme ? "0 1px 0 rgba(255, 255, 255, .25)" : "0 -1px 0 rgba(0, 0, 0, .25)"));
@@ -254,6 +244,7 @@ $(function () {
     }
     $("#autoSave").change(autoSave).prop("checked", gD.options.autoSave.enabled != 0);
     $("#autoSaveTimer").keydown(validateNumber(autoSaveTimer)).change(autoSaveTimer);
+    $("#logDuration").keydown(validateNumber(logDurationSetting)).change(logDurationSetting);
     $("#saveSave").tooltip().mouseup(toBlur).hover(themeTooltip).click(save);
     $("#loadSave").tooltip().mouseup(toBlur).hover(themeTooltip).click(load);
     $("#deleteSave").tooltip().mouseup(toBlur).hover(themeTooltip).click(function() {

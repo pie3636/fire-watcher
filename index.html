@@ -34,6 +34,7 @@
                 <li class="active"><a id="nav_play" href="#" onclick="changeTab('play')">Play</a></li>
                 <li><a href="#" id="nav_opt" onclick="changeTab('opt')">Options</a></li>
                 <li><a href="#" id="nav_stats" onclick="changeTab('stats')">Stats</a></li>
+                <li><a href="#" id="nav_logs" onclick="changeTab('logs')">Logs</a></li>
             </ul>
         </div>
     </div>
@@ -41,34 +42,38 @@
 
 
 <div class="container theme-showcase" role="main" id="main">
-    <div class="row">
+    <!--<div class="row">
         <b>Announcement :</b> I'm not too sure what to put here, to be honest.
     </div>
-    <hr />
-    <div class="alert alert-danger" id="announcement">
-    <button type="button" class="close" data-dismiss="alert">x</button>
-    <b>Announcement :</b> v0.4.4 is out!<br />
-        - Improved logger compatibility<br/>
-        - Added basic stats and display functions<br />
-        - Customizable autosave!
-        This is a <a class="alert-link">test</a> okay?<hr/>
+    <hr />-->
+    <div class="alert alert-info" id="updateAnnouncement" style="display: block">
+    <button type="button" class="close" data-dismiss="alert" id="updateAnnouncementClose">x</button>
+    <b>Announcement :</b> v0.4.5 is out!<br />
+        - Improved theme support<br />
+        - Customizable autosave and logs!
     </div>
+    <!--
     <div class="alert alert-info" id="announcement">
     <button type="button" class="close" data-dismiss="alert">x</button>
-    <b>Announcement :</b> This is a <a class="alert-link">test</a> okay?<hr/>
+    <b>Blue :</b> This is a <a class="alert-link">link</a>.P<hr/>
+    </div>
+    <div class="alert alert-danger" id="announcement">
+    <button type="button" class="close" data-dismiss="alert">x</button>
+    <b>Red :</b> This is a <a class="alert-link">link</a>.P<hr/>
     </div>
     <div class="alert alert-success" id="announcement">
     <button type="button" class="close" data-dismiss="alert">x</button>
-    <b>Announcement :</b> This is a <a class="alert-link">test</a> okay?<hr/>
+    <b>Green :</b> This is a <a class="alert-link">link</a>.<hr/>
     </div>
     <div class="alert alert-warning" id="announcement">
     <button type="button" class="close" data-dismiss="alert">x</button>
-    <b>Announcement :</b> This is a <a class="alert-link">test</a> okay?<hr/>
+    <b>Yellow :</b> This is a <a class="alert-link">link</a>.<hr/>
     </div>
     <div class="alert alert-purple" id="announcement">
     <button type="button" class="close" data-dismiss="alert">x</button>
-    <b>Announcement :</b> This is a <a class="alert-link">test</a> okay?<hr/>
+    <b>Purple :</b> This is a <a class="alert-link">link</a>.<hr/>
     </div>
+    -->
     <div class="row" id="play">
         <div class="col-md-8 split-left" id="actions"> <!-- Can be splitted into col-md-8 + another div -->
             <div style="margin-left:15px">
@@ -121,7 +126,7 @@
             <div style="margin-left:15px">
                 Highlighting duration of the logs : 
                 <input type="number" id="logDuration" value="10" min="1" max="3600">
-                seconds (1-3600)<br />
+                seconds (1-3600). <b>Warning : </b>This will reset the current highlighting!<br />
             </div>
             <hr/>
             <div class="row" style="margin-left:10px">
@@ -161,6 +166,15 @@
                 </div><hr/>
                 Time played : <span id="stats_sessionTime"></span><br />
                 Flames fanning : <span id="stats_fanTheFlamesUses"></span><br />
+            </div>
+        </div>
+    </div>
+    
+    
+    <div class="row" id="logs" style="display:none">
+        <div class="col-md-12">
+            <div class="col-md-12"style="margin-left:-15px">
+                12345
             </div>
         </div>
     </div>
