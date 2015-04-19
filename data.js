@@ -1,8 +1,9 @@
 var game = {
-    version: "v0.4.6",
+    version: "v0.4.7",
     onLoad: false,
     onImport: false,
     onReset: false,
+    onUpdate: false,
     logTimeout: {},
     latestLog: 5,
     numLogs: 5,
@@ -31,6 +32,7 @@ var gD = {
         }
     },
     actions: {
+        totalActions: 0,
         fanTheFlames: {
             uses: 0,
             power: 5

@@ -1,4 +1,4 @@
-//TODO: Stats, achievements, upgrades bought etc. hasOwnProperty -> optimisation, theme for fullLogs, progress (bars?)
+//TODO: Stats, achievements. hasOwnProperty -> optimisation, progress (bars?)
 
 /*function buyWatcher(number) {
     for (var i = 1; i <= number; i++) {
@@ -21,43 +21,61 @@ function tick() {
     //time += watchers * watcherPower * tickDuration/1000;
     $("#time").html(timify(gD.time, 3));
     for (var i in actions) {
-        if (!gD.actions[i].unlocked && compare(actions[i].unlock, gD) || gD.actions[i].unlocked && game.onLoad && !gD.actions[i].bought) { // If new action unlocked or unlocked in loaded game
+        var normalTick = !gD.actions[i].unlocked && compare(actions[i].unlock, gD) || gD.actions[i].unlocked && game.onLoad && !gD.actions[i].bought;
+        var restoreStats = game.onUpdate && gD.actions[i].bought;
+        if (normalTick || restoreStats) { // If new action unlocked or unlocked in loaded game or bought in loaded game (to add to stats)
             gD.actions[i].unlocked = true;
+            if (actions[i].repeatable && gD.actions[i].unlocked) {
+                gD.actions.totalActions++;
+            }
             var strButton = '<button id=' + i + ' type="button" class="btn btn-default' + (gD.options.darkTheme ? "2" : "") + '" data-toggle="tooltip" data-placement="bottom" title="' + actions[i].show.tooltip + '" data-container="body">';
             switch (actions[i].show.type) { // Display it
             case "standardAction":
-                $("#actions").append('\
-                    <div id="' + i + 'Div" class="row" style="margin-left:10px">\
-                        <div class="col-md-3 col-md-center' + (actions[i].show.nocenter ? ' top3' : '') + '">\
-                            ' + strButton + i.textify() + '</button>\
+                if (normalTick) {
+                    $("#actions").append('\
+                        <div id="' + i + 'Div" class="row" style="margin-left:10px">\
+                            <div class="col-md-3 col-md-center' + (actions[i].show.nocenter ? ' top3' : '') + '">\
+                                ' + strButton + i.textify() + '</button>\
+                            </div>\
+                            <div class="col-md-9' + (actions[i].show.nocenter ? '' : ' top6') + '">\
+                                ' + actions[i].show.inside + '\
+                            </div>\
                         </div>\
-                        <div class="col-md-9' + (actions[i].show.nocenter ? '' : ' top6') + '">\
-                            ' + actions[i].show.inside + '\
-                        </div>\
-                    </div>\
-                    <hr id="' + i + 'HR"' + (gD.options.darkTheme ? 'class="HR2"' : "") + ' />');
+                        <hr id="' + i + 'HR"' + (gD.options.darkTheme ? 'class="HR2"' : "") + ' />');
+                }
                 break;
             case "standardUpgrade":
-                $("#upgrades").append(
+                if (normalTick) {
+                    $("#upgrades").append(
+                            strButton + i.textify() + ' ' + cost(i) + '</button>');
+                    $("#" + i).css("margin-right", 10);
+                }
+                if (restoreStats) {
+                    $("#upgradesBought").append(
                         strButton + i.textify() + ' ' + cost(i) + '</button>');
-                $("#" + i).css("margin-right", 10);
+                        $("#" + i).css("margin-right", 10);
+                }
                 break;
             default:
-                $(actions[i].isUpgrade ? "#upgrades" : "#actions").after(actions[i].show.text);
+                if (normalTick) {
+                    $(actions[i].isUpgrade ? "#upgrades" : "#actions").after(actions[i].show.text);
+                }
                 break;
             }
             if (actions[i].show.type == "standardAction" || actions[i].show.type == "standardUpgrade") { // Fix to prevent constant focus after clicking
                 $("#" + i).tooltip().mouseup(toBlur).hover(themeTooltip); // Changes tooltip theme as needed
-                $("#" + i).on('click', function(_i){
-                    return function() { // Clooooooosure :D
-                        buyUpgrade(_i);
-                    };
-                }(i));
+                if (normalTick) {
+                    $("#" + i).on('click', function(_i){
+                        return function() { // Clooooooosure :D
+                            buyUpgrade(_i);
+                        };
+                    }(i));
+                }
             }
         }
         var greyOut = "greyedOut" + (gD.options.darkTheme ? "2" : "");
         if (!$("#" + i + ":hover").length) {
-            if(gD.actions[i].unlocked && !compare(actions[i].cost, gD)) { // Each action unlocked : grey if and only if not affordable
+            if(gD.actions[i].unlocked && !compare(actions[i].cost, gD) && !gD.actions[i].bought) { // Each action unlocked : grey if and only if not affordable and not bought yet
                 if (!$("#" + i).hasClass(greyOut)) {
                     $("#" + i).addClass(greyOut);
                 }
@@ -74,8 +92,10 @@ function tick() {
     if (gD.currentTab == "stats") {
         $("#stats_sessionTime").html(timify(gD.stats.playTime*gD.tickDuration/1000, 2));
         $("#stats_fanTheFlamesUses").html(gD.actions.fanTheFlames.uses);
+        $("#actionsUnlockedCur").html(gD.actions.totalActions);
     }
     game.onLoad = false;
+    game.onUpdate = false;
     /* greyOut("buyWatcher1", time >= sumPrices(10, 1.1, watchers, 1));
     greyOut("buyWatcher2", time >= sumPrices(10, 1.1, watchers, 10));
     greyOut("buyWatcher3", time >= sumPrices(10, 1.1, watchers, 100)); */
@@ -95,8 +115,10 @@ function buyUpgrade(upgrade, isOnLoad) { // isOnLoad => deletion
                     $("#" + upgrade + "HR").remove();
                     break;
                 case "standardUpgrade":
+                    $("#upgradesBought").append($("#" + upgrade)[0].outerHTML); //TODO : Add other cases
                     $("#" + upgrade).tooltip('hide');
                     $("#" + upgrade).remove();
+                    $("#" + upgrade).tooltip().mouseup(toBlur).hover(themeTooltip);
                     break;
                 default:
                     console.log("ERROR");
@@ -194,7 +216,6 @@ function changeTab(newTab) {
 }
 
 function setTheme() {
-    var fg = (gD.options.darkTheme ? "#000" : "#FFF");
     if (gD.options.darkTheme) {
         $("#navbar, #logger").removeClass("navbar-inverse");
         $(".btn-default2").not(document.getElementById("importNow")).removeClass("btn-default2").addClass("btn-default");
@@ -208,12 +229,10 @@ function setTheme() {
         $("hr").addClass("HR2");
         $(".btn").removeClass("greyedOut");
     }
-    $(".navbar-fixed-bottom").css("color", (gD.options.darkTheme ? "#777" : "9d9d9d"));
-    $(".navbar-fixed-bottom").css("text-shadow", (gD.options.darkTheme ? "0 1px 0 rgba(255, 255, 255, .25)" : "0 -1px 0 rgba(0, 0, 0, .25)"));
+    $(".navbar-fixed-bottom").css("color", (gD.options.darkTheme ? "#777" : "9d9d9d")).css("text-shadow", (gD.options.darkTheme ? "0 1px 0 rgba(255, 255, 255, .25)" : "0 -1px 0 rgba(0, 0, 0, .25)"));
     $("#logger").css("background-color", (gD.options.darkTheme ? "#eee" : "#111"));
-    $("#fullLogs").css("background-color", (gD.options.darkTheme ? "#eee" : "#111")).css("color", (gD.options.darkTheme ? "#777" : "9d9d9d")).css("border", "1px solid " + (gD.options.darkTheme ? "#ccc" : "#ccc")); //TODO : Edit
-    $("body").css("background-color", (gD.options.darkTheme ? "#FFF" : "#000"));
-    $("body").css("color", fg);
+    $("#fullLogs").css("background-color", (gD.options.darkTheme ? "#eee" : "#111")).css("color", (gD.options.darkTheme ? "#555" : "#9d9d9d"));
+    $("body").css("background-color", (gD.options.darkTheme ? "#FFF" : "#000")).css("color", (gD.options.darkTheme ? "#000" : "#FFF"));
     for (var i = 1; i <= game.numLogs; i++) {
         if ($("#l" + i).css("font-weight") == "bold") {
             $("#l" + i).css("color", (gD.options.darkTheme ? "#08F" : "#FF0"));
@@ -261,6 +280,7 @@ $(function () {
     $("#importNow").tooltip().mouseup(toBlur).click(importSave);
     $("#clearLogs").tooltip().mouseup(toBlur).click(clearLogs);
     $("#clearFullLogs").tooltip().mouseup(toBlur).click(clearFullLogs);
+    $("#actionsUnlockedTotal").html(countActions());
     $('.modal').on('show.bs.modal', centerModal);
     $(window).on("resize", function() {
         $('.modal:visible').each(centerModal);
@@ -274,7 +294,7 @@ $(function () {
     $('#importGame').on('shown.bs.modal', function() {
         $('#containerImport').focus();
     });
-    setTimeout(function(){log("This is just a test, but if you see it, it means you've spent at least 60 seconds playing. Given the fact that there's basically nothing to do, either you're a bugtracker, or you must be really bored.")}, 60000);
+    setTimeout(function(){log("This is just a test, but if you see it, it means you've spent at least 60 seconds playing. Given the fact that there's basically nothing to do, either you're a bugtracker, or you must be really bored.")}, 60000); //TODO : Edit/add more
 });
 
 window.setInterval(tick, gD.tickDuration);

@@ -51,6 +51,7 @@
     <b>Announcement :</b> <span id="updateAnnouncementVersion"></span> is out!<br />
         - Better logs, including separate tab<br />
         - Announcements management
+        - Updates bought now available in stats!
     </div>
     <!--
     <div class="alert alert-info" id="announcement">
@@ -166,10 +167,15 @@
     <div class="row" id="stats" style="display:none">
         <div class="col-md-12">
             <div class="col-md-12"style="margin-left:-15px">
-                <div style="margin-left:15px">Overall stats :
-                </div><hr/>
-                Time played : <span id="stats_sessionTime"></span><br />
-                Flames fanning : <span id="stats_fanTheFlamesUses"></span><br />
+                <b>Overall stats :</b><br/>
+                <div style="margin-left:15px" class="top6">
+                    Time played : <span id="stats_sessionTime"></span><br />
+                    Flames fanning : <span id="stats_fanTheFlamesUses"></span><br />
+                    Actions unlocked : <span id="actionsUnlockedCur"></span> of <span id="actionsUnlockedTotal"></span>
+                </div>
+                    <hr/>
+                <b>Upgrades purchased :</b><br/>
+                <div style="margin-left:15px" class="top6" id="upgradesBought"></div>
             </div>
         </div>
     </div>
@@ -178,7 +184,7 @@
     <div class="row" id="logs" style="display:none">
         <div class="col-md-12">
             <div class="col-md-12"style="margin-left:-15px">
-                <textarea id="fullLogs" readonly class="form-control"></textarea>
+                <textarea id="fullLogs" readonly class="form-control" style="border: 1px solid #ccc"></textarea>
                 <button id="clearFullLogs" type="button" class="btn btn-default top15 center-block" data-toggle="tooltip" data-placement="bottom" title="Clear the logs" data-container="body">Clear logs</button>
             </div>
         </div>

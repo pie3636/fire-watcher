@@ -7,7 +7,7 @@ function save() {
     }
 }
 
-function load() {
+function load() { //TODO : Check compatibility on version upgrade
     game.onLoad = true; // Restore actions on next tick
     var saveTheme = gD.options.darkTheme;
     for (var i in gD.actions) {
@@ -15,6 +15,7 @@ function load() {
             buyUpgrade(i, true); // Delete everything
         }
     }
+    $("#upgradesBought").html("");
     if (game.onReset) {
         gD = JSON.parse(localStorage.getItem("initValues"));
         gD.currentTab = "opt"; // Needed to change tab
@@ -32,6 +33,7 @@ function load() {
             log("Game loaded.");
         }
     }
+    game.onUpdate = true;
     game.onReset = false;
     game.onImport = false;
     if (saveTheme != gD.options.darkTheme) {
@@ -44,6 +46,7 @@ function load() {
         gD.announcements.update.dismissed = false;
     }
     gD.announcements.update.version = game.version;
+    gD.actions.totalActions = 0; // Computed at next nick
     $("#updateAnnouncementClose").click(function() {
         gD.announcements.update.dismissed = true;
         $("#updateAnnouncement").css("display", "none");
@@ -145,7 +148,7 @@ function log(str, secondary) {
 }
 
 function unhighlightLastLog() {
-    $("#l" + game.latestLog).css("color", (gD.options.darkTheme ? "#9d9d9d" : "#777")).css("font-weight", "normal");
+    $("#l" + game.latestLog).css("color", (gD.options.darkTheme ? "#9d9d9d" : "#555")).css("font-weight", "normal");
     game.logTimeout["l" + game.latestLog] = 0;
     game.latestLog--;
 }
@@ -154,7 +157,7 @@ function clearLogs() {
     for (var i = 1; i <= game.numLogs; i++) {
         clearTimeout(game.logTimeout["l" + i]);
         game.logTimeout["l" + i] = 0;
-        $("#l" + i).html("").css("color", (gD.options.darkTheme ? "#9d9d9d" : "#777")).css("font-weight", "normal");
+        $("#l" + i).html("").css("color", (gD.options.darkTheme ? "#9d9d9d" : "#555")).css("font-weight", "normal");
     }
     game.latestLog = 0;
 }
@@ -177,7 +180,7 @@ function clearFullLogs() {
 
 function resizeFullLogs() {
     if (game.latestFullLog > gD.options.numFullLogs) {
-        $("#fullLogs").html($("#fullLogs").html().split("\n").splice(game.latestFullLog - gD.options.numFullLogs).join("\n"));
+        $("#fullLogs").html($("#fullLogs").html().split("\n").splice(game.latestFullLog - gD.options.numFullLogs).join("\n")); // Remove first lines
         game.latestFullLog = gD.options.numFullLogs;
         
     }
