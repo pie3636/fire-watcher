@@ -47,10 +47,10 @@
     </div>
     <hr />-->
     <div class="alert alert-info" id="updateAnnouncement" style="display: block">
-    <button type="button" class="close" data-dismiss="alert" id="updateAnnouncementClose">x</button>
-    <b>Announcement :</b> v0.4.5 is out!<br />
-        - Improved theme support<br />
-        - Customizable autosave and logs!
+    <button type="button" class="close" id="updateAnnouncementClose">x</button>
+    <b>Announcement :</b> <span id="updateAnnouncementVersion"></span> is out!<br />
+        - Better logs, including separate tab<br />
+        - Annoucements management
     </div>
     <!--
     <div class="alert alert-info" id="announcement">
@@ -121,12 +121,6 @@
                 </label>Enable autosave every 
                 <input type="number" id="autoSaveTimer" value="60" min="10" max="3600">
                   seconds (10-3600)<br />
-            </div><br />
-            <b>Advanced settings :</b><br />
-            <div style="margin-left:15px">
-                Highlighting duration of the logs : 
-                <input type="number" id="logDuration" value="10" min="1" max="3600">
-                seconds (1-3600). <b>Warning : </b>This will reset the current highlighting!<br />
             </div>
             <hr/>
             <div class="row" style="margin-left:10px">
@@ -140,7 +134,7 @@
                         <button id="importSave" type="button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Import a previously exported save" data-container="body">Import</button>
                     </div>
                 </div>
-                <div class="col-md-9 vcenter" style="margin-left:-40px">
+                <div class="col-md-9 top6" style="margin-left:-40px">
                     The game is saved through localStorage. To prevent data corruption or deletion, <b>regularly export your savefile</b>!
                 </div>
             </div>
@@ -150,11 +144,21 @@
                     <button id="deleteSave" type="button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Delete the saved game" data-container="body">Delete save</button>
                         <button id="wipeSave" type="button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Reset your current progress (doesn't erase the savefile)" data-container="body">Reset</button>
                 </div>
-                <div class="col-md-10 vcenter" style="margin-left:-25px">
+                <div class="col-md-10 top6" style="margin-left:-25px">
                     Be careful when using those. Deleting the savefile doesn't reset the game, nor does resetting update/delete your savefile.
                 </div>
             </div>
-            <hr id="myHR" />
+            <hr/>
+            <b>Advanced settings :</b><br />
+            <div style="margin-left:15px">
+                Highlighting duration of the logs : 
+                <input type="number" id="logDuration" value="10" min="1" max="3600">
+                seconds (1-3600). <b>Warning : </b>This will reset the current highlighting!<br />
+                Make the full logs 
+                <input type="number" id="fullLogSize" value="100" min="1" max="2000">
+                lines high (10-2000). <br />
+            <button id="clearLogs" type="button" class="btn btn-default top6" data-toggle="tooltip" data-placement="bottom" title="Clear the logs" data-container="body">Clear logs</button>
+            </div>
         </div>
     </div>
 
@@ -174,7 +178,8 @@
     <div class="row" id="logs" style="display:none">
         <div class="col-md-12">
             <div class="col-md-12"style="margin-left:-15px">
-                12345
+                <textarea id="fullLogs" readonly class="form-control"></textarea>
+                <button id="clearFullLogs" type="button" class="btn btn-default top15 center-block" data-toggle="tooltip" data-placement="bottom" title="Clear the logs" data-container="body">Clear logs</button>
             </div>
         </div>
     </div>
@@ -203,7 +208,7 @@
                 <div id="importError" style="color:#A00; display:none">
                     <br /><b>Error while parsing save, please try again.</b><br />
                 </div>
-                <button id="importNow" type="button" class="btn btn-default center-block" data-toggle="tooltip" data-placement="top" title="Import the game now" data-container="body" style="margin-top:15px">Import</button>
+                <button id="importNow" type="button" class="btn btn-default center-block top15" data-toggle="tooltip" data-placement="top" title="Import the game now" data-container="body">Import</button>
             </div>
         </div>
       </div>

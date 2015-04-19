@@ -1,12 +1,12 @@
 var game = {
-    version: "v0.4.5",
+    version: "v0.4.6",
     onLoad: false,
     onImport: false,
     onReset: false,
     logTimeout: {},
-    logDuration: 10000,
     latestLog: 5,
     numLogs: 5,
+    latestFullLog: 0,
     newSave: {},
     operator: {
         EQ: 1, // =
@@ -26,7 +26,7 @@ var gD = {
     currentTab: "play",
     announcements: {
         update: {
-            version: "v0.4.4",
+            version: "",
             dismissed: true
         }
     },
@@ -40,7 +40,8 @@ var gD = {
         }
     },
     options: {
-        logDuration: 10, //TODO : Make editable
+        numFullLogs: 100,
+        logDuration: 10,
         darkTheme: false,
         autoSave: {
             enabled: setInterval(save, 60000),

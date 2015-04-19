@@ -39,22 +39,15 @@ function load() {
         gD.options.darkTheme = saveTheme;
         setTheme(); // Changes theme from gD.options.saveTheme to its opposite
     }
-        console.log(gD.announcements.update);
-        console.log(gD.announcements);
-        console.log(gD.announcements.update);
-        console.log("CHECK" + gD.announcements.update.version + "/" + game.version + " DISMISSED " + gD.announcements.update.dismissed);
-    if (gD.announcements.update.version == game.version && gD.announcements.update.dismissed) {
-        $("#updateAnnouncement").css("display", "none");
-    }
+    $("#updateAnnouncement").css("display", (gD.announcements.update.version == game.version && gD.announcements.update.dismissed ? "none" : "block"));
     if (gD.announcements.update.version != game.version) {
         gD.announcements.update.dismissed = false;
     }
     gD.announcements.update.version = game.version;
     $("#updateAnnouncementClose").click(function() {
         gD.announcements.update.dismissed = true;
-        console.log("CLICK" + gD.announcements.update.version + "/" + game.version + " DISMISSED " + gD.announcements.update.dismissed);
+        $("#updateAnnouncement").css("display", "none");
     });
-    console.log("AFTER" + gD.announcements.update.version + "/" + game.version + " DISMISSED " + gD.announcements.update.dismissed);
 }
 
 function loadRec(save, data) {
@@ -62,6 +55,7 @@ function loadRec(save, data) {
         switch (typeof save[i]) {
             case "number":
             case "boolean":
+            case "string":
                 data[i] = save[i];
                 break;
             case "object":
@@ -128,21 +122,26 @@ function importSave() {
 
 /*====================================================================== LOGGER ======================================================================*/
 
-function log(str) {
+function log(str, secondary) {
     var d = new Date;
-    var date = "<span style='color:#A00'>[" + prettify(d.getHours(), 0, 2) + ":" + prettify(d.getMinutes(), 0, 2) + ":" + prettify(d.getSeconds(), 0, 2) + "." + prettify(d.getMilliseconds(), 0, 3) + "]</span> ";
-    game.latestLog = Math.min(game.numLogs, game.latestLog + 1);
-    clearTimeout(game.logTimeout["l" + game.numLogs]);
-    for (var i = game.numLogs; i > 1; i--) {
-        $("#l" + i).html($("#l" + (i - 1)).html());
-        if ($("#l" + (i - 1)).css("font-weight") == "bold") {
-            $("#l" + i).css("color", (gD.options.darkTheme ? "#FF0" : "#08F")).css("font-weight", "bold");
-            game.logTimeout["l" + i] = game.logTimeout["l" + (i - 1)];
+    var date = "[" + prettify(d.getHours(), 0, 2) + ":" + prettify(d.getMinutes(), 0, 2) + ":" + prettify(d.getSeconds(), 0, 2) + "." + prettify(d.getMilliseconds(), 0, 3) + "] ";
+    if(!secondary) {
+        game.latestLog = Math.min(game.numLogs, game.latestLog + 1);
+        clearTimeout(game.logTimeout["l" + game.numLogs]);
+        for (var i = game.numLogs; i > 1; i--) {
+            $("#l" + i).html($("#l" + (i - 1)).html());
+            if ($("#l" + (i - 1)).css("font-weight") == "bold") {
+                $("#l" + i).css("color", (gD.options.darkTheme ? "#FF0" : "#08F")).css("font-weight", "bold");
+                game.logTimeout["l" + i] = game.logTimeout["l" + (i - 1)];
+            }
         }
+        $("#l1").html("<span style='color:#A00'>" + date + "</span>" + str);
+        $("#l1").css("color", (gD.options.darkTheme ? "#FF0" : "#08F")).css("font-weight", "bold");
+        game.logTimeout.l1 = setTimeout(unhighlightLastLog, gD.options.logDuration); //TODO : Transition, bitstorm?
     }
-    $("#l1").html(date + str);
-    $("#l1").css("color", (gD.options.darkTheme ? "#FF0" : "#08F")).css("font-weight", "bold");
-    game.logTimeout.l1 = setTimeout(unhighlightLastLog, game.logDuration); //TODO : Transition, bitstorm?
+    $("#fullLogs").html($("#fullLogs").html() + date + str + "\n");
+    game.latestFullLog++;
+    resizeFullLogs();
 }
 
 function unhighlightLastLog() {
@@ -161,11 +160,31 @@ function clearLogs() {
 }
 
 function logDurationSetting() {
-    game.logDuration = Number(1000 * $("#logDuration").val());
+    gD.options.logDuration = Number(1000 * $("#logDuration").val());
     for (var i = 1; i <= game.numLogs; i++) {
         clearTimeout(game.logTimeout["l" + i]);
         if ($("#l" + i).css("font-weight") == "bold") {
-            game.logTimeout["l" + i] = setTimeout(unhighlightLastLog, game.logDuration);
+            game.logTimeout["l" + i] = setTimeout(unhighlightLastLog, gD.options.logDuration.logDuration);
         }
     }
 }
+
+/* ====================================================================== FULL LOGS ====================================================================== */
+
+function clearFullLogs() {
+    $("#fullLogs").html("");
+}
+
+function resizeFullLogs() {
+    if (game.latestFullLog > gD.options.numFullLogs) {
+        $("#fullLogs").html($("#fullLogs").html().split("\n").splice(game.latestFullLog - gD.options.numFullLogs).join("\n"));
+        game.latestFullLog = gD.options.numFullLogs;
+        
+    }
+}
+
+function fullLogSize() {
+    gD.options.numFullLogs = $("#fullLogSize").val();
+    resizeFullLogs();
+}
+

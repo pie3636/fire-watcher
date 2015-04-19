@@ -1,4 +1,4 @@
-//TODO: Stats, achievements, upgrades bought etc. hasOwnProperty -> optimisation, log_tab + customizable line number
+//TODO: Stats, achievements, upgrades bought etc. hasOwnProperty -> optimisation, theme for fullLogs, progress (bars?)
 
 /*function buyWatcher(number) {
     for (var i = 1; i <= number; i++) {
@@ -28,10 +28,10 @@ function tick() {
             case "standardAction":
                 $("#actions").append('\
                     <div id="' + i + 'Div" class="row" style="margin-left:10px">\
-                        <div class="col-md-3 col-md-center' + (actions[i].show.nocenter ? ' vcenterbtn' : '') + '">\
+                        <div class="col-md-3 col-md-center' + (actions[i].show.nocenter ? ' top3' : '') + '">\
                             ' + strButton + i.textify() + '</button>\
                         </div>\
-                        <div class="col-md-9' + (actions[i].show.nocenter ? '' : ' vcenter') + '">\
+                        <div class="col-md-9' + (actions[i].show.nocenter ? '' : ' top6') + '">\
                             ' + actions[i].show.inside + '\
                         </div>\
                     </div>\
@@ -211,6 +211,7 @@ function setTheme() {
     $(".navbar-fixed-bottom").css("color", (gD.options.darkTheme ? "#777" : "9d9d9d"));
     $(".navbar-fixed-bottom").css("text-shadow", (gD.options.darkTheme ? "0 1px 0 rgba(255, 255, 255, .25)" : "0 -1px 0 rgba(0, 0, 0, .25)"));
     $("#logger").css("background-color", (gD.options.darkTheme ? "#eee" : "#111"));
+    $("#fullLogs").css("background-color", (gD.options.darkTheme ? "#eee" : "#111")).css("color", (gD.options.darkTheme ? "#777" : "9d9d9d")).css("border", "1px solid " + (gD.options.darkTheme ? "#ccc" : "#ccc")); //TODO : Edit
     $("body").css("background-color", (gD.options.darkTheme ? "#FFF" : "#000"));
     $("body").css("color", fg);
     for (var i = 1; i <= game.numLogs; i++) {
@@ -236,7 +237,9 @@ $(function () {
         game.logTimeout["l" + i] = setTimeout(unhighlightLastLog, 10000 + 1000 * i);
     }
     load();
+    gD.currentTab = "play";
     $("#version").append(game.version);
+    $("#updateAnnouncementVersion").html(game.version);
     $("#darkTheme").change(setTheme).prop("checked", gD.options.darkTheme);
     if (gD.options.darkTheme) {
         gD.options.darkTheme = false;
@@ -245,6 +248,7 @@ $(function () {
     $("#autoSave").change(autoSave).prop("checked", gD.options.autoSave.enabled != 0);
     $("#autoSaveTimer").keydown(validateNumber(autoSaveTimer)).change(autoSaveTimer);
     $("#logDuration").keydown(validateNumber(logDurationSetting)).change(logDurationSetting);
+    $("#fullLogSize").keydown(validateNumber(fullLogSize)).change(fullLogSize);
     $("#saveSave").tooltip().mouseup(toBlur).hover(themeTooltip).click(save);
     $("#loadSave").tooltip().mouseup(toBlur).hover(themeTooltip).click(load);
     $("#deleteSave").tooltip().mouseup(toBlur).hover(themeTooltip).click(function() {
@@ -255,6 +259,8 @@ $(function () {
     $("#exportSave").tooltip().mouseup(toBlur).hover(themeTooltip).click(exportSave).attr("data-toggle", "modal").attr("data-target","#exportGame").focus(toBlur);
     $("#importSave").tooltip().mouseup(toBlur).hover(themeTooltip).attr("data-toggle", "modal").attr("data-target","#importGame").focus(toBlur); // Or it stays focused after the modal is closed
     $("#importNow").tooltip().mouseup(toBlur).click(importSave);
+    $("#clearLogs").tooltip().mouseup(toBlur).click(clearLogs);
+    $("#clearFullLogs").tooltip().mouseup(toBlur).click(clearFullLogs);
     $('.modal').on('show.bs.modal', centerModal);
     $(window).on("resize", function() {
         $('.modal:visible').each(centerModal);
