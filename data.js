@@ -6,6 +6,7 @@ var game = {
     logTimeout: {},
     latestLog: 5,
     numLogs: 5,
+    sessionTime: 0,
     latestFullLog: 0,
     newSave: {},
     operator: {
@@ -31,7 +32,6 @@ var gD = {
         }
     },
     actions: {
-        totalActions: 0,
         fanTheFlames: {
             uses: 0,
             power: 5
@@ -50,6 +50,9 @@ var gD = {
         }
     },
     stats: {
+        totalActions: 0,
+        totalUpgrades: 0,
+        totalAchievements: 0,
         playTime: 0,
         uses: {
             fanTheFlames: 0

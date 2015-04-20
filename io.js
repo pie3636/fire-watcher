@@ -9,6 +9,7 @@ function save() {
 
 function load() {
     game.onLoad = true; // Restore actions on next tick
+    game.sessionTime = 0;
     var saveTheme = gD.options.darkTheme;
     $("#actions").html("<div style='margin-left:15px'>Time left : <span id='time'>0</span></div><hr/>");
     $("#upgrades").html("");
@@ -44,7 +45,9 @@ function load() {
         gD.announcements.update.dismissed = false;
     }
     gD.announcements.update.version = game.version;
-    gD.actions.totalActions = 0; // Computed at next nick
+    gD.stats.totalActions = 0; // Computed at next nick
+    gD.stats.totalUpgrades = 0;
+    gD.stats.totalAchievements = 0;
     $("#updateAnnouncementClose").click(function() {
         gD.announcements.update.dismissed = true;
         $("#updateAnnouncement").css("display", "none");

@@ -1,4 +1,4 @@
-//TODO: More stats (sessionTime, prestigeTime, achievements/upgrades count...), grey, hasOwnProperty -> optimisation, progress (bars?), log highlighting transition? (bitstorm), compatibility on version update, timify, cost, countActions
+//TODO: More stats (sessionTime, prestigeTime...), hasOwnProperty -> optimisation, progress (bars?), log highlighting transition? (bitstorm), compatibility on version update, timify, cost, countActions
 
 /*function buyWatcher(number) {
     for (var i = 1; i <= number; i++) {
@@ -18,15 +18,20 @@
 function tick() {
     gD.time -= gD.timeSpeed * gD.tickDuration/1000;
     gD.stats.playTime += gD.tickDuration/1000;
+    game.sessionTime += gD.tickDuration/1000;
     //time += watchers * watcherPower * tickDuration/1000;
     $("#time").html(timify(gD.time, 3));
     for (var i in actions) {
-        var normalTick = !gD.actions[i].unlocked && compare(actions[i].unlock, gD) || gD.actions[i].unlocked && game.onLoad && !gD.actions[i].bought;
+        var justUnlocked = !gD.actions[i].unlocked && compare(actions[i].unlock, gD);
+        var normalTick =  justUnlocked || gD.actions[i].unlocked && game.onLoad && !gD.actions[i].bought;
         var restoreStats = game.onLoad && gD.actions[i].bought;
         if (normalTick || restoreStats) { // If new action unlocked or unlocked in loaded game or bought in loaded game (to add to stats)
             gD.actions[i].unlocked = true;
-            if (actions[i].repeatable && gD.actions[i].unlocked) {
-                gD.actions.totalActions++;
+            if (actions[i].repeatable) {
+                gD.stats.totalActions++;
+            }
+            if (actions[i].show.type == "standardAchievement") {
+                gD.stats.totalAchievements++;
             }
             var strButton = '<button id=' + i + ' type="button" class="btn btn-default' + (gD.options.darkTheme ? "2" : "") + '" data-toggle="tooltip" data-placement="bottom" title="' + actions[i].show.tooltip + '" data-container="body">';
             switch (actions[i].show.type) { // Display it
@@ -48,20 +53,21 @@ function tick() {
                 if (normalTick) {
                     $("#upgrades").append(
                             strButton + i.textify() + ' ' + cost(i) + '</button>');
-                    $("#" + i).css("margin-right", 10);
+                    $("#" + i).css("margin-right", 10).css("margin-bottom", 5);
                 }
                 if (restoreStats) {
                     $("#upgradesBought").append(
                         strButton + i.textify() + ' ' + cost(i) + '</button>');
-                        $("#" + i).css("margin-right", 10);
+                        $("#" + i).css("margin-right", 10).css("margin-bottom", 5);
+                        gD.stats.totalUpgrades++;
                 }
                 break;
             case "standardAchievement":
                 if (normalTick) {
                     $("#achievements").append(
                             strButton + i.textify() + ' </button>');
-                    $("#" + i).css("margin-right", 10);
-                    if (typeof actions[i].effect !== 'undefined') {
+                    $("#" + i).css("margin-right", 10).css("margin-bottom", 5);
+                    if (typeof actions[i].effect !== 'undefined' && justUnlocked) { // Don't apply effects on load
                         actions[i].effect();
                     }
                     if (!game.onLoad) {
@@ -106,9 +112,12 @@ function tick() {
         }
     }
     if (gD.currentTab == "stats") {
-        $("#stats_sessionTime").html(timify(gD.stats.playTime, 2));
+        $("#stats_playTime").html(timify(gD.stats.playTime, 2));
+        $("#stats_sessionTime").html(timify(game.sessionTime, 2));
         $("#stats_fanTheFlamesUses").html(gD.actions.fanTheFlames.uses);
-        $("#actionsUnlockedCur").html(gD.actions.totalActions);
+        $("#actionsUnlockedCur").html(gD.stats.totalActions);
+        $("#upgradesUnlockedCur").html(gD.stats.totalUpgrades);
+        $("#achievementsUnlockedCur").html(gD.stats.totalAchievements);
     }
     game.onLoad = false;
     /* greyOut("buyWatcher1", time >= sumPrices(10, 1.1, watchers, 1));
@@ -123,6 +132,7 @@ function buyUpgrade(upgrade) {
         }
         if (!actions[upgrade].repeatable) {
             gD.actions[upgrade].bought = true;
+            console.log(upgrade);
             switch (actions[upgrade].show.type) {
                 case "standardAction":
                     $("#" + upgrade).tooltip('hide');
@@ -134,6 +144,7 @@ function buyUpgrade(upgrade) {
                     $("#" + upgrade).tooltip('hide');
                     $("#" + upgrade).remove();
                     $("#" + upgrade).tooltip().mouseup(toBlur).hover(themeTooltip);
+                    gD.stats.totalUpgrades++;
                     break;
                 case "noDisplay":
                     break;
@@ -282,10 +293,9 @@ $(function () {
         gD.options.darkTheme = false;
         setTheme();
     }
+    
     $("#autoSave").change(autoSave).prop("checked", gD.options.autoSave.enabled != 0);
     $("#autoSaveTimer").keydown(validateNumber(autoSaveTimer)).change(autoSaveTimer);
-    $("#logDuration").keydown(validateNumber(logDurationSetting)).change(logDurationSetting);
-    $("#fullLogSize").keydown(validateNumber(fullLogSize)).change(fullLogSize);
     $("#saveSave").tooltip().mouseup(toBlur).hover(themeTooltip).click(save);
     $("#loadSave").tooltip().mouseup(toBlur).hover(themeTooltip).click(load);
     $("#deleteSave").tooltip().mouseup(toBlur).hover(themeTooltip).click(function() {
@@ -296,9 +306,16 @@ $(function () {
     $("#exportSave").tooltip().mouseup(toBlur).hover(themeTooltip).click(exportSave).attr("data-toggle", "modal").attr("data-target","#exportGame").focus(toBlur);
     $("#importSave").tooltip().mouseup(toBlur).hover(themeTooltip).attr("data-toggle", "modal").attr("data-target","#importGame").focus(toBlur); // Or it stays focused after the modal is closed
     $("#importNow").tooltip().mouseup(toBlur).click(importSave);
+    
+    $("#logDuration").keydown(validateNumber(logDurationSetting)).change(logDurationSetting);
+    $("#fullLogSize").keydown(validateNumber(fullLogSize)).change(fullLogSize);
     $("#clearLogs").tooltip().mouseup(toBlur).click(clearLogs);
     $("#clearFullLogs").tooltip().mouseup(toBlur).click(clearFullLogs);
+    
     $("#actionsUnlockedTotal").html(countActions());
+    $("#upgradesUnlockedTotal").html(countUpgrades());
+    $("#achievementsUnlockedTotal").html(countAchievements());
+    
     $('.modal').on('show.bs.modal', centerModal);
     $(window).on("resize", function() {
         $('.modal:visible').each(centerModal);
