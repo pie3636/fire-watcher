@@ -168,7 +168,7 @@ var actions = {
     },
     /* ============================================================ MISCELLANEOUS ============================================================ */
     heyDood: {
-        unlock: {stats: {playTime:3}},
+        unlock: {stats: {playTime:60}},
         show: {
             type: "noDisplay"
         },
