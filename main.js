@@ -1,4 +1,4 @@
-//TODO: Stats, achievements. hasOwnProperty -> optimisation, progress (bars?)
+//TODO: More stats (sessionTime, prestigeTime, achievements/upgrades count...) hasOwnProperty -> optimisation, progress (bars?), log highlighting transition? (bitstorm), compatibility on version update, timify, cost, countActions
 
 /*function buyWatcher(number) {
     for (var i = 1; i <= number; i++) {
@@ -17,12 +17,12 @@
 
 function tick() {
     gD.time -= gD.timeSpeed * gD.tickDuration/1000;
-    gD.stats.playTime++;
+    gD.stats.playTime += gD.tickDuration/1000;
     //time += watchers * watcherPower * tickDuration/1000;
     $("#time").html(timify(gD.time, 3));
     for (var i in actions) {
         var normalTick = !gD.actions[i].unlocked && compare(actions[i].unlock, gD) || gD.actions[i].unlocked && game.onLoad && !gD.actions[i].bought;
-        var restoreStats = game.onUpdate && gD.actions[i].bought;
+        var restoreStats = game.onLoad && gD.actions[i].bought;
         if (normalTick || restoreStats) { // If new action unlocked or unlocked in loaded game or bought in loaded game (to add to stats)
             gD.actions[i].unlocked = true;
             if (actions[i].repeatable && gD.actions[i].unlocked) {
@@ -56,15 +56,31 @@ function tick() {
                         $("#" + i).css("margin-right", 10);
                 }
                 break;
+            case "standardAchievement":
+                if (normalTick) {
+                    $("#achievements").append(
+                            strButton + i.textify() + ' </button>');
+                    $("#" + i).css("margin-right", 10);
+                    if (typeof actions[i].effect !== 'undefined') {
+                        actions[i].effect();
+                    }
+                    if (!game.onLoad) {
+                        log("Achievement unlocked : " + i.textify() + "!");
+                    }
+                }
+                break;
+            case "noDisplay":
+                buyUpgrade(i);
+                break;
             default:
                 if (normalTick) {
                     $(actions[i].isUpgrade ? "#upgrades" : "#actions").after(actions[i].show.text);
                 }
                 break;
             }
-            if (actions[i].show.type == "standardAction" || actions[i].show.type == "standardUpgrade") { // Fix to prevent constant focus after clicking
+            if (actions[i].show.type == "standardAction" || actions[i].show.type == "standardUpgrade" || actions[i].show.type == "standardAchievement") { // Fix to prevent constant focus after clicking
                 $("#" + i).tooltip().mouseup(toBlur).hover(themeTooltip); // Changes tooltip theme as needed
-                if (normalTick) {
+                if (normalTick && actions[i].show.type != "standardAchievement") {
                     $("#" + i).on('click', function(_i){
                         return function() { // Clooooooosure :D
                             buyUpgrade(_i);
@@ -90,23 +106,22 @@ function tick() {
         }
     }
     if (gD.currentTab == "stats") {
-        $("#stats_sessionTime").html(timify(gD.stats.playTime*gD.tickDuration/1000, 2));
+        $("#stats_sessionTime").html(timify(gD.stats.playTime, 2));
         $("#stats_fanTheFlamesUses").html(gD.actions.fanTheFlames.uses);
         $("#actionsUnlockedCur").html(gD.actions.totalActions);
     }
     game.onLoad = false;
-    game.onUpdate = false;
     /* greyOut("buyWatcher1", time >= sumPrices(10, 1.1, watchers, 1));
     greyOut("buyWatcher2", time >= sumPrices(10, 1.1, watchers, 10));
     greyOut("buyWatcher3", time >= sumPrices(10, 1.1, watchers, 100)); */
 }
 
-function buyUpgrade(upgrade, isOnLoad) { // isOnLoad => deletion
-    if (isOnLoad || !gD.actions[upgrade].bought && compare(actions[upgrade].cost, gD, true)) { // First condition isn't mandatory
-        if (typeof actions[upgrade].effect !== 'undefined' && !isOnLoad) {
+function buyUpgrade(upgrade) {
+    if (!gD.actions[upgrade].bought && compare(actions[upgrade].cost, gD, true)) { // First condition isn't mandatory
+        if (typeof actions[upgrade].effect !== 'undefined') {
             actions[upgrade].effect();
         }
-        if (!actions[upgrade].repeatable || isOnLoad) {
+        if (!actions[upgrade].repeatable) {
             gD.actions[upgrade].bought = true;
             switch (actions[upgrade].show.type) {
                 case "standardAction":
@@ -115,11 +130,14 @@ function buyUpgrade(upgrade, isOnLoad) { // isOnLoad => deletion
                     $("#" + upgrade + "HR").remove();
                     break;
                 case "standardUpgrade":
-                    $("#upgradesBought").append($("#" + upgrade)[0].outerHTML); //TODO : Add other cases
+                    $("#upgradesBought").append($("#" + upgrade)[0].outerHTML); //TODO : Add other cases?
                     $("#" + upgrade).tooltip('hide');
                     $("#" + upgrade).remove();
                     $("#" + upgrade).tooltip().mouseup(toBlur).hover(themeTooltip);
                     break;
+                case "noDisplay":
+                    break;
+                case "standardAchievement": // Shouldn't happen
                 default:
                     console.log("ERROR");
                     break;
@@ -294,7 +312,6 @@ $(function () {
     $('#importGame').on('shown.bs.modal', function() {
         $('#containerImport').focus();
     });
-    setTimeout(function(){log("This is just a test, but if you see it, it means you've spent at least 60 seconds playing. Given the fact that there's basically nothing to do, either you're a bugtracker, or you must be really bored.")}, 60000); //TODO : Edit/add more
 });
 
 window.setInterval(tick, gD.tickDuration);

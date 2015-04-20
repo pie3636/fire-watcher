@@ -1,9 +1,8 @@
 var game = {
-    version: "v0.4.7",
-    onLoad: false,
-    onImport: false,
-    onReset: false,
-    onUpdate: false,
+    version: "v0.5.0",
+    onLoad: false, // Restore purchases
+    onImport: false, // Load from import
+    onReset: false, // Load from initValues
     logTimeout: {},
     latestLog: 5,
     numLogs: 5,
@@ -62,7 +61,7 @@ var gD = {
 
 /* unlock, cost : Object [~gD]                          Costs of unlocking and buying, default: {operator: game.operator.GE, value: cost[î], isConsumed: true}
  * -> unlock : {time: 50} ~ {time: {operator: game.operator.GE, value: 50, isConsumed: true}}
- * show : Object [type, tooltip, inside][text]          Items to be displayed
+ * show : Object [type, tooltip, inside][text]          Items to be displayed. Types : standardAction, standardUpgrade, standardAchievement
  * effect : function                                    On buying
  * tick : function                                      On tick
  * repeatable : Boolean                                 Peristent
@@ -140,7 +139,6 @@ var actions = {
     pyramidFire: {
         unlock: {time: 100},
         cost: {time: 600},
-        isUpgrade: true,
         show: {
             type: "standardUpgrade",
             tooltip : "Fanning the flames is twice as efficient"
@@ -152,10 +150,30 @@ var actions = {
     fireMastery: {
         unlock: {actions: {fanTheFlames: {uses: 50}}},
         cost: {time: 500},
-        isUpgrade: true,
         show: {
             type: "standardUpgrade",
             tooltip : "Your fire skills increase with time. Fan the flames gains 0.001 power with each use"
+        }
+    },
+    /* ============================================================ ACHIEVEMENTS ============================================================ */
+    wellThatWasShort: {
+        unlock: {stats: {playTime:300}},
+        show: {
+            type: "standardAchievement",
+            tooltip: "Playing for more than 5 minutes! Time decay is halved."
         },
+        effect: function() {
+            gD.timeSpeed /= 2;
+        }
+    },
+    /* ============================================================ MISCELLANEOUS ============================================================ */
+    heyDood: {
+        unlock: {stats: {playTime:3}},
+        show: {
+            type: "noDisplay"
+        },
+        effect: function() {
+            log("This is just a test, but if you see it, it means you've spent at least 60 seconds playing. Given the fact that there's basically nothing to do, either you're a bugtracker, or you must be really bored.");
+        }
     }
 };

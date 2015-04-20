@@ -55,7 +55,7 @@ function validateBounds(callback, ptr) {
 }
 
 function cost(upgrade) {
-    return '(' + actions[upgrade].cost.time + ')'; //TODO : Modifier
+    return '(' + actions[upgrade].cost.time + ')';
 }
 
 function prettify(input, digits, before) {

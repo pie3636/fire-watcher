@@ -7,15 +7,13 @@ function save() {
     }
 }
 
-function load() { //TODO : Check compatibility on version upgrade
+function load() {
     game.onLoad = true; // Restore actions on next tick
     var saveTheme = gD.options.darkTheme;
-    for (var i in gD.actions) {
-        if (gD.actions[i].unlocked) {
-            buyUpgrade(i, true); // Delete everything
-        }
-    }
+    $("#actions").html("<div style='margin-left:15px'>Time left : <span id='time'>0</span></div><hr/>");
+    $("#upgrades").html("");
     $("#upgradesBought").html("");
+    $("#achievements").html("");
     if (game.onReset) {
         gD = JSON.parse(localStorage.getItem("initValues"));
         gD.currentTab = "opt"; // Needed to change tab
@@ -28,12 +26,12 @@ function load() { //TODO : Check compatibility on version upgrade
         log("Succesfully imported savefile.")
     } else {
         loadRec(JSON.parse(localStorage.getItem("save")), gD);
+        gD.currentTab = "opt";
         if (localStorage.getItem("save") != localStorage.getItem("initValues")) {
             clearLogs();
             log("Game loaded.");
         }
     }
-    game.onUpdate = true;
     game.onReset = false;
     game.onImport = false;
     if (saveTheme != gD.options.darkTheme) {
@@ -140,7 +138,7 @@ function log(str, secondary) {
         }
         $("#l1").html("<span style='color:#A00'>" + date + "</span>" + str);
         $("#l1").css("color", (gD.options.darkTheme ? "#FF0" : "#08F")).css("font-weight", "bold");
-        game.logTimeout.l1 = setTimeout(unhighlightLastLog, gD.options.logDuration); //TODO : Transition, bitstorm?
+        game.logTimeout.l1 = setTimeout(unhighlightLastLog, gD.options.logDuration * 1000);
     }
     $("#fullLogs").html($("#fullLogs").html() + date + str + "\n");
     game.latestFullLog++;

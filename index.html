@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="Yet another clicker">
-<meta name="author" content="Anfasa">
+<meta name="author" content="pie3636">
 <title>Fire Watcher</title>
 <link href="css/bootstrap.css" rel="stylesheet">
 <link href="css/bootstrap-theme.css" rel="stylesheet">
@@ -50,8 +50,9 @@
     <button type="button" class="close" id="updateAnnouncementClose">x</button>
     <b>Announcement :</b> <span id="updateAnnouncementVersion"></span> is out!<br />
         - Better logs, including separate tab<br />
-        - Announcements management
-        - Updates bought now available in stats!
+        - Announcements management<br />
+        - Updates bought now available in stats<br />
+        - Achievement and event systems implemented (one of each available so far)
     </div>
     <!--
     <div class="alert alert-info" id="announcement">
@@ -76,11 +77,7 @@
     </div>
     -->
     <div class="row" id="play">
-        <div class="col-md-8 split-left" id="actions"> <!-- Can be splitted into col-md-8 + another div -->
-            <div style="margin-left:15px">
-                Time left : <span id="time">0</span>
-            </div>
-            <hr/>
+        <div class="col-md-8 split-left" id="actions"> <!-- Can be splitted into col-md-8 + another div -->				²²                                                                                                                                                                                                                                                                                                                                                                                                                                                      
                 <!--
                 <div class="row" style="margin-left:0px">
                     <div class="col-md-3 col-md-center">
@@ -173,9 +170,12 @@
                     Flames fanning : <span id="stats_fanTheFlamesUses"></span><br />
                     Actions unlocked : <span id="actionsUnlockedCur"></span> of <span id="actionsUnlockedTotal"></span>
                 </div>
-                    <hr/>
+                <hr/>
                 <b>Upgrades purchased :</b><br/>
                 <div style="margin-left:15px" class="top6" id="upgradesBought"></div>
+                <hr />
+                <b>Achievements :</b><br/>
+                <div style="margin-left:15px" class="top6" id="achievements"></div>
             </div>
         </div>
     </div>
