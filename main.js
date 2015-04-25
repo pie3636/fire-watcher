@@ -27,6 +27,9 @@ function tick() {
         var restoreStats = game.onLoad && gD.actions[i].bought;
         if (normalTick || restoreStats) { // If new action unlocked or unlocked in loaded game or bought in loaded game (to add to stats)
             gD.actions[i].unlocked = true;
+            if (typeof actions[i].doUnlock !== 'undefined') {
+                actions[i].doUnlock();
+            }
             if (actions[i].repeatable) {
                 gD.stats.totalActions++;
             }
@@ -97,7 +100,7 @@ function tick() {
         }
         var greyOut = "greyedOut" + (gD.options.darkTheme ? "2" : "");
         if (!$("#" + i + ":hover").length) {
-            if(gD.actions[i].unlocked && !compare(actions[i].cost, gD) && !gD.actions[i].bought) { // Each action unlocked : grey if and only if not affordable and not bought yet
+            if (gD.actions[i].unlocked && !compare(actions[i].cost, gD) && !gD.actions[i].bought) { // Each action unlocked : grey if and only if not affordable and not bought yet
                 if (!$("#" + i).hasClass(greyOut)) {
                     $("#" + i).addClass(greyOut);
                 }
@@ -107,7 +110,7 @@ function tick() {
         } else {
             $("#" + i).removeClass(greyOut);
         }
-        if(typeof actions[i].tick !== 'undefined' && (!game.onLoad || gD.actions[i].unlocked)) { // && (!actions[i].tickIfBought || gD.actions[i].bought) && (!actions[i].tickIfUnlocked || gD.actions[i].unlocked)) { // No tick if loading game and not unlocked
+        if (typeof actions[i].tick !== 'undefined' && (!game.onLoad || gD.actions[i].unlocked)) { // && (!actions[i].tickIfBought || gD.actions[i].bought) && (!actions[i].tickIfUnlocked || gD.actions[i].unlocked)) { // No tick if loading game and not unlocked
             actions[i].tick();
         }
     }

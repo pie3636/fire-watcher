@@ -21,11 +21,13 @@ var game = {
         branches: {
             buy: function(str) {
                 var n = (str == "all" ? gD.inventory.branches.value : str);
-                if (n <= gD.inventory.branches.value) {
+                if (n <= gD.inventory.branches.value && n) {
                     gD.inventory.branches.value -= n;
                     var gain = gD.actions.exploreTheBeach.branchesPower * n;
                     log("Earnt " + timify(gain) + "!");
                     gD.time += gain;
+                } else {
+                    log("Not enough branches!");
                 }
             }
         }
@@ -154,11 +156,14 @@ var actions = {
             gD.inventory.branches.unlocked = true;
             gD.inventory.branches.value += branchesFound;
             log("You found " + branchesFound + " branches!");
-            $("#inv_branches").show();
-            $("#inv_branches_info").tooltip().hover(themeTooltip);
         },
         tick: function() {
             $("#inv_branches_more").html(timify(gD.actions.exploreTheBeach.branchesPower));
+        },
+        doUnlock: function() {
+            $("#inv_branches").show();
+            $("#inv_branches_info").tooltip().hover(themeTooltip);
+            setUseLinks("branches");
         }
     },
     /* ============================================================ UPGRADES ============================================================ */

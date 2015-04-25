@@ -56,17 +56,20 @@ function load() {
         if (gD.inventory[i].unlocked) {
             $("#inv_" + i).show()
             $("#inv_" + i + "_info").tooltip().hover(themeTooltip);
-            for (var k = 0; k < $("#inv_" + i + "_use").children().length; k++) { // Buy on click
-                var j = $("#inv_" + i + "_use").children()[k].id;
-                $("#" + j).show().click(function(_i, _j) {
-                    return function() {
-                        game.inventory[_i].buy(_j.split("_")[2]);
-                    };
-                }(i, j));
-            }            
         } else {
             $("#inv_" + i).hide();       
         }
+    }
+}
+
+function setUseLinks(i) {
+    for (var k = 0; k < $("#inv_" + i + "_use").children().length; k++) { // Buy on click
+        var j = $("#inv_" + i + "_use").children()[k].id;
+        $("#" + j).show().click(function(_i, _j) {
+            return function() {
+                game.inventory[_i].buy(_j.split("_")[2]);
+            };
+        }(i, j));
     }
 }
 
