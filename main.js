@@ -1,4 +1,4 @@
-//TODO: More stats (prestigeTime...), hasOwnProperty -> optimisation, progress (bars?), log highlighting transition? (bitstorm), compatibility on version update, timify, cost, countActions, noScript
+//TODO: More stats (prestigeTime...), hasOwnProperty -> optimisation, progress (bars?), log highlighting transition? (bitstorm), compatibility on version update, timify, cost, countActions, noScript, crédits
 
 /*function buyWatcher(number) {
     for (var i = 1; i <= number; i++) {
