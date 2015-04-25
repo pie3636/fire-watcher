@@ -115,6 +115,12 @@ function countAchievements() {
     return total;
 }
 
+function gainTime(n)
+{
+    gD.time += n;
+    gD.stats.timeGained += n;
+}
+
 String.prototype.textify = function() { // camelCaseObject,AnotherAnd_Escaping_or_Not__ -> Camel case object, another and Escapingor Not_
     var res = "";
     var up = false;

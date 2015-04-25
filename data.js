@@ -25,7 +25,7 @@ var game = {
                     gD.inventory.branches.value -= n;
                     var gain = gD.actions.exploreTheBeach.branchesPower * n;
                     log("Earnt " + timify(gain) + "!");
-                    gD.time += gain;
+                    gainTime(gain);
                 } else {
                     log("Not enough branches!");
                 }
@@ -75,6 +75,7 @@ var gD = {
         totalUpgrades: 0,
         totalAchievements: 0,
         playTime: 0,
+        timeGained: 0,
         uses: {
             fanTheFlames: 0
         }
@@ -106,7 +107,7 @@ var actions = {
             if (gD.actions.fireMastery.bought) {
                 gain += 0.001 * gD.actions.fanTheFlames.uses;
             }
-            gD.time += gain;
+            gainTime(gain);
             gD.actions.fanTheFlames.uses ++;
         },
         tick: function() {
@@ -129,7 +130,7 @@ var actions = {
         },
         effect: function() {
             gD.actions.fetch_Brushwood.fatigue = Math.min(300, gD.actions.fetch_Brushwood.fatigue + 30);
-            gD.time += 300 - gD.actions.fetch_Brushwood.fatigue;
+            gainTime(300 - gD.actions.fetch_Brushwood.fatigue);
         },
         tick: function() {
         var fatigue = gD.actions.fetch_Brushwood.fatigue;
@@ -155,7 +156,7 @@ var actions = {
             var branchesFound = intRandom(1, 5);
             gD.inventory.branches.unlocked = true;
             gD.inventory.branches.value += branchesFound;
-            log("You found " + branchesFound + " branches!");
+            log("You found " + timify(branchesFound, 0, true, true) + " branches! Total : " + timify(gD.inventory.branches.value, 0, true, true));
         },
         tick: function() {
             $("#inv_branches_more").html(timify(gD.actions.exploreTheBeach.branchesPower));

@@ -118,6 +118,7 @@ function tick() {
         $("#stats_playTime").html(timify(gD.stats.playTime, 2));
         $("#stats_sessionTime").html(timify(game.sessionTime, 2));
         $("#stats_fanTheFlamesUses").html(gD.actions.fanTheFlames.uses);
+        $("#stats_timeGained").html(timify(gD.stats.timeGained, 2));
         $("#actionsUnlockedCur").html(gD.stats.totalActions);
         $("#upgradesUnlockedCur").html(gD.stats.totalUpgrades);
         $("#achievementsUnlockedCur").html(gD.stats.totalAchievements);
