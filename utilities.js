@@ -12,7 +12,7 @@ function sumPrices(base, factor, owned, number) {
 function timify(input, digits, keepZeros, nonTime) { // TODO Add options : rough (~ 3 hours), long (3 hours 5 minutes 43 seconds), scientific (1e+02s), prefixes, horloge (00:05:17.123)->reuse in log etc
     digits = (typeof digits === 'undefined' ? 0 : digits); //TODO : Use Date package, + options pour afficher temps complets/autres -> short mid long (3s 3 sec 3 seconds), + precision, default = 2 (H:M, M:S; etc), use extra units. Units = SMHDMYCM, SMHDWMYQCM (option pour garder 0x ou x) (Q = bissextiles), yzafpnµmskMGTPEZY, dnosxfqtbµm.KMBTQFXSOND, z..aA..Z
     var out = prettify(input, digits, 0);
-    if (out <= 300 && !nonTime) {
+    if (out < 300 && !nonTime) {
         return out + " seconds";
     } else if (!nonTime) {
         var outmin = Math.floor(out/60);
@@ -23,7 +23,7 @@ function timify(input, digits, keepZeros, nonTime) { // TODO Add options : rough
             var outhour = Math.floor(outmin/60);
             outmin = outmin % 60;
             if (outhour <= 47) {
-                return outhour + " hr" + (outmin >= 1 && !keepZeros ? " " + Math.floor(outmin) + " sec" : "");
+                return outhour + " hr" + (outmin >= 1 && !keepZeros ? " " + Math.floor(outmin) + " min" : "");
             }
         }
     }
