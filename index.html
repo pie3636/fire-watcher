@@ -35,6 +35,7 @@
                 <li><a href="#" id="nav_opt" onclick="changeTab('opt')">Options</a></li>
                 <li><a href="#" id="nav_stats" onclick="changeTab('stats')">Stats</a></li>
                 <li><a href="#" id="nav_logs" onclick="changeTab('logs')">Logs</a></li>
+                <li><a href="#" id="nav_inv" onclick="changeTab('inv')">Inventory</a></li>
             </ul>
         </div>
     </div>
@@ -78,35 +79,32 @@
     -->
     <div class="row" id="play">
         <div class="col-md-8 split-left" id="actions"> <!-- Can be splitted into col-md-8 + another div -->				
-        
-                <!--
-                <div class="row" style="margin-left:0px">
-                    <div class="col-md-3 col-md-center">
-                        Watchers : <span id="watchers">0</span>
-                    </div>
-                    <div class="col-md-2 col-md-center">
-                        Cost : <span id="watcherCost">10</span>
-                    </div>
-                    <div class="col-md-3 col-md-center">
-                        Production : <span id="watcherProduction">0</span>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="btn-group float-right">
-                            <button onclick="buyWatcher(1)" type="button" class="btn btn-default" id="buyWatcher1" data-toggle="tooltip" data-placement="top" title="Cost : 10" data-container="body">Buy 1</button>
-                            <button onclick="buyWatcher(10)" type="button" class="btn btn-default" id="buyWatcher2" data-toggle="tooltip" data-placement="top" title="Cost : 0" data-container="body">Buy 10</button>
-                            <button onclick="buyWatcher(100)" type="button" class="btn btn-default" id="buyWatcher3" data-toggle="tooltip" data-placement="top" title="Cost : 0" data-container="body">Buy 100</button>
-                        </div>
+            <!--
+            <div class="row" style="margin-left:0px">
+                <div class="col-md-3 col-md-center">
+                    Watchers : <span id="watchers">0</span>
+                </div>
+                <div class="col-md-2 col-md-center">
+                    Cost : <span id="watcherCost">10</span>
+                </div>
+                <div class="col-md-3 col-md-center">
+                    Production : <span id="watcherProduction">0</span>
+                </div>
+                <div class="col-md-4">
+                    <div class="btn-group float-right">
+                        <button onclick="buyWatcher(1)" type="button" class="btn btn-default" id="buyWatcher1" data-toggle="tooltip" data-placement="top" title="Cost : 10" data-container="body">Buy 1</button>
+                        <button onclick="buyWatcher(10)" type="button" class="btn btn-default" id="buyWatcher2" data-toggle="tooltip" data-placement="top" title="Cost : 0" data-container="body">Buy 10</button>
+                        <button onclick="buyWatcher(100)" type="button" class="btn btn-default" id="buyWatcher3" data-toggle="tooltip" data-placement="top" title="Cost : 0" data-container="body">Buy 100</button>
                     </div>
                 </div>
-                <hr />
-                -->   
             </div>
+            <hr />
+            -->   
+        </div>
         <div class="col-md-4" id="upgrades">
             <!--<p class="text-center">--><p>Upgrades :</p>
         </div>
-        <hr/>
     </div>
-
 
     <div class="row" id="opt" style="display:none">
         <div class="col-md-12">
@@ -188,11 +186,21 @@
     
     
     <div class="row" id="logs" style="display:none">
-        <div class="col-md-12">
-            <div class="col-md-12"style="margin-left:-15px">
-                <textarea id="fullLogs" readonly class="form-control" style="border: 1px solid #ccc"></textarea>
-                <button id="clearFullLogs" type="button" class="btn btn-default top15 center-block" data-toggle="tooltip" data-placement="bottom" title="Clear the logs" data-container="body">Clear logs</button>
-            </div>
+        <div class="col-md-12"style="margin-left:-15px">
+            <textarea id="fullLogs" readonly class="form-control" style="border: 1px solid #ccc"></textarea>
+            <button id="clearFullLogs" type="button" class="btn btn-default top15 center-block" data-toggle="tooltip" data-placement="bottom" title="Clear the logs" data-container="body">Clear logs</button>
+        </div>
+    </div>
+    
+    
+    <div class="row" id="inv" style="display:none">
+        <div class="col-md-2">
+            <span id="inv_branches" style="display:none">Branches : <br /></span>
+            <span id="inv_random">Randomness : <br /></span>
+        </div>
+        <div class="col-md-1">
+            <span id="inv_branches_value" style="display:none">0<br /></span>
+            <span id="inv_random_value">1234<br /></span>
         </div>
     </div>
 

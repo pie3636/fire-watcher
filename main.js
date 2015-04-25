@@ -1,4 +1,4 @@
-//TODO: More stats (prestigeTime...), hasOwnProperty -> optimisation, progress (bars?), log highlighting transition? (bitstorm), compatibility on version update, timify, cost, countActions
+//TODO: More stats (prestigeTime...), hasOwnProperty -> optimisation, progress (bars?), log highlighting transition? (bitstorm), compatibility on version update, timify, cost, countActions, noScript
 
 /*function buyWatcher(number) {
     for (var i = 1; i <= number; i++) {
@@ -119,6 +119,9 @@ function tick() {
         $("#upgradesUnlockedCur").html(gD.stats.totalUpgrades);
         $("#achievementsUnlockedCur").html(gD.stats.totalAchievements);
     }
+    if (gD.currentTab == "inv") {
+        $("#inv_branches_value").html(timify(gD.inventory.branches.value, 0, true, true) + "<br />");
+    }
     game.onLoad = false;
     /* greyOut("buyWatcher1", time >= sumPrices(10, 1.1, watchers, 1));
     greyOut("buyWatcher2", time >= sumPrices(10, 1.1, watchers, 10));
@@ -132,7 +135,6 @@ function buyUpgrade(upgrade) {
         }
         if (!actions[upgrade].repeatable) {
             gD.actions[upgrade].bought = true;
-            console.log(upgrade);
             switch (actions[upgrade].show.type) {
                 case "standardAction":
                     $("#" + upgrade).tooltip('hide');
@@ -239,8 +241,8 @@ function compare(cost, data, doSub, subStep) { // Returns (cost <= data), data -
 function changeTab(newTab) {
     $("#nav_" + gD.currentTab).parent().removeClass("active");
     $("#nav_" + newTab).parent().addClass("active");
-    hide(gD.currentTab);
-    show(newTab);
+    $("#" + gD.currentTab).hide();
+    $("#" + newTab).show();
     gD.currentTab = newTab;
 }
 
@@ -278,6 +280,9 @@ $(function () {
         } else {
             gD.actions[i] = {unlocked: false, bought: false};
         }
+    }
+    for (var i in gD.inventory) {
+        gD.inventory[i] = {unlocked: false, value: 0};
     }
     localStorage.setItem("initValues", JSON.stringify(gD));
     for(var i = 1; i <= game.numLogs; i++) {
@@ -324,7 +329,7 @@ $(function () {
         $('#containerExport').focus().select();
     });
     $('#importGame').on('hidden.bs.modal', function() {
-        $("#importError").css("display", "none");
+        $("#importError").hide();
     });
     $('#importGame').on('shown.bs.modal', function() {
         $('#containerImport').focus();
@@ -332,3 +337,13 @@ $(function () {
 });
 
 window.setInterval(tick, gD.tickDuration);
+/*window.onbeforeunload = function (event) {
+  var message = 'Are you sure you want to leave?';
+  if (typeof event == 'undefined') {
+    event = window.event;
+  }
+  if (event) {
+    event.returnValue = message;
+  }
+  return message;
+}*/

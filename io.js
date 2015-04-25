@@ -50,8 +50,17 @@ function load() {
     gD.stats.totalAchievements = 0;
     $("#updateAnnouncementClose").click(function() {
         gD.announcements.update.dismissed = true;
-        $("#updateAnnouncement").css("display", "none");
+        $("#updateAnnouncement").hide();
     });
+    for (i in gD.inventory) {
+        if (gD.inventory[i].unlocked) {
+            $("#inv_" + i).show();
+            $("#inv_" + i + "_value").show();
+        } else {
+            $("#inv_" + i).hide();
+            $("#inv_" + i + "_value").hide();        
+        }
+    }
 }
 
 function loadRec(save, data) {
@@ -108,7 +117,7 @@ function importSaveRec() {
         $('#importGame').modal('hide'); // Doesn't happen if error
     }
     catch(err) {
-        $("#importError").css("display", "block"); // Error message
+        $("#importError").show(); // Error message
         return false;
     }
     return true;

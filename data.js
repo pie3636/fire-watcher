@@ -31,6 +31,9 @@ var gD = {
             dismissed: true
         }
     },
+    inventory: {
+        branches : {},
+    },
     actions: {
         fanTheFlames: {
             uses: 0,
@@ -38,7 +41,7 @@ var gD = {
         },
         fetch_Brushwood: {
             fatigue: 0
-        }
+        },
     },
     options: {
         numFullLogs: 100,
@@ -134,6 +137,11 @@ var actions = {
         },
         effect: function() {
             var branchesFound = intRandom(1, 5);
+            gD.inventory.branches.unlocked = true;
+            gD.inventory.branches.value += branchesFound;
+            log("You found " + branchesFound + " branches!");
+            $("#inv_branches_value").show();
+            $("#inv_branches").show();
         },
         tick: function() {
         }
