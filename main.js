@@ -115,6 +115,9 @@ function tick() {
         }
     }
     if (gD.currentTab == "stats") {
+        for (var i in gD.stats) {
+            if (i) {}
+        }
         $("#stats_playTime").html(timify(gD.stats.playTime, 2));
         $("#stats_sessionTime").html(timify(game.sessionTime, 2));
         $("#stats_fanTheFlamesUses").html(gD.actions.fanTheFlames.uses);
