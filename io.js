@@ -12,7 +12,7 @@ function load() {
     game.sessionTime = 0;
     var saveTheme = gD.options.darkTheme;
     $("#actions").html("<div style='margin-left:15px'>Time left : <span id='time'>0</span></div><hr/>");
-    $("#upgrades").html("");
+    $("#upgrades").html("<!--<p class='text-center'>--><p>Upgrades :</p>");
     $("#upgradesBought").html("");
     $("#achievements").html("");
     if (game.onReset) {
@@ -54,11 +54,18 @@ function load() {
     });
     for (i in gD.inventory) {
         if (gD.inventory[i].unlocked) {
-            $("#inv_" + i).show();
-            $("#inv_" + i + "_value").show();
+            $("#inv_" + i).show()
+            $("#inv_" + i + "_info").tooltip().hover(themeTooltip);
+            for (var k = 0; k < $("#inv_" + i + "_use").children().length; k++) { // Buy on click
+                var j = $("#inv_" + i + "_use").children()[k].id;
+                $("#" + j).show().click(function(_i, _j) {
+                    return function() {
+                        game.inventory[_i].buy(_j.split("_")[2]);
+                    };
+                }(i, j));
+            }            
         } else {
-            $("#inv_" + i).hide();
-            $("#inv_" + i + "_value").hide();        
+            $("#inv_" + i).hide();       
         }
     }
 }

@@ -120,6 +120,7 @@ function tick() {
         $("#achievementsUnlockedCur").html(gD.stats.totalAchievements);
     }
     if (gD.currentTab == "inv") {
+        $("#time2").html(timify(gD.time, 3));
         $("#inv_branches_value").html(timify(gD.inventory.branches.value, 0, true, true) + "<br />");
     }
     game.onLoad = false;
@@ -273,6 +274,7 @@ function setTheme() {
 }
 
 $(function () {
+    $("#noscript").remove();
     for (var i in actions) {
         if (gD.actions.hasOwnProperty(i)) {
             gD.actions[i].unlocked = false;

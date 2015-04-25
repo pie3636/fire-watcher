@@ -1,5 +1,5 @@
 var game = {
-    version: "v0.5.0",
+    version: "v0.6.0",
     onLoad: false, // Restore purchases
     onImport: false, // Load from import
     onReset: false, // Load from initValues
@@ -16,6 +16,19 @@ var game = {
         GT: 4, // >
         GE: 5, // >=
         NE: 6  // !=
+    },
+    inventory: {
+        branches: {
+            buy: function(str) {
+                var n = (str == "all" ? gD.inventory.branches.value : str);
+                if (n <= gD.inventory.branches.value) {
+                    gD.inventory.branches.value -= n;
+                    var gain = gD.actions.exploreTheBeach.branchesPower * n;
+                    log("Earnt " + timify(gain) + "!");
+                    gD.time += gain;
+                }
+            }
+        }
     }
 };
 var gD = {
@@ -42,6 +55,9 @@ var gD = {
         fetch_Brushwood: {
             fatigue: 0
         },
+        exploreTheBeach: {
+            branchesPower: 10
+        }
     },
     options: {
         numFullLogs: 100,
@@ -119,11 +135,9 @@ var actions = {
                 gD.actions.fetch_Brushwood.fatigue -= gD.tickDuration/1000;
             }
             actions.fetch_Brushwood.cost.time = 60 + fatigue;
-            $("#fetchBrushwoodLoss").html(timify(actions.fetch_Brushwood.cost.time));
-            $("#fetchBrushwoodGain").html(timify(300 - fatigue));
             var color = (fatigue < 120 ? "#080" : "#A00"); // Cost < Gain
-            $("#fetchBrushwoodLoss").attr("style", "color:" + color);
-            $("#fetchBrushwoodGain").attr("style", "color:" + color);
+            $("#fetchBrushwoodLoss").html(timify(actions.fetch_Brushwood.cost.time)).attr("style", "color:" + color);
+            $("#fetchBrushwoodGain").html(timify(300 - fatigue)).attr("style", "color:" + color);
         }
     },
     exploreTheBeach: {
@@ -140,10 +154,11 @@ var actions = {
             gD.inventory.branches.unlocked = true;
             gD.inventory.branches.value += branchesFound;
             log("You found " + branchesFound + " branches!");
-            $("#inv_branches_value").show();
             $("#inv_branches").show();
+            $("#inv_branches_info").tooltip().hover(themeTooltip);
         },
         tick: function() {
+            $("#inv_branches_more").html(timify(gD.actions.exploreTheBeach.branchesPower));
         }
     },
     /* ============================================================ UPGRADES ============================================================ */
