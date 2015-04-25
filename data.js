@@ -19,7 +19,7 @@ var game = {
     },
     inventory: {
         branches: {
-            buy: function(str) {
+            buy: function(str) { // TODO : Generalize function
                 var n = (str == "all" ? gD.inventory.branches.value : str);
                 if (n <= gD.inventory.branches.value && n) {
                     gD.inventory.branches.value -= n;
