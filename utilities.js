@@ -23,7 +23,7 @@ function timify(input, digits, keepZeros, nonTime) { // TODO Add options : rough
             var outhour = Math.floor(outmin/60);
             outmin = outmin % 60;
             if (outhour <= 47) {
-                return outhour + " hr" + (outmin >= 1 && !keepZeros ? " " + Math.floor(outmin) + " min" : "");
+                return outhour + " hr" + (outmin >= 1 && !keepZeros ? " " + Math.floor(outmin) + " min" : "") + (out >= 1 && !keepZeros ? " " + Math.floor(out) + " sec" : "");
             }
         }
     }

@@ -137,8 +137,8 @@ var actions = {
             inside: "Takes <b><span id='fetchBrushwoodLoss'></span></b> to gather brushwood and makes the fire last an additional <b><span id='fetchBrushwoodGain'></span></b>."
         },
         effect: function() {
-            gD.actions.fetch_Brushwood.fatigue = Math.min(300, gD.actions.fetch_Brushwood.fatigue + 30);
             gainTime(300 - gD.actions.fetch_Brushwood.fatigue);
+            gD.actions.fetch_Brushwood.fatigue = Math.min(300, gD.actions.fetch_Brushwood.fatigue + 30);
         },
         tick: function() {
         var fatigue = gD.actions.fetch_Brushwood.fatigue;
@@ -210,7 +210,14 @@ var actions = {
         unlock: {event: {branches37: true}},
         show: {
             type: "achievement",
-            tooltip: "Using exactly 37 branches at once. Increases branches gain"
+            tooltip: "Using exactly 37 branches at once. This achievement does nothing at all"
+        }
+    },
+    mismisunderstanding: {
+        unlock: {stats: {uses: {fanTheFlames: 1111}}},
+        show: {
+            type: "achievement",
+            tooltip: "You earn more than 11.111 seconds each time you fan the flames! Increases branches gain"
         },
         effect: function() {
             gD.actions.exploreTheBeach.maxBranches *= 3;
