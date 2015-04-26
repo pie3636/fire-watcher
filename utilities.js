@@ -108,11 +108,21 @@ function countUpgrades() {
 function countAchievements() {
     var total = 0;
     for (var i in actions) {
-        if (actions[i].show.type == "standardAchievement") { //TODO : Change eventually, or global variable
+        if (actions[i].show.type == "achievement") { //TODO : Change eventually, or global variable
             total++;
         }
     }
     return total;
+}
+
+function setStats(str, data) {
+    for (var i in data) {
+        if (typeof data[i] === "object") {
+            setStats(str + "_" + i, data[i]);
+        } else {
+            $(str + "_" + i).html((~i.toLowerCase().indexOf("time") ? timify(data[i], 2) : data[i]));   
+        }
+    }
 }
 
 function gainTime(n)

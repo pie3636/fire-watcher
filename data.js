@@ -6,7 +6,6 @@ var game = {
     logTimeout: {},
     latestLog: 5,
     numLogs: 5,
-    sessionTime: 0,
     latestFullLog: 0,
     newSave: {},
     operator: {
@@ -36,6 +35,7 @@ var game = {
 var gD = {
     tickDuration: 25,
     time: 60,
+    sessionTime: 0,
     timeSpeed: 1,
     //watchers: 0,
     //watcherPower: 1,
@@ -58,6 +58,8 @@ var gD = {
             fatigue: 0
         },
         exploreTheBeach: {
+            minBranches: 1,
+            maxBranches: 5,
             branchesPower: 10
         }
     },
@@ -86,7 +88,7 @@ var gD = {
 
 /* unlock, cost : Object [~gD]                          Costs of unlocking and buying, default: {operator: game.operator.GE, value: cost[î], isConsumed: true}
  * -> unlock : {time: 50} ~ {time: {operator: game.operator.GE, value: 50, isConsumed: true}}
- * show : Object [type, tooltip, inside][text]          Items to be displayed. Types : standardAction, standardUpgrade, standardAchievement
+ * show : Object [type, tooltip, inside][text]          Items to be displayed. Types : action, standardUpgrade, standardAchievement
  * effect : function                                    On buying
  * tick : function                                      On tick
  * repeatable : Boolean                                 Peristent
@@ -98,7 +100,7 @@ var actions = {
     fanTheFlames: {
         repeatable: true,
         show: {
-            type: "standardAction",
+            type: "action",
             tooltip: "Blow air on the fire to make it last a bit longer",
             inside: "Increases the fire duration by <b><span id='firePower'>" + gD.actions.fanTheFlames.power + " seconds</span></b>."
         },
@@ -108,7 +110,7 @@ var actions = {
                 gain += 0.001 * gD.actions.fanTheFlames.uses;
             }
             gainTime(gain);
-            gD.actions.fanTheFlames.uses ++;
+            gD.stats.uses.fanTheFlames++;
         },
         tick: function() {
             var gain = gD.actions.fanTheFlames.power;
@@ -123,7 +125,7 @@ var actions = {
         cost: {time: 60},
         repeatable: true,
         show: {
-            type: "standardAction",
+            type: "action",
             nocenter: true,
             tooltip: "Take some time to fetch brushwood on the beach, increasing the duration of the fire",
             inside: "Takes <b><span id='fetchBrushwoodLoss'></span></b> to gather brushwood and makes the fire last an additional <b><span id='fetchBrushwoodGain'></span></b>."
@@ -148,12 +150,12 @@ var actions = {
         cost: {time: 300},
         repeatable: true,
         show: {
-            type: "standardAction",
+            type: "action",
             tooltip: "Explore the immediate surroundings of the fire, and collect what could be useful",
             inside: "Takes <b><span id='exploreTheBeachLoss'>" + timify(300) + "</span></b> to explore the beach and possibly find loot.<br />"
         },
         effect: function() {
-            var branchesFound = intRandom(1, 5);
+            var branchesFound = intRandom(gD.actions.exploreTheBeach.minBranches, gD.actions.exploreTheBeach.maxBranches);
             gD.inventory.branches.unlocked = true;
             gD.inventory.branches.value += branchesFound;
             log("You found " + timify(branchesFound, 0, true, true) + " branches! Total : " + timify(gD.inventory.branches.value, 0, true, true));
@@ -180,7 +182,7 @@ var actions = {
         }
     },
     fireMastery: {
-        unlock: {actions: {fanTheFlames: {uses: 50}}},
+        unlock: {stats: {uses: {fanTheFlames: 50}}},
         cost: {time: 500},
         show: {
             type: "standardUpgrade",
@@ -188,11 +190,11 @@ var actions = {
         }
     },
     /* ============================================================ ACHIEVEMENTS ============================================================ */
-    wellThatWasShort: {
+    threeHundredSeconds: {
         unlock: {stats: {playTime:300}},
         show: {
-            type: "standardAchievement",
-            tooltip: "Playing for more than 5 minutes! Time decay is halved."
+            type: "achievement",
+            tooltip: "Playing for more than 5 minutes! Time decay is decreased by 10%"
         },
         effect: function() {
             gD.timeSpeed /= 2;
@@ -209,3 +211,4 @@ var actions = {
         }
     }
 };
+

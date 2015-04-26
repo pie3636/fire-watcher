@@ -4,9 +4,9 @@ Fatigue : f
 t -= 1/s
 f -= 2/s
 
-Fan the flames              No requirement              No cost                    t += 5s                      T
-Fetch brushwood             100s                        t -= 60s + f/2             t += 5m -f/2, f += 60        T
+Fan the flames              No requirement              No cost                    t + 5s                       T
+Fetch brushwood             100s                        t -= 60s + f/2             t + 5m - f/2, f + 60         T
 Pyramid fire                100s                        t -= 10m                   Fan_the_flames * 2           U
 Fire mastery                50 Fan_the_flames           t -= 500s                  Fan_the_fire += 0.001/use    U
+Explore the beach           300s                        t -= 300s                  1~5 branches (10s)           T
 
-Explore the beach           300s                        t -= 300s                  [Loot]                       T
