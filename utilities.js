@@ -98,7 +98,7 @@ function countActions() {
 function countUpgrades() {
     var total = 0;
     for (var i in actions) {
-        if (actions[i].show.type == "standardUpgrade") { //TODO : Change eventually, or global variable
+        if (actions[i].show.type == "upgrade") { //TODO : Change eventually, or global variable
             total++;
         }
     }
@@ -179,3 +179,4 @@ function changeTooltipColorTo(color, fgcolor) {
     $(".tooltip.left .tooltip-arrow").css("border-left-color", color);
     $(".tooltip.bottom .tooltip-arrow").css("border-bottom-color", color);
 }
+

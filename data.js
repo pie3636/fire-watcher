@@ -1,5 +1,5 @@
 var game = {
-    version: "v0.6.0",
+    version: "v0.6.1",
     onLoad: false, // Restore purchases
     onImport: false, // Load from import
     onReset: false, // Load from initValues
@@ -25,10 +25,13 @@ var game = {
                     var gain = gD.actions.exploreTheBeach.branchesPower * n;
                     log("Earnt " + timify(gain) + "!");
                     gainTime(gain);
+                    if(n == 37) {
+                        gD.event.branches37 = true;
+                    }
                 } else {
                     log("Not enough branches!");
                 }
-            }
+            },
         }
     }
 };
@@ -49,6 +52,9 @@ var gD = {
     inventory: {
         branches : {},
     },
+    event: {
+        branches37: false
+    },
     actions: {
         fanTheFlames: {
             uses: 0,
@@ -60,7 +66,7 @@ var gD = {
         exploreTheBeach: {
             minBranches: 1,
             maxBranches: 5,
-            branchesPower: 10
+            branchesPower: 10,
         }
     },
     options: {
@@ -88,7 +94,7 @@ var gD = {
 
 /* unlock, cost : Object [~gD]                          Costs of unlocking and buying, default: {operator: game.operator.GE, value: cost[î], isConsumed: true}
  * -> unlock : {time: 50} ~ {time: {operator: game.operator.GE, value: 50, isConsumed: true}}
- * show : Object [type, tooltip, inside][text]          Items to be displayed. Types : action, standardUpgrade, standardAchievement
+ * show : Object [type, tooltip, inside][text]          Items to be displayed. Types : action, upgrade, achievement
  * effect : function                                    On buying
  * tick : function                                      On tick
  * repeatable : Boolean                                 Peristent
@@ -107,7 +113,7 @@ var actions = {
         effect: function() {
             var gain = gD.actions.fanTheFlames.power;
             if (gD.actions.fireMastery.bought) {
-                gain += 0.001 * gD.actions.fanTheFlames.uses;
+                gain += 0.001 * gD.stats.uses.fanTheFlames;
             }
             gainTime(gain);
             gD.stats.uses.fanTheFlames++;
@@ -115,7 +121,7 @@ var actions = {
         tick: function() {
             var gain = gD.actions.fanTheFlames.power;
             if (gD.actions.fireMastery.bought) {
-                gain += 0.001 * gD.actions.fanTheFlames.uses;
+                gain += 0.001 * gD.stats.uses.fanTheFlames;
             }
             $("#firePower").html(timify(gain, 3));
         }
@@ -174,7 +180,7 @@ var actions = {
         unlock: {time: 100},
         cost: {time: 600},
         show: {
-            type: "standardUpgrade",
+            type: "upgrade",
             tooltip : "Fanning the flames is twice as efficient"
         },
         effect: function() {
@@ -185,7 +191,7 @@ var actions = {
         unlock: {stats: {uses: {fanTheFlames: 50}}},
         cost: {time: 500},
         show: {
-            type: "standardUpgrade",
+            type: "upgrade",
             tooltip : "Your fire skills increase with time. Fan the flames gains 0.001 power with each use"
         }
     },
@@ -194,10 +200,20 @@ var actions = {
         unlock: {stats: {playTime:300}},
         show: {
             type: "achievement",
-            tooltip: "Playing for more than 5 minutes! Time decay is decreased by 10%"
+            tooltip: "Playing for 5 minutes! Time decay is decreased by 10%"
         },
         effect: function() {
-            gD.timeSpeed /= 2;
+            gD.timeSpeed *= 0.9;
+        }
+    },
+    misunderstanding: {
+        unlock: {event: {branches37: true}},
+        show: {
+            type: "achievement",
+            tooltip: "Using exactly 37 branches at once. Increases branches gain"
+        },
+        effect: function() {
+            gD.actions.exploreTheBeach.maxBranches *= 3;
         }
     },
     /* ============================================================ MISCELLANEOUS ============================================================ */
