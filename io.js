@@ -11,6 +11,7 @@ function load() {
     game.onLoad = true; // Restore actions on next tick
     gD.stats.sessionTime = 0;
     var saveTheme = gD.options.darkTheme;
+    unsetUseLinks("branches");
     $("#actions").html("<div style='margin-left:15px'>Time left : <span id='time'>0</span></div><hr/>");
     $("#upgrades").html("<!--<p class='text-center'>--><p>Upgrades :</p>");
     $("#upgradesBought").html("");
@@ -72,6 +73,13 @@ function setUseLinks(i) {
                 game.inventory[_i].buy(_j.split("_")[2]);
             };
         }(i, j));
+    }
+}
+
+function unsetUseLinks(i) {
+    for (var k = 0; k < $("#inv_" + i + "_use").children().length; k++) { // Buy on click
+        var j = $("#inv_" + i + "_use").children()[k].id;
+        $("#" + j).show().off("click");
     }
 }
 
