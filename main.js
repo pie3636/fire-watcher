@@ -1,4 +1,4 @@
-//TODO: More stats (prestigeTime...), hasOwnProperty/booleans 0-1 -> optimisation, progress (bars?), log highlighting transition? (bitstorm), compatibility on version update, timify, cost, countActions, credits
+//TODO: More stats (prestigeTime...), hasOwnProperty/booleans 0-1 -> optimisation, progress (bars?), log highlighting transition? (bitstorm), compatibility on version update, timify, cost, actions, credits
 
 /*function buyWatcher(number) {
     for (var i = 1; i <= number; i++) {
@@ -71,7 +71,6 @@ function tick() {
                             strButton + i.textify() + ' </button>');
                     $("#" + i).css("margin-right", 10).css("margin-bottom", 5);
                     if (typeof actions[i].effect !== 'undefined' && justUnlocked) { // Don't apply effects on load
-console.log("UNLOCKED NORMAL " + i);
                         actions[i].effect();
                     }
                     if (!game.onLoad) {
@@ -130,7 +129,6 @@ console.log("UNLOCKED NORMAL " + i);
 function buyUpgrade(upgrade) {
     if (!gD.actions[upgrade].bought && compare(actions[upgrade].cost, gD, true)) { // First condition isn't mandatory
         if (typeof actions[upgrade].effect !== 'undefined') {
-console.log("UNLOCKED BUY " + upgrade);
             actions[upgrade].effect();
         }
         if (!actions[upgrade].repeatable) {
@@ -247,19 +245,18 @@ function changeTab(newTab) {
 }
 
 function setTheme() {
+    var add = (gD.options.darkTheme ? "2" : "");
+    var add2 = (add ? "" : "2");
     if (gD.options.darkTheme) {
         $("#navbar, #logger").removeClass("navbar-inverse");
-        $(".btn-default2").not(document.getElementById("importNow")).removeClass("btn-default2").addClass("btn-default");
-        $(".split-left2").removeClass("split-left2").addClass("split-left");
         $("hr").removeClass("HR2");
-        $(".btn").removeClass("greyedOut2");
     } else {
         $("#navbar, #logger").addClass("navbar-inverse");
-        $(".btn-default").not(document.getElementById("importNow")).removeClass("btn-default").addClass("btn-default2");
-        $(".split-left").removeClass("split-left").addClass("split-left2");;
         $("hr").addClass("HR2");
-        $(".btn").removeClass("greyedOut");
     }
+    $(".split-left" + add).removeClass("split-left" + add).addClass("split-left" + add2);
+    $(".btn-default" + add).not(document.getElementById("importNow")).removeClass("btn-default" + add).addClass("btn-default" + add2);
+    $(".btn").removeClass("greyedOut" + (gD.options.darkTheme ? "2" : ""));
     $(".navbar-fixed-bottom").css("color", (gD.options.darkTheme ? "#777" : "9d9d9d")).css("text-shadow", (gD.options.darkTheme ? "0 1px 0 rgba(255, 255, 255, .25)" : "0 -1px 0 rgba(0, 0, 0, .25)"));
     $("#logger").css("background-color", (gD.options.darkTheme ? "#eee" : "#111"));
     $("#fullLogs").css("background-color", (gD.options.darkTheme ? "#eee" : "#111")).css("color", (gD.options.darkTheme ? "#555" : "#9d9d9d"));
@@ -321,9 +318,9 @@ $(function () {
     $("#timeFormatting").change(setFormatting);
     $("#resourcesFormatting").change(setFormatting);
     
-    $("#actionsUnlockedTotal").html(countActions());
-    $("#upgradesUnlockedTotal").html(countUpgrades());
-    $("#achievementsUnlockedTotal").html(countAchievements());
+    $("#actionsUnlockedTotal").html(count("action"));
+    $("#upgradesUnlockedTotal").html(count("upgrade"));
+    $("#achievementsUnlockedTotal").html(count("achievement"));
     
     $('.modal').on('show.bs.modal', centerModal);
     $(window).on("resize", function() {

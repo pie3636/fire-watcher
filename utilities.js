@@ -41,6 +41,9 @@ function timify(out, timeLike, shortness, precision, digits, space, extraZeros, 
     var pos = []; // successive string lengths
     var subs = []; // unit without and with precision
     var p = 0; // effective steps
+    if (out < 0) {
+        out *= -1;
+    }
     switch (choice) {
         case 0:
             data = timeUnits;
@@ -114,7 +117,7 @@ function timify(out, timeLike, shortness, precision, digits, space, extraZeros, 
     if (outsave2 % 1 !== 0 || ~str.search(/[a-zA-Zµ]/)) {
         str = str.replace(subs[p - precision][0], subs[subs.length - precision][1]);
     }
-    return str.replace("  ", " ").replace(/ $/, "");
+    return (outsave2 < 0 ? "-" : "") + str.replace("  ", " ").replace(/ $/, "");
 }
 
 function validateNumber(callback) {
@@ -134,8 +137,7 @@ function validateBounds(callback, ptr) {
     return function() {
         if (Number($("#" + ptr.id).val()) < ptr.min) {
             $("#" + ptr.id).val(ptr.min);
-        }
-        if (Number($("#" + ptr.id).val()) > ptr.max) {
+        } else if (Number($("#" + ptr.id).val()) > ptr.max) {
             $("#" + ptr.id).val(ptr.max);
         }
         callback();
@@ -165,37 +167,19 @@ function greyOut(id, back, theme) {
 function tooltip(id, title, show) {
     show = (typeof show === 'undefined' ? true : show);
     $("#" + id).attr("title", title).tooltip('fixTitle');
-    if (show) $("#" + id).tooltip('show');
+    if (show) {
+        $("#" + id).tooltip('show');
+    }
 }
 
 function intRandom(min, max) {
     return 1 + Math.round(Math.random()*(max-min));
 }
 
-function countActions() {
+function count(str) {
     var total = 0;
     for (var i in actions) {
-        if (actions[i].repeatable) { //TODO : Change eventually, or global variable
-            total++;
-        }
-    }
-    return total;
-}
-
-function countUpgrades() {
-    var total = 0;
-    for (var i in actions) {
-        if (actions[i].show.type == "upgrade") { //TODO : Change eventually, or global variable
-            total++;
-        }
-    }
-    return total;
-}
-
-function countAchievements() {
-    var total = 0;
-    for (var i in actions) {
-        if (actions[i].show.type == "achievement") { //TODO : Change eventually, or global variable
+        if (actions[i].show.type == str) { //TODO : Change eventually, or global variable
             total++;
         }
     }
