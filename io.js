@@ -165,7 +165,7 @@ function log(str, secondary) {
         $("#l1").css("color", (gD.options.darkTheme ? "#FF0" : "#08F")).css("font-weight", "bold");
         game.logTimeout.l1 = setTimeout(unhighlightLastLog, gD.options.logDuration * 1000);
     }
-    $("#fullLogs").html($("#fullLogs").html() + date + str + "\n");
+   $("#fullLogs").html(date + str + "\n" + $("#fullLogs").html());
     game.latestFullLog++;
     resizeFullLogs();
 }

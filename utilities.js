@@ -191,7 +191,7 @@ function setStats(str, data) {
         if (typeof data[i] === "object") {
             setStats(str + "_" + i, data[i]);
         } else {
-            $(str + "_" + i).html((~i.toLowerCase().indexOf("time") ? timify(data[i], true, 1, 3, 0) : timify(data[i], false, 1, 1, (~i.toLowerCase().indexOf("total") ? 0 : 3))));   
+            $(str + "_" + i).html((~i.toLowerCase().indexOf("time") ? timify(data[i], true, 1, 3, 0) : (~i.toLowerCase().indexOf("total") ? data[i] : timify(data[i], false, 1, 1, 3)) ));   
         }
     }
 }
