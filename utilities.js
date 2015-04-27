@@ -111,7 +111,7 @@ function timify(out, timeLike, shortness, precision, digits, space, extraZeros, 
         str = str.slice(0, - pos[p - precision - 1] - (extraSpace ? 1 : 0));
     }
     str += sec;
-    if (outsave2 % 1 !== 0 || !~str.indexOf(" ")) {
+    if (outsave2 % 1 !== 0 || ~str.search(/[a-zA-Zµ]/)) {
         str = str.replace(subs[p - precision][0], subs[subs.length - precision][1]);
     }
     return str.replace("  ", " ").replace(/ $/, "");
