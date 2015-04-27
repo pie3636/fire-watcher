@@ -79,7 +79,7 @@ var gD = {
         },
         formatting: {
             time: 0,
-            resources: 2
+            resources: 1
         }
     },
     stats: {
