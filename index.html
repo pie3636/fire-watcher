@@ -50,7 +50,8 @@
     <div class="alert alert-info" id="updateAnnouncement" style="display: block">
     <button type="button" class="close" id="updateAnnouncementClose">x</button>
     <b>Announcement :</b> <span id="updateAnnouncementVersion"></span> is out!<br />
-        - Added another achievement<br />
+        - Added another achievement (Interstellar)<br />
+        - Display formatting in progress : Last step before the content update!
     </div>
     <!--
     <div class="alert alert-info" id="announcement">
@@ -74,7 +75,7 @@
     <b>Purple :</b> This is a <a class="alert-link">link</a>.<hr/>
     </div>
     -->
-    <h1 class="text-center" id="noscript">Oops! The game doesn't seem to load... If your connection is being slow, you can wait some more. Otherwise, please make sure JavaScript is enabled, and try again. If you are using an add-on like NoScript, please whitelist <u>pie3636.github.io</u>.</h1>
+    <h1 class="text-center" id="noscript">Oops! The game doesn't seem to load... If your connection is being slow, you can wait some more. Otherwise, please make sure JavaScript is enabled, and try again. If you are using an add-on like NoScript, please whitelist <u>pie3636.github.io</u> in order to play the game.</h1>
     <div class="row" id="play">
         <div class="col-md-8 split-left" id="actions">		
             <!--
@@ -135,15 +136,15 @@
     <div class="row" id="opt" style="display:none">
         <div class="col-md-12">
             <div style="margin-left:36px">
-                <label class="checkbox">
+                <label class="row">
                     <input type="checkbox" id="darkTheme"/>
-                </label>Use dark theme
+                </label><span style="margin-left: 20px">Use dark theme</span>
                 <br />
-                <label class="checkbox">
+                <label class="row">
                     <input type="checkbox" id="autoSave"/>
-                </label>Enable autosave every 
+                </label><span style="margin-left: 20px">Enable autosave every 
                 <input type="number" id="autoSaveTimer" value="60" min="10" max="3600">
-                  seconds (10-3600)<br />
+                  seconds (10-3600)<span><br />
             </div>
             <hr/>
             <div class="row" style="margin-left:10px">
@@ -175,11 +176,26 @@
             <b>Advanced settings :</b><br />
             <div style="margin-left:15px">
                 Highlighting duration of the logs : 
-                <input type="number" id="logDuration" value="10" min="1" max="3600">
+                <input type="number" id="logDuration" class="top3" value="10" min="1" max="3600">
                 seconds (1-3600). <b>Warning : </b>This will reset the current highlighting!<br />
                 Make the full logs 
-                <input type="number" id="fullLogSize" value="100" min="1" max="2000">
+                <input type="number" id="fullLogSize" class="top3" value="100" min="1" max="2000">
                 lines high (10-2000). <br />
+                Time formatting (WIP) : <select class="form-control top3" id="timeFormatting" style="width: auto; min-height: 0px; display: inline; padding: 4px 0px 4px 12px">
+                    <option>Temporal units (second, minute, hour...)</option>
+                    <option>S.I. units (kilo, mega, giga...)</option>
+                    <option>Mathematical units (million, billion, trillion...)</option>
+                    <option>Alphabetical units (a, b, c...)</option>
+                    <option>Scientific notation (1.234e+56)</option>
+                </select>
+                <br />
+                Other resources formatting (WIP) : <select class="form-control top3" id="resourceFormatting" style="width: auto; min-height: 0px; display: inline; padding: 4px 0px 4px 12px">
+                    <option>S.I. units (kilo, mega, giga...)</option>
+                    <option>Mathematical units (million, billion, trillion...)</option>
+                    <option>Alphabetical units (a, b, c...)</option>
+                    <option>Scientific notation (1.234e+56)</option>
+                </select>
+                <br />
             <button id="clearLogs" type="button" class="btn btn-default top6" data-toggle="tooltip" data-placement="bottom" title="Clear the logs" data-container="body">Clear logs</button>
             </div>
         </div>

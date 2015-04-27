@@ -1,5 +1,5 @@
 var game = {
-    version: "v0.6.1",
+    version: "v0.6.2",
     onLoad: false, // Restore purchases
     onImport: false, // Load from import
     onReset: false, // Load from initValues
@@ -92,14 +92,15 @@ var gD = {
 
 
 
-/* unlock, cost : Object [~gD]                          Costs of unlocking and buying, default: {operator: game.operator.GE, value: cost[î], isConsumed: true}
+/* unlock, cost : Object [~gD]                                  Costs of unlocking and buying, default: {operator: game.operator.GE, value: cost[î], isConsumed: true}
  * -> unlock : {time: 50} ~ {time: {operator: game.operator.GE, value: 50, isConsumed: true}}
- * show : Object [type, tooltip, inside][text]          Items to be displayed. Types : action, upgrade, achievement
- * effect : function                                    On buying
- * tick : function                                      On tick
- * repeatable : Boolean                                 Peristent
- * nocenter : Boolean                                   Multiline (action)
- * isUpgrade : Boolean                                  In case of unhandled show type
+ * show : Object [type, tooltip, inside, nocenter][text]        Items to be displayed. Types : action, upgrade, achievement
+ * effect : function                                            On buying
+ * tick : function                                              On tick
+ * doUnlock : function                                          On unlock
+ * repeatable : Boolean                                         Peristent
+ * nocenter : Boolean                                           Multiline (action)
+ * isUpgrade : Boolean                                          In case of unhandled show type
  */
  
 var actions = {
@@ -141,7 +142,7 @@ var actions = {
             gD.actions.fetch_Brushwood.fatigue = Math.min(300, gD.actions.fetch_Brushwood.fatigue + 30);
         },
         tick: function() {
-        var fatigue = gD.actions.fetch_Brushwood.fatigue;
+            var fatigue = gD.actions.fetch_Brushwood.fatigue;
             if (fatigue >= 0) {
                 gD.actions.fetch_Brushwood.fatigue -= gD.tickDuration/1000;
             }
@@ -181,7 +182,7 @@ var actions = {
         cost: {time: 600},
         show: {
             type: "upgrade",
-            tooltip : "Fanning the flames is twice as efficient"
+            tooltip: "Fanning the flames is twice as efficient"
         },
         effect: function() {
             gD.actions.fanTheFlames.power *= 2;
@@ -192,7 +193,7 @@ var actions = {
         cost: {time: 500},
         show: {
             type: "upgrade",
-            tooltip : "Your fire skills increase with time. Fan the flames gains 0.001 power with each use"
+            tooltip: "Your fire skills increase with time. Fan the flames gains 0.001 power with each use"
         }
     },
     /* ============================================================ ACHIEVEMENTS ============================================================ */
@@ -213,7 +214,7 @@ var actions = {
             tooltip: "Using exactly 37 branches at once. This achievement does nothing at all"
         }
     },
-    mismisunderstanding: {
+    iAmSoConfused: {
         unlock: {stats: {uses: {fanTheFlames: 1111}}},
         show: {
             type: "achievement",
@@ -221,6 +222,16 @@ var actions = {
         },
         effect: function() {
             gD.actions.exploreTheBeach.maxBranches *= 3;
+        }
+    },
+    interstellar: {
+        unlock: {time: 4354317648e8},
+        show: {
+            type: "achievement",
+            tooltip: "13.8 billion years? That's the age of the Universe!"
+        },
+        effect: function() {
+            //TODO
         }
     },
     /* ============================================================ MISCELLANEOUS ============================================================ */

@@ -9,8 +9,8 @@ function sumPrices(base, factor, owned, number) {
     return sum;
 }
 
-function timify(input, digits, keepZeros, nonTime) { // TODO Add options : rough (~ 3 hours), long (3 hours 5 minutes 43 seconds), scientific (1e+02s), prefixes, horloge (00:05:17.123)->reuse in log etc
-    digits = (typeof digits === 'undefined' ? 0 : digits); //TODO : Use Date package, + options pour afficher temps complets/autres -> short mid long (3s 3 sec 3 seconds), + precision, default = 2 (H:M, M:S; etc), use extra units. Units = SMHDMYCM, SMHDWMYQCM (option pour garder 0x ou x) (Q = bissextiles), yzafpnµmskMGTPEZY, dnosxfqtbµm.KMBTQFXSOND, z..aA..Z
+function timify(input, digits, keepZeros, nonTime) { // TODO Add options : rough (~ 3 hours), horloge (YYYY:DD:HH:MM:SS.mmm) -> reuse in log etc
+    digits = set(digits, 0);
     var out = prettify(input, digits, 0);
     if (out < 300 && !nonTime) {
         return out + " seconds";
@@ -22,12 +22,96 @@ function timify(input, digits, keepZeros, nonTime) { // TODO Add options : rough
         } else {
             var outhour = Math.floor(outmin/60);
             outmin = outmin % 60;
-            if (outhour <= 47) {
+            if (outhour <= 9999999) {//47) {
                 return outhour + " hr" + (outmin >= 1 && !keepZeros ? " " + Math.floor(outmin) + " min" : "") + (out >= 1 && !keepZeros ? " " + Math.floor(out) + " sec" : "");
             }
         }
     }
     return out;
+}
+
+function set(x, val) {
+    return (typeof x === 'undefined' ? val : x);
+}
+
+function timifyall(out, shortness, precision, digits, timeLike, space, extraZeros, keepZeros, extraSpace) {
+    var choice = 1; // $("#timeFormatting option:selected").prevAll().size();
+    timeLike = set(timeLike, true);
+    precision = set(precision, 3);
+    extraSpace = set(extraSpace, true);
+    extraZeros = set(extraZeros, choice == 0 && shortness);
+    digits = set(digits, 3);
+    shortness = set(shortness, 0);
+    space = set(space, shortness <= 1 && choice != 3 && choice != 2 || shortness == 0);
+    keepZeros = set(keepZeros, false);
+    var timeUnits = [["second", "sec", "s", 60], ["minute", "min", "m", 60], ["hour", "hr", "h", 24], ["day", "day", "d", 365], ["year", "yr", "y", 1e3], ["millennium", "mil", "M"]];
+    var SIUnits = [["yocto", "y"], ["zocto", "z"], ["atto", "a"], ["femto", "f"], ["pico", "p"], ["nano", "n"], ["micro", "µ"], ["milli", "m"], ["unit", "u"], ["kilo", "k"], ["mega", "M"], ["giga", "G"], ["tera", "T"], ["peta", "P"], ["exa", "E"], ["zetta", "Z"], ["yotta", "Y"]];
+    var mathUnits = [["", ""],  ["kilo", "K"],  ["million", "M"],  ["billion", "B"],  ["trillion", "T"],  ["quadrillion", "Qa", "Q"],  ["quintillion", "Qi"],  ["sextillion", "Sx", "S"],  ["septillion", "Sp"],  ["octillion", "Oc", "O"],  ["nonillion", "No", "N"],  ["decillion", "Dc", "D"]];
+    var alphaUnits = "zyxwvutsrqponmlkjihgfedcbaøABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    var outsave = 1;
+    var data, start, sec;
+    var pos = [];
+    switch (choice) {
+        case 0:
+            data = timeUnits;
+            start = 1;
+            break;
+        case 1:
+            data = SIUnits;
+            start = 1e24;
+            break;
+        case 2:
+            data = mathUnits;
+            start = 1;
+            break;
+        case 3:
+            data = alphaUnits;
+            start = 1e78;
+            break;
+        case 4:
+            return out.toExponential();
+            break;
+    }
+    switch (shortness) {
+        case 0:
+            sec = "seconds";
+            break;
+        case 1:
+            sec = "sec";
+            break;
+        default:
+            sec = "s";
+            break;
+    }
+    sec = (timeLike && choice ? (choice >= 1 && space || choice == 3 ? " " : "") + sec : "")
+    var str = "";
+    var n = data.length - 1;
+    out *= start;
+    for (var i = 0; i <= n && outsave >= 1; i++) {
+        var N = data[i].length - 1;
+        var div = data[i][data[i].length - 1];
+        var str2 = "";
+        if (i == data.length - 1) {
+            div = Infinity;
+        } else if (choice) {
+            div = 1e3;
+        }
+        var cur = (i ? Math.floor(out % div) : (out % div).toFixed(digits));
+        if (extraZeros && i != n && out >= div) {
+            for (var j = 4; j >= 1; j--) {
+                var k = Math.pow(10, j);
+                str2 += (cur < k && k < div ? "0" : "");
+            }
+        }
+        str = ((cur || keepZeros) != 0 ? str2 + cur + (choice || i != 5 || cur < 2 || shortness ? (space ? " " : "") + (choice == 3 ? data[i] : data[i][Math.min(shortness, N - (typeof data[i][N] === 'string' ? 0 : 1))]) + (choice || cur <= 1 || shortness || cur < 2 && i == n ? "" : "s") : (space ? " " : "") + "millennia") + (i && extraSpace ? " " : "") : "") + str; // The '!= 0' is mandatory, for some reason
+        if (cur) {
+            pos.push(str.length);
+        }
+        out /= div;
+        outsave = out;
+    }
+    str = str.replace("  ", " ");
+    return (precision >= pos.length ? str + sec : str.substr(0, str.length - pos[pos.length - precision - 1] - (extraSpace ? 1 : 0)) + sec);
 }
 
 function validateNumber(callback) {

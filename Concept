@@ -11,3 +11,4 @@ Fire mastery                50 Fan_the_flames           t -= 500s               
 Explore the beach           300s                        t -= 300s                  1~5 branches (10s)           T
 Three hundred seconds       300s played                 No cost                    dt *= 0.9                    A
 Misunderstanding            37 branches used at once    No cost                    maxBranches *= 3             A
+Interstellar                13.8e9 yr                   No cost                    Nothing                      A
