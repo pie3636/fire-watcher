@@ -60,7 +60,7 @@ function tick() {
                 }
                 if (restoreStats) {
                     $("#upgradesBought").append(
-                        strButton + i.textify() + ' ' + cost(i) + '</button>');
+                        strButton + i.textify() + '</button>');
                         $("#" + i).css("margin-right", 10).css("margin-bottom", 5);
                         gD.stats.totalUpgrades++;
                 }
@@ -71,6 +71,7 @@ function tick() {
                             strButton + i.textify() + ' </button>');
                     $("#" + i).css("margin-right", 10).css("margin-bottom", 5);
                     if (typeof actions[i].effect !== 'undefined' && justUnlocked) { // Don't apply effects on load
+console.log("UNLOCKED NORMAL " + i);
                         actions[i].effect();
                     }
                     if (!game.onLoad) {
@@ -118,7 +119,7 @@ function tick() {
         setStats("#stats", gD.stats);        
     } else if (gD.currentTab == "inv") {
         $("#time2").html(timify(gD.time, true, 0, 4, 3));
-        $("#inv_branches_value").html(timify(gD.inventory.branches.value, false, 1, 1, 0) + "<br />");
+        $("#inv_branches_value").html(timify(gD.inventory.branches.value, false, 1, 1, 3) + "<br />");
     }
     game.onLoad = false;
     /* greyOut("buyWatcher1", time >= sumPrices(10, 1.1, watchers, 1));
@@ -129,6 +130,7 @@ function tick() {
 function buyUpgrade(upgrade) {
     if (!gD.actions[upgrade].bought && compare(actions[upgrade].cost, gD, true)) { // First condition isn't mandatory
         if (typeof actions[upgrade].effect !== 'undefined') {
+console.log("UNLOCKED BUY " + upgrade);
             actions[upgrade].effect();
         }
         if (!actions[upgrade].repeatable) {

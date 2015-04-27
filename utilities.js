@@ -73,7 +73,7 @@ function timify(out, timeLike, shortness, precision, digits, space, extraZeros, 
     }
     sec = (timeLike && choice ? (choice >= 1 && space || choice == 3 ? " " : "") + sec : "")
     if (!out) {
-        return (timeLike ? (0).toFixed(digits) + sec : (0).toFixed(digits));
+        return "0" + (timeLike ? sec : "");
     }
     var str = "";
     var n = data.length - 1;

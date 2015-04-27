@@ -132,6 +132,7 @@ function importSaveRec() {
         $("#importError").show(); // Error message
         return false;
     }
+    $('#containerImport').val("");
     return true;
 }
 
