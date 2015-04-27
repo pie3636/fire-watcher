@@ -36,7 +36,7 @@ var game = {
     }
 };
 var gD = {
-    tickDuration: 25,
+    tickDuration: 50,
     time: 60,
     sessionTime: 0,
     timeSpeed: 1,
@@ -172,7 +172,7 @@ var actions = {
             log("You found " + timify(branchesFound, false, 0, 2, 0) + " branches! Total : " + timify(gD.inventory.branches.value, false, 1, 1, 3));
         },
         tick: function() {
-            $("#inv_branches_more").html(timify(gD.actions.exploreTheBeach.branchesPower, false, 1, 1, 0));
+            $("#inv_branches_more").html(timify(gD.actions.exploreTheBeach.branchesPower, true, 0, 2, 0));
         },
         doUnlock: function() {
             $("#inv_branches").show();
