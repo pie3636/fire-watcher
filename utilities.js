@@ -36,6 +36,7 @@ function timify(out, timeLike, shortness, precision, digits, space, extraZeros, 
     var alphaUnits = "zyxwvutsrqponmlkjihgfedcba ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     var outsave = 1; // save out after each loop
     var data, sec; // units, unit for last iteration (s/sec/second)
+    var outsave2 = out; // save
     var start = 1; // Starting multiplier
     var pos = []; // successive string lengths
     var subs = []; // unit without and with precision
@@ -106,7 +107,14 @@ function timify(out, timeLike, shortness, precision, digits, space, extraZeros, 
         outsave = out;
     }
     precision = Math.min(precision, p);
-    return (precision >= p ? str + sec : (str.slice(0, - pos[p - precision - 1] - (extraSpace ? 1 : 0)) + sec)).replace(subs[p - precision][0], subs[subs.length - precision][1]).replace("  ", " ").replace(/ $/, "");
+    if (precision < p) {
+        str = str.slice(0, - pos[p - precision - 1] - (extraSpace ? 1 : 0));
+    }
+    str += sec;
+    if (outsave2 % 1 !== 0 || !~str.indexOf(" ")) {
+        str = str.replace(subs[p - precision][0], subs[subs.length - precision][1]);
+    }
+    return str.replace("  ", " ").replace(/ $/, "");
 }
 
 function validateNumber(callback) {

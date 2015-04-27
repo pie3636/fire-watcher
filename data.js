@@ -169,7 +169,7 @@ var actions = {
             var branchesFound = intRandom(gD.actions.exploreTheBeach.minBranches, gD.actions.exploreTheBeach.maxBranches);
             gD.inventory.branches.unlocked = true;
             gD.inventory.branches.value += branchesFound;
-            log("You found " + timify(branchesFound, false, 0, 2, 0) + " branches! Total : " + timify(gD.inventory.branches.value, false, 1, 1, 3));
+            log("You found " + timify(branchesFound, false, 0, 1, 3) + " branches! Total : " + timify(gD.inventory.branches.value, false, 1, 1, 3));
         },
         tick: function() {
             $("#inv_branches_more").html(timify(gD.actions.exploreTheBeach.branchesPower, true, 0, 2, 0));
@@ -218,7 +218,7 @@ var actions = {
             tooltip: "Using exactly 37 branches at once. This achievement does nothing at all"
         }
     },
-    iAmSoConfused: {
+    b31: {
         unlock: {stats: {uses: {fanTheFlames: 1111}}},
         show: {
             type: "achievement",
