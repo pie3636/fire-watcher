@@ -9,34 +9,20 @@ function sumPrices(base, factor, owned, number) {
     return sum;
 }
 
-function timify(input, digits, keepZeros, nonTime) { // TODO Add options : rough (~ 3 hours), horloge (YYYY:DD:HH:MM:SS.mmm) -> reuse in log etc
-    digits = set(digits, 0);
-    var out = prettify(input, digits, 0);
-    if (out < 300 && !nonTime) {
-        return out + " seconds";
-    } else if (!nonTime) {
-        var outmin = Math.floor(out/60);
-        out = out % 60;
-        if (outmin <= 59) {
-            return outmin + " min" + (out >= 1 && !keepZeros ? " " + Math.floor(out) + " sec" : "");
-        } else {
-            var outhour = Math.floor(outmin/60);
-            outmin = outmin % 60;
-            if (outhour <= 9999999) {//47) {
-                return outhour + " hr" + (outmin >= 1 && !keepZeros ? " " + Math.floor(outmin) + " min" : "") + (out >= 1 && !keepZeros ? " " + Math.floor(out) + " sec" : "");
-            }
-        }
-    }
-    return out;
-}
-
 function set(x, val) {
     return (typeof x === 'undefined' ? val : x);
 }
 
-function timifyall(out, shortness, precision, digits, timeLike, space, extraZeros, keepZeros, extraSpace) {
-    var choice = 1; // $("#timeFormatting option:selected").prevAll().size();
+function setFormatting() {
+    var str = this.id.split(/(?=[A-Z])/)[0];
+    gD.options.formatting[str] = $("#" + this.id + " option:selected").prevAll().size();
+    log(str.textify() + " setting changed!");
+}
+
+function timify(out, timeLike, shortness, precision, digits, space, extraZeros, keepZeros, extraSpace, choice, fullPrecision) { // TODO : horloge (YYYY:DD:HH:MM:SS.mmm) -> reuse in log etc
+    fullPrecision = set(fullPrecision, true);
     timeLike = set(timeLike, true);
+    choice = set(choice, gD.options.formatting[(timeLike ? "time" : "resources")] + (timeLike ? 0 : 1));
     precision = set(precision, 3);
     extraSpace = set(extraSpace, true);
     extraZeros = set(extraZeros, choice == 0 && shortness);
@@ -45,16 +31,18 @@ function timifyall(out, shortness, precision, digits, timeLike, space, extraZero
     space = set(space, shortness <= 1 && choice != 3 && choice != 2 || shortness == 0);
     keepZeros = set(keepZeros, false);
     var timeUnits = [["second", "sec", "s", 60], ["minute", "min", "m", 60], ["hour", "hr", "h", 24], ["day", "day", "d", 365], ["year", "yr", "y", 1e3], ["millennium", "mil", "M"]];
-    var SIUnits = [["yocto", "y"], ["zocto", "z"], ["atto", "a"], ["femto", "f"], ["pico", "p"], ["nano", "n"], ["micro", "µ"], ["milli", "m"], ["unit", "u"], ["kilo", "k"], ["mega", "M"], ["giga", "G"], ["tera", "T"], ["peta", "P"], ["exa", "E"], ["zetta", "Z"], ["yotta", "Y"]];
-    var mathUnits = [["", ""],  ["kilo", "K"],  ["million", "M"],  ["billion", "B"],  ["trillion", "T"],  ["quadrillion", "Qa", "Q"],  ["quintillion", "Qi"],  ["sextillion", "Sx", "S"],  ["septillion", "Sp"],  ["octillion", "Oc", "O"],  ["nonillion", "No", "N"],  ["decillion", "Dc", "D"]];
-    var alphaUnits = "zyxwvutsrqponmlkjihgfedcbaøABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    var outsave = 1;
-    var data, start, sec;
-    var pos = [];
+    var SIUnits = [["yocto", "y"], ["zocto", "z"], ["atto", "a"], ["femto", "f"], ["pico", "p"], ["nano", "n"], ["micro", "µ"], ["milli", "m"], ["", ""], ["kilo", "k"], ["mega", "M"], ["giga", "G"], ["tera", "T"], ["peta", "P"], ["exa", "E"], ["zetta", "Z"], ["yotta", "Y"]];
+    var mathUnits = [["", ""],  ["thousand", "K"],  ["million", "M"],  ["billion", "B"],  ["trillion", "T"],  ["quadrillion", "Qa", "Q"],  ["quintillion", "Qi"],  ["sextillion", "Sx", "S"],  ["septillion", "Sp"],  ["octillion", "Oc", "O"],  ["nonillion", "No", "N"],  ["decillion", "Dc", "D"]];
+    var alphaUnits = "zyxwvutsrqponmlkjihgfedcba ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    var outsave = 1; // save out after each loop
+    var data, sec; // units, unit for last iteration (s/sec/second)
+    var start = 1; // Starting multiplier
+    var pos = []; // successive string lengths
+    var subs = []; // unit without and with precision
+    var p = 0; // effective steps
     switch (choice) {
         case 0:
             data = timeUnits;
-            start = 1;
             break;
         case 1:
             data = SIUnits;
@@ -62,7 +50,6 @@ function timifyall(out, shortness, precision, digits, timeLike, space, extraZero
             break;
         case 2:
             data = mathUnits;
-            start = 1;
             break;
         case 3:
             data = alphaUnits;
@@ -84,6 +71,9 @@ function timifyall(out, shortness, precision, digits, timeLike, space, extraZero
             break;
     }
     sec = (timeLike && choice ? (choice >= 1 && space || choice == 3 ? " " : "") + sec : "")
+    if (!out) {
+        return (timeLike ? (0).toFixed(digits) + sec : (0).toFixed(digits));
+    }
     var str = "";
     var n = data.length - 1;
     out *= start;
@@ -96,22 +86,27 @@ function timifyall(out, shortness, precision, digits, timeLike, space, extraZero
         } else if (choice) {
             div = 1e3;
         }
-        var cur = (i ? Math.floor(out % div) : (out % div).toFixed(digits));
+        var cur = Math.floor(out % div);
+        var cur2 = (out % div).toFixed(digits);
         if (extraZeros && i != n && out >= div) {
             for (var j = 4; j >= 1; j--) {
                 var k = Math.pow(10, j);
                 str2 += (cur < k && k < div ? "0" : "");
             }
         }
-        str = ((cur || keepZeros) != 0 ? str2 + cur + (choice || i != 5 || cur < 2 || shortness ? (space ? " " : "") + (choice == 3 ? data[i] : data[i][Math.min(shortness, N - (typeof data[i][N] === 'string' ? 0 : 1))]) + (choice || cur <= 1 || shortness || cur < 2 && i == n ? "" : "s") : (space ? " " : "") + "millennia") + (i && extraSpace ? " " : "") : "") + str; // The '!= 0' is mandatory, for some reason
-        if (cur) {
+        var add = ((cur || keepZeros) != 0 ? str2 + cur + (choice || i != 5 || cur < 2 || shortness ? (space ? " " : "") + (choice == 3 ? data[i] : data[i][Math.min(shortness, N - (typeof data[i][N] === 'string' ? 0 : 1))]) + (choice || cur <= 1 || shortness || cur < 2 && i == n ? "" : "s") : (space ? " " : "") + "millennia") + (i && extraSpace ? " " : "") : ""); // The '!= 0' is mandatory, for some reason
+        var add2 = add.replace(cur, cur2);
+        str = add + str;
+        if (cur || fullPrecision) {
+            subs.push([add.replace(/ $/, ""), add2.replace(/ $/, "")]);
             pos.push(str.length);
+            p++;
         }
         out /= div;
         outsave = out;
     }
-    str = str.replace("  ", " ");
-    return (precision >= pos.length ? str + sec : str.substr(0, str.length - pos[pos.length - precision - 1] - (extraSpace ? 1 : 0)) + sec);
+    precision = Math.min(precision, p);
+    return (precision >= p ? str + sec : (str.slice(0, - pos[p - precision - 1] - (extraSpace ? 1 : 0)) + sec)).replace(subs[p - precision][0], subs[subs.length - precision][1]).replace("  ", " ").replace(/ $/, "");
 }
 
 function validateNumber(callback) {
@@ -140,7 +135,7 @@ function validateBounds(callback, ptr) {
 }
 
 function cost(upgrade) {
-    return '(' + timify(actions[upgrade].cost.time) + ')';
+    return '(' + timify(actions[upgrade].cost.time, true, 1, 2, 0) + ')';
 }
 
 function prettify(input, digits, before) {
@@ -204,7 +199,7 @@ function setStats(str, data) {
         if (typeof data[i] === "object") {
             setStats(str + "_" + i, data[i]);
         } else {
-            $(str + "_" + i).html((~i.toLowerCase().indexOf("time") ? timify(data[i], 2) : data[i]));   
+            $(str + "_" + i).html((~i.toLowerCase().indexOf("time") ? timify(data[i], true, 1, 3, 0) : timify(data[i], false, 1, 1, (~i.toLowerCase().indexOf("total") ? 0 : 3))));   
         }
     }
 }

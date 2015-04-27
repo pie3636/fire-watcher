@@ -1,5 +1,5 @@
 var game = {
-    version: "v0.6.2",
+    version: "v0.6.3",
     onLoad: false, // Restore purchases
     onImport: false, // Load from import
     onReset: false, // Load from initValues
@@ -23,7 +23,7 @@ var game = {
                 if (n <= gD.inventory.branches.value && n) {
                     gD.inventory.branches.value -= n;
                     var gain = gD.actions.exploreTheBeach.branchesPower * n;
-                    log("Earnt " + timify(gain) + "!");
+                    log("Earnt " + timify(gain, true, 0, 3, 0) + "!");
                     gainTime(gain);
                     if(n == 37) {
                         gD.event.branches37 = true;
@@ -76,6 +76,10 @@ var gD = {
         autoSave: {
             enabled: setInterval(save, 60000),
             interval: 60000
+        },
+        formatting: {
+            time: 0,
+            resources: 2
         }
     },
     stats: {
@@ -124,7 +128,7 @@ var actions = {
             if (gD.actions.fireMastery.bought) {
                 gain += 0.001 * gD.stats.uses.fanTheFlames;
             }
-            $("#firePower").html(timify(gain, 3));
+            $("#firePower").html(timify(gain, true, 0, 2, 3));
         }
     },
     fetch_Brushwood: {
@@ -148,8 +152,8 @@ var actions = {
             }
             actions.fetch_Brushwood.cost.time = 60 + fatigue;
             var color = (fatigue < 120 ? "#080" : "#A00"); // Cost < Gain
-            $("#fetchBrushwoodLoss").html(timify(actions.fetch_Brushwood.cost.time)).attr("style", "color:" + color);
-            $("#fetchBrushwoodGain").html(timify(300 - fatigue)).attr("style", "color:" + color);
+            $("#fetchBrushwoodLoss").html(timify(actions.fetch_Brushwood.cost.time, true, 0, 2, 0)).attr("style", "color:" + color);
+            $("#fetchBrushwoodGain").html(timify(300 - fatigue, true, 0, 2, 0)).attr("style", "color:" + color);
         }
     },
     exploreTheBeach: {
@@ -159,16 +163,16 @@ var actions = {
         show: {
             type: "action",
             tooltip: "Explore the immediate surroundings of the fire, and collect what could be useful",
-            inside: "Takes <b><span id='exploreTheBeachLoss'>" + timify(300) + "</span></b> to explore the beach and possibly find loot.<br />"
+            inside: "Takes <b><span id='exploreTheBeachLoss'>" + timify(300, true, 0, 2, 0) + "</span></b> to explore the beach and possibly find loot.<br />"
         },
         effect: function() {
             var branchesFound = intRandom(gD.actions.exploreTheBeach.minBranches, gD.actions.exploreTheBeach.maxBranches);
             gD.inventory.branches.unlocked = true;
             gD.inventory.branches.value += branchesFound;
-            log("You found " + timify(branchesFound, 0, true, true) + " branches! Total : " + timify(gD.inventory.branches.value, 0, true, true));
+            log("You found " + timify(branchesFound, false, 0, 2, 0) + " branches! Total : " + timify(gD.inventory.branches.value, false, 1, 1, 3));
         },
         tick: function() {
-            $("#inv_branches_more").html(timify(gD.actions.exploreTheBeach.branchesPower));
+            $("#inv_branches_more").html(timify(gD.actions.exploreTheBeach.branchesPower, false, 1, 1, 0));
         },
         doUnlock: function() {
             $("#inv_branches").show();

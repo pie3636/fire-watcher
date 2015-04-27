@@ -51,7 +51,7 @@
     <button type="button" class="close" id="updateAnnouncementClose">x</button>
     <b>Announcement :</b> <span id="updateAnnouncementVersion"></span> is out!<br />
         - Added another achievement (Interstellar)<br />
-        - Display formatting in progress : Last step before the content update!
+        - Display formatting    
     </div>
     <!--
     <div class="alert alert-info" id="announcement">
@@ -181,19 +181,19 @@
                 Make the full logs 
                 <input type="number" id="fullLogSize" class="top3" value="100" min="1" max="2000">
                 lines high (10-2000). <br />
-                Time formatting (WIP) : <select class="form-control top3" id="timeFormatting" style="width: auto; min-height: 0px; display: inline; padding: 4px 0px 4px 12px">
-                    <option>Temporal units (second, minute, hour...)</option>
-                    <option>S.I. units (kilo, mega, giga...)</option>
-                    <option>Mathematical units (million, billion, trillion...)</option>
-                    <option>Alphabetical units (a, b, c...)</option>
-                    <option>Scientific notation (1.234e+56)</option>
+                Time formatting : <select class="form-control top3" id="timeFormatting" style="width: auto; min-height: 0px; display: inline; padding: 4px 0px 4px 12px">
+                    <option value="0">Temporal units (second, minute, hour...)</option>
+                    <option value="1">S.I. units (kilo, mega, giga...)</option>
+                    <option value="2">Mathematical units (million, billion, trillion...)</option>
+                    <option value="3">Alphabetical units (a, b, c...)</option>
+                    <option value="4">Scientific notation (1.234e+56)</option>
                 </select>
                 <br />
-                Other resources formatting (WIP) : <select class="form-control top3" id="resourceFormatting" style="width: auto; min-height: 0px; display: inline; padding: 4px 0px 4px 12px">
-                    <option>S.I. units (kilo, mega, giga...)</option>
-                    <option>Mathematical units (million, billion, trillion...)</option>
-                    <option>Alphabetical units (a, b, c...)</option>
-                    <option>Scientific notation (1.234e+56)</option>
+                Other resources formatting : <select class="form-control top3" id="resourcesFormatting" style="width: auto; min-height: 0px; display: inline; padding: 4px 0px 4px 12px">
+                    <option value="0">S.I. units (kilo, mega, giga...)</option>
+                    <option value="1">Mathematical units (million, billion, trillion...)</option>
+                    <option value="2">Alphabetical units (a, b, c...)</option>
+                    <option value="3">Scientific notation (1.234e+56)</option>
                 </select>
                 <br />
             <button id="clearLogs" type="button" class="btn btn-default top6" data-toggle="tooltip" data-placement="bottom" title="Clear the logs" data-container="body">Clear logs</button>

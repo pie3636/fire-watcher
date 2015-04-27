@@ -60,6 +60,8 @@ function load() {
             $("#inv_" + i).hide();       
         }
     }
+    $("#timeFormatting").val(String(gD.options.formatting.time));
+    $("#resourcesFormatting").val(String(gD.options.formatting.resources))
 }
 
 function setUseLinks(i) {

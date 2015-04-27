@@ -20,7 +20,7 @@ function tick() {
     gD.stats.playTime += gD.tickDuration/1000;
     gD.stats.   sessionTime += gD.tickDuration/1000;
     //time += watchers * watcherPower * tickDuration/1000;
-    $("#time").html(timify(gD.time, 3));
+    $("#time").html(timify(gD.time, true, 0, 4, 3));
     for (var i in actions) {
         var justUnlocked = !gD.actions[i].unlocked && compare(actions[i].unlock, gD);
         var normalTick =  justUnlocked || gD.actions[i].unlocked && game.onLoad && !gD.actions[i].bought;
@@ -116,10 +116,9 @@ function tick() {
     }
     if (gD.currentTab == "stats") {
         setStats("#stats", gD.stats);        
-    }
-    if (gD.currentTab == "inv") {
-        $("#time2").html(timify(gD.time, 3));
-        $("#inv_branches_value").html(timify(gD.inventory.branches.value, 0, true, true) + "<br />");
+    } else if (gD.currentTab == "inv") {
+        $("#time2").html(timify(gD.time, true, 0, 4, 3));
+        $("#inv_branches_value").html(timify(gD.inventory.branches.value, false, 1, 1, 0) + "<br />");
     }
     game.onLoad = false;
     /* greyOut("buyWatcher1", time >= sumPrices(10, 1.1, watchers, 1));
@@ -316,6 +315,9 @@ $(function () {
     $("#fullLogSize").keydown(validateNumber(fullLogSize)).change(fullLogSize);
     $("#clearLogs").tooltip().mouseup(toBlur).click(clearLogs);
     $("#clearFullLogs").tooltip().mouseup(toBlur).click(clearFullLogs);
+    
+    $("#timeFormatting").change(setFormatting);
+    $("#resourcesFormatting").change(setFormatting);
     
     $("#actionsUnlockedTotal").html(countActions());
     $("#upgradesUnlockedTotal").html(countUpgrades());
