@@ -12,7 +12,7 @@ function load() {
     gD.stats.sessionTime = 0;
     var saveTheme = gD.options.darkTheme;
     unsetUseLinks("branches");
-    $("#actions").html("<div style='margin-left:15px'>Time left : <span id='time'>0</span></div><hr/>");
+    $("#actions").html("<div style='margin-left:15px'>Time left : <span id='time'>0</span><br /><br /></div><hr/>");
     $("#upgrades").html("<!--<p class='text-center'>--><p>Upgrades :</p>");
     $("#upgradesBought").html("");
     $("#achievements").html("");

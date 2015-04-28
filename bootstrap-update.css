@@ -316,3 +316,11 @@ input:invalid {
 .greyedOut2 {
     background-color: #444;
 }
+
+.text-success2 {
+  color: #080;
+}
+.text-danger2 {
+  color: #A00;
+}
+

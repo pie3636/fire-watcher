@@ -196,10 +196,22 @@ function setStats(str, data) {
     }
 }
 
+function animate(num, stats) {
+    var id = "#time" + (stats ? "2" : "");
+    var element = $("<div class='animate'/>");
+    element.addClass("text-" + (num < 0 ? "danger" : "success") + (gD.options.darkTheme ? "2" : "")).html((num >= 0 ? "+" : "") + timify(num, true, 0, 2, 3));
+    $('body').append(element);
+    element.css('position', 'absolute').offset({ left: $(id).offset().left, top: $(id).offset().top }).animate({ top: '90px' }).animate({ opacity: 0, top: '90px' }, 500, 'swing', function () {
+        $(this).remove();
+    });
+}
+
 function gainTime(n)
 {
     gD.time += n;
     gD.stats.timeGained += n;
+    animate(n, gD.currentTab == "inv");
+    
 }
 
 String.prototype.textify = function() { // camelCaseObject,AnotherAnd_Escaping_or_Not__ -> Camel case object, another and Escapingor Not_

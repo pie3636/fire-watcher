@@ -143,6 +143,8 @@ var actions = {
         },
         effect: function() {
             gainTime(300 - gD.actions.fetch_Brushwood.fatigue);
+            $(".animate").remove();
+            animate(300 - gD.actions.fetch_Brushwood.fatigue - actions.fetch_Brushwood.cost.time, gD.currentTab == "opt");
             gD.actions.fetch_Brushwood.fatigue = Math.min(300, gD.actions.fetch_Brushwood.fatigue + 30);
         },
         tick: function() {
