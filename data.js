@@ -201,7 +201,7 @@ var actions = {
     },
     /* ============================================================ UNITS ============================================================ */
     monkey: {
-        unlock: {time: 600, actions: {forestExploration: {unlocked: true}}},
+        unlock: {time: 300, actions: {forestExploration: {bought: true}}},
         cost: {time: 10},
         getCost: function(j) {
             j = Math.min(j, 4); // Just in case, lol
@@ -213,7 +213,7 @@ var actions = {
             tooltip: "A monkey found in the forest. Each has a 1% chance to click every second. Get 100 of them and they'll click more regularly."
         },
         effect: function(j) {
-            if (j && gD.actions.monkey.maxBuy) {
+            if (j) {
                 gD.actions.monkey.number += (j == 4 ? gD.actions.monkey.maxBuy : Math.pow(10, j - 1));
             }
             var str = timify(gD.actions.monkey.number, false, 1, 1, 3);
@@ -224,7 +224,7 @@ var actions = {
         tick: function() {
             gD.actions.monkey.maxBuy = sumPrices(actions.monkey.cost.time, gD.actions.monkey.factor, gD.actions.monkey.number, 0, gD.time, true, true);
             $("#monkey4").html("Max (" + gD.actions.monkey.maxBuy + ")").mouseup(toBlur);
-            if (gD.actions.monkey.number < 100) {
+            if (gD.actions.monkey.number < 100 && !(gD.stats.ticks % (Math.floor(1000/gD.tickDuration)))) {
                 for (var i = 1; i <= gD.actions.monkey.number; i++) {
                     if (Math.random() <= 0.01)
                     {
@@ -282,19 +282,30 @@ var actions = {
         }
     },
     twistrike: {
-        unlock: {actions: {monkey: {number: 25}}},
-        cost: {time: 5000},
+        unlock: {actions: {monkey: {number: 20}}},
+        cost: {time: 2400},
         show: {
             type: "upgrade",
-            tooltip: "Monkeys' clicks are twice as efficient"
+            tooltip: "Monkeys' are twice as efficient"
+        },
+        effect: function() {
+            gD.actions.monkey.click *= 2;
+        }
+    },
+    withBothHands: {
+        unlock: {actions: {monkey: {number: 50}}},
+        cost: {time: 9600},
+        show: {
+            type: "upgrade",
+            tooltip: "Monkeys' are twice as efficient"
         },
         effect: function() {
             gD.actions.monkey.click *= 2;
         }
     },
     forestExploration: {
-        unlock: {time: 2500},
-        cost: {time: 15000},
+        unlock: {time: 900},
+        cost: {time: 1500},
         show: {
             type: "upgrade",
             tooltip: "Venture in the forest to find creatures, and hire them"
@@ -345,6 +356,16 @@ var actions = {
         show: {
             type: "achievement",
             tooltip: "13.8 billion years? That's the age of the Universe!"
+        },
+        effect: function() {
+            //TODO
+        }
+    },
+    negatron: {
+        unlock: {time: {operator: game.operator.LT, value: 0}},
+        show: {
+            type: "achievement",
+            tooltip: "This makes no sense at all..."
         },
         effect: function() {
             //TODO

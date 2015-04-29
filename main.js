@@ -141,7 +141,7 @@ function tick() {
 
 function buyUpgrade(upgrade, unit) {
     unit = set(unit, false);
-    if (!gD.actions[upgrade].bought && (unit && compare(actions[upgrade].getCost(unit), gD, true) || !unit && compare(actions[upgrade].cost, gD, true))) { // First condition isn't mandatory
+    if (!gD.actions[upgrade].bought && (unit && gD.actions[upgrade].maxBuy && compare(actions[upgrade].getCost(unit), gD, true) || !unit && compare(actions[upgrade].cost, gD, true))) { // First condition isn't mandatory
         if (typeof actions[upgrade].effect !== 'undefined') {
             actions[upgrade].effect((actions[upgrade].show.type == "unit" ? unit : undefined));
         }
@@ -174,9 +174,9 @@ function compare(cost, data, doSub, subStep) { // Returns (cost <= data), data -
     var ret = true;
     if(!subStep) {
         for (var i in cost) {
-            switch (typeof cost[i]) {
+            switch (typeof data[i]) {
                 case "number":
-                    if (typeof data[i] === "number") {
+                    if (typeof cost[i] === "number") {
                         ret = cost[i] <= data[i];
                     } else {
                         switch (cost[i].operator) {
