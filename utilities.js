@@ -135,10 +135,10 @@ function timify(out, timeLike, shortness, precision, digits, space, extraZeros, 
             sec = "s";
             break;
     }
-    sec = (timeLike && choice ? (choice >= 1 && space || choice == 3 ? " " : "") + sec : "")
     if (!out) {
-        return "0" + (timeLike ? sec : "");
+        return (0).toFixed(digits) + (timeLike ? " " + sec : "");
     }
+    sec = (timeLike && choice ? (choice >= 1 && space || choice == 3 ? " " : "") + sec : "")
     var str = "";
     var n = data.length - 1;
     out *= start;
@@ -151,7 +151,7 @@ function timify(out, timeLike, shortness, precision, digits, space, extraZeros, 
         } else if (choice) {
             div = 1e3;
         }
-        var cur = Math.floor(out % div);
+        var cur = (i ? Math.floor(out % div) : out % div);
         var cur2 = (out % div).toFixed(digits);
         if (extraZeros && i != n && out >= div) {
             for (var j = 4; j >= 1; j--) {
