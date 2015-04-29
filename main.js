@@ -1,30 +1,15 @@
-//TODO: More stats (prestigeTime...), hasOwnProperty/booleans 0-1 -> optimisation, progress (bars?), log highlighting transition? (bitstorm), compatibility on version update, timify, cost, actions, credits
-
-/*function buyWatcher(number) {
-    for (var i = 1; i <= number; i++) {
-        var watcherCost = sumPrices(10, 1.1, watchers, 1);
-        if(time >= watcherCost) {
-            watchers++;
-            time -= watcherCost;
-            var nextCost = sumPrices(10, 1.1, watchers, 1);
-                $("#watchers").html(watchers);
-                $("#watcherCost").html(nextCost);
-                $("#watcherProduction").html(watcherPower * watchers);
-                tooltip(buyWatcher1, "Cost : " + nextCost); //TODO : EDIT
-        }
-    }
-}*/
+//TODO: More stats (prestigeTime...), hasOwnProperty/booleans 0-1 -> optimisation, progress (bars?), log highlighting transition? (bitstorm), compatibility on version update, timify, cost
 
 function tick() {
     gD.time -= gD.timeSpeed * gD.tickDuration/1000;
     gD.stats.playTime += gD.tickDuration/1000;
     gD.stats.   sessionTime += gD.tickDuration/1000;
-    //time += watchers * watcherPower * tickDuration/1000;
     $("#time").html(timify(gD.time, true, 0, 4, 3));
     for (var i in actions) {
         var justUnlocked = !gD.actions[i].unlocked && compare(actions[i].unlock, gD);
         var normalTick =  justUnlocked || gD.actions[i].unlocked && game.onLoad && !gD.actions[i].bought;
         var restoreStats = game.onLoad && gD.actions[i].bought;
+        var tab = ["1", "2", "3", "4"]; // 1, 10, 100, max
         if (normalTick || restoreStats) { // If new action unlocked or unlocked in loaded game or bought in loaded game (to add to stats)
             gD.actions[i].unlocked = true;
             if (typeof actions[i].doUnlock !== 'undefined') {
@@ -36,79 +21,105 @@ function tick() {
             if (actions[i].show.type == "achievement") {
                 gD.stats.totalAchievements++;
             }
-            var strButton = '<button id=' + i + ' type="button" class="btn btn-default' + (gD.options.darkTheme ? "2" : "") + '" data-toggle="tooltip" data-placement="bottom" title="' + actions[i].show.tooltip + '" data-container="body">';
+            var strHR = '<hr id="' + i + 'HR"' + (gD.options.darkTheme ? 'class="HR2"' : "") + ' />';
+            var name = (actions[i].show.title ? actions[i].show.title : i.textify());
             switch (actions[i].show.type) { // Display it
-            case "action":
-                if (normalTick) {
-                    $("#actions").append('\
-                        <div id="' + i + 'Div" class="row" style="margin-left:10px">\
-                            <div class="col-md-3 col-md-center' + (actions[i].show.nocenter ? ' top3' : '') + '">\
-                                ' + strButton + i.textify() + '</button>\
+                case "action":
+                    if (normalTick) {
+                        $("#actions").append(strDiv(i, 10) + '\
+                                <div class="col-md-3 col-md-center' + (actions[i].show.nocenter ? ' top3' : '') + '">\
+                                    ' + strButton(i, name) + '\
+                                </div>\
+                                <div class="col-md-9' + (actions[i].show.nocenter ? '' : ' top6') + '">\
+                                    ' + actions[i].show.inside + '\
+                                </div>\
+                            </div>' + strHR);
+                    }
+                    break;
+                case "unit":
+                    if (normalTick) {
+                        $("#actions").append(strDiv(i, 0) + '\
+                            <div class="col-md-2 top6">\
+                                <span' + strTooltip(i) + ' id="' + i + 'Info">' + name + 's</span> : <span id="' + i + 'Number">0</span>\
                             </div>\
-                            <div class="col-md-9' + (actions[i].show.nocenter ? '' : ' top6') + '">\
-                                ' + actions[i].show.inside + '\
+                            <div class="col-md-4 top6">\
+                                Cost : <span id="' + i + 'Cost">' + cost(actions[i].getCost(1), true) + '</span>\
                             </div>\
-                        </div>\
-                        <hr id="' + i + 'HR"' + (gD.options.darkTheme ? 'class="HR2"' : "") + ' />');
-                }
+                            <div class="col-md-2 top6">\
+                                Production : <span id="' + i + 'Production">0</span>\
+                            </div>\
+                            <div class="col-md-4">\
+                                <div class="btn-group float-right">' + strButton(i + "1", "Buy 1", i) + strButton(i + "2", "10", i) + strButton(i + "3", "100", i) + strButton(i + "4", "Max (0)", i) + '\
+                                </div>\
+                            </div>\
+                        </div>' + strHR);
+                        actions[i].effect(0); // Initialize text
+                    }
                 break;
-            case "upgrade":
-                if (normalTick) {
-                    $("#upgrades").append(
-                            strButton + i.textify() + ' ' + cost(i) + '</button>');
-                    $("#" + i).css("margin-right", 10).css("margin-bottom", 5);
-                }
-                if (restoreStats) {
-                    $("#upgradesBought").append(
-                        strButton + i.textify() + '</button>');
+                case "upgrade":
+                    if (normalTick) {
+                        $("#upgrades").append(
+                                strButton(i, name + ' ' + cost(actions[i].cost)));
                         $("#" + i).css("margin-right", 10).css("margin-bottom", 5);
-                        gD.stats.totalUpgrades++;
-                }
-                break;
-            case "achievement":
-                if (normalTick) {
-                    $("#achievements").append(
-                            strButton + i.textify() + ' </button>');
-                    $("#" + i).css("margin-right", 10).css("margin-bottom", 5);
-                    if (typeof actions[i].effect !== 'undefined' && justUnlocked) { // Don't apply effects on load
-                        actions[i].effect();
                     }
-                    if (!game.onLoad) {
-                        log("Achievement unlocked : " + i.textify() + "!");
+                    if (restoreStats) {
+                        $("#upgradesBought").append(
+                            strButton(i, name));
+                            $("#" + i).css("margin-right", 10).css("margin-bottom", 5);
+                            gD.stats.totalUpgrades++;
                     }
-                }
-                break;
-            case "noDisplay":
-                buyUpgrade(i);
-                break;
-            default:
-                if (normalTick) {
-                    $(actions[i].isUpgrade ? "#upgrades" : "#actions").after(actions[i].show.text);
-                }
-                break;
+                    break;
+                case "achievement":
+                    if (normalTick) {
+                        $("#achievements").append(
+                                strButton(i, name));
+                        $("#" + i).css("margin-right", 10).css("margin-bottom", 5);
+                        if (typeof actions[i].effect !== 'undefined' && justUnlocked) { // Don't apply effects on load
+                            actions[i].effect();
+                        }
+                        if (!game.onLoad) {
+                            log("Achievement unlocked : " + name + "!");
+                        }
+                    }
+                    break;
+                case "noDisplay":
+                    buyUpgrade(i);
+                    break;
+                default:
+                    if (normalTick) {
+                        $(actions[i].isUpgrade ? "#upgrades" : "#actions").after(actions[i].show.text);
+                    }
+                    break;
             }
-            if (actions[i].show.type == "action" || actions[i].show.type == "upgrade" || actions[i].show.type == "achievement") { // Fix to prevent constant focus after clicking
+            if (actions[i].show.type == "action" || actions[i].show.type == "upgrade" || actions[i].show.type == "achievement") { // Fix to prevent constant focus after clicking, TODO : Optimize
                 $("#" + i).tooltip().mouseup(toBlur).hover(themeTooltip); // Changes tooltip theme as needed
                 if (normalTick && actions[i].show.type != "achievement") {
                     $("#" + i).on('click', function(_i){
-                        return function() { // Clooooooosure :D
+                        return function() {
                             buyUpgrade(_i);
                         };
                     }(i));
                 }
+            } else if (actions[i].show.type == "unit") {
+                for (var j in tab) {
+                    $("#" + i + j).mouseup(toBlur);
+                    if (normalTick) {
+                        $("#" + i + tab[j]).on('click', function(_i, _j){
+                            return function() {
+                                buyUpgrade(_i, Number(_j) + 1);
+                            };
+                        }(i, j));
+                    }
+                }
+                $("#" + i + "Info").tooltip().hover(themeTooltip);
             }
         }
-        var greyOut = "greyedOut" + (gD.options.darkTheme ? "2" : "");
-        if (!$("#" + i + ":hover").length) {
-            if (gD.actions[i].unlocked && !compare(actions[i].cost, gD) && !gD.actions[i].bought) { // Each action unlocked : grey if and only if not affordable and not bought yet
-                if (!$("#" + i).hasClass(greyOut)) {
-                    $("#" + i).addClass(greyOut);
-                }
-            } else {
-                $("#" + i).removeClass(greyOut);
-            }
+        if (actions[i].show.type != "unit") {
+            setGreyout(i);
         } else {
-            $("#" + i).removeClass(greyOut);
+            for (var j in tab) {
+                setGreyout(i, j);
+            }
         }
         if (typeof actions[i].tick !== 'undefined' && (!game.onLoad || gD.actions[i].unlocked)) { // && (!actions[i].tickIfBought || gD.actions[i].bought) && (!actions[i].tickIfUnlocked || gD.actions[i].unlocked)) { // No tick if loading game and not unlocked
             actions[i].tick();
@@ -121,26 +132,25 @@ function tick() {
         $("#inv_branches_value").html(timify(gD.inventory.branches.value, false, 1, 1, 3) + "<br />");
     }
     game.onLoad = false;
-    /* greyOut("buyWatcher1", time >= sumPrices(10, 1.1, watchers, 1));
-    greyOut("buyWatcher2", time >= sumPrices(10, 1.1, watchers, 10));
-    greyOut("buyWatcher3", time >= sumPrices(10, 1.1, watchers, 100)); */
 }
 
-function buyUpgrade(upgrade) {
-    if (!gD.actions[upgrade].bought && compare(actions[upgrade].cost, gD, true)) { // First condition isn't mandatory
+function buyUpgrade(upgrade, unit) {
+    unit = set(unit, false);
+    if (!gD.actions[upgrade].bought && (unit && compare(actions[upgrade].getCost(unit), gD, true) || !unit && compare(actions[upgrade].cost, gD, true))) { // First condition isn't mandatory
         if (typeof actions[upgrade].effect !== 'undefined') {
-            actions[upgrade].effect();
+            actions[upgrade].effect((actions[upgrade].show.type == "unit" ? unit : undefined));
         }
         if (!actions[upgrade].repeatable) {
             gD.actions[upgrade].bought = true;
             switch (actions[upgrade].show.type) {
                 case "action":
+                case "unit":
                     $("#" + upgrade).tooltip('hide');
                     $("#" + upgrade + "Div").remove();
                     $("#" + upgrade + "HR").remove();
                     break;
                 case "upgrade":
-                    $("#upgradesBought").append($("#" + upgrade)[0].outerHTML); //TODO : Add other cases?
+                    $("#upgradesBought").append($("#" + upgrade)[0].outerHTML.replace(/ (.*)/, 0)); //TODO : Add other cases?
                     $("#" + upgrade).tooltip('hide');
                     $("#" + upgrade).remove();
                     $("#" + upgrade).tooltip().mouseup(toBlur).hover(themeTooltip);
@@ -219,7 +229,7 @@ function compare(cost, data, doSub, subStep) { // Returns (cost <= data), data -
                 case "number":
                     if (typeof data[i] === "number" || cost[i].isConsumed) {
                         data[i] -= cost[i];
-                        if (i == "time") {
+                        if (i == "time" && cost[i]) {
                             animate(-cost[i], gD.currentTab == "opt");
                         }
                     }
@@ -273,7 +283,7 @@ function setTheme() {
 }
 
 $(function () {
-    $("#noscript").remove();
+    $("#loading").remove();
     for (var i in actions) {
         if (gD.actions.hasOwnProperty(i)) {
             gD.actions[i].unlocked = false;
@@ -321,7 +331,7 @@ $(function () {
     $("#timeFormatting").change(setFormatting);
     $("#resourcesFormatting").change(setFormatting);
     
-    $("#actionsUnlockedTotal").html(count("action"));
+    $("#actionsUnlockedTotal").html(count("action") + count("unit")); //TODO : split?
     $("#upgradesUnlockedTotal").html(count("upgrade"));
     $("#achievementsUnlockedTotal").html(count("achievement"));
     
@@ -338,6 +348,12 @@ $(function () {
     $('#importGame').on('shown.bs.modal', function() {
         $('#containerImport').focus();
     });
+    
+    log("Here go the logs. Everytime something interesting happens, it will appear here.", true);
+    log("You can check the full logs by clicking the 'Logs' tab up there in the navigation bar ↑", true);
+    log("I'd like to thanks Fulji for the beta-testing, he is very talented at finding bugs. No, seriously, check him out, this guy is awesome :D", true);
+    log("Need help? Check out the wiki at https://www.reddit.com/r/firewatcher/wiki! Have any suggestions? Feel free to send me an e-mail at pie3636@gmail.com or to visit the subreddit at https://www.reddit.com/r/firewatcher", true);
+    log("That's it for now! Hope you'll have as much fun playing this as I had coding it ;) - pie3636", true);
 });
 
 window.setInterval(tick, gD.tickDuration);

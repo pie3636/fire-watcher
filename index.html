@@ -43,23 +43,19 @@
 
 
 <div class="container-fluid" role="main" id="main">
-    <!--<div class="row">
-        <b>Announcement :</b> I'm not too sure what to put here, to be honest.
-    </div>
-    <hr />-->
-    <div class="alert alert-info" id="updateAnnouncement" style="display: block">
+    <div class="alert alert-info" id="updateAnnouncement" style="display: none">
     <button type="button" class="close" id="updateAnnouncementClose">x</button>
     <b>Announcement :</b> <span id="updateAnnouncementVersion"></span> is out!<br />
-        - Animations<br />
+        - Added units!<br />
     </div>
     <!--
     <div class="alert alert-info" id="announcement">
     <button type="button" class="close" data-dismiss="alert">x</button>
-    <b>Blue :</b> This is a <a class="alert-link">link</a>.P<hr/>
+    <b>Blue :</b> This is a <a class="alert-link">link</a>.<hr/>
     </div>
     <div class="alert alert-danger" id="announcement">
     <button type="button" class="close" data-dismiss="alert">x</button>
-    <b>Red :</b> This is a <a class="alert-link">link</a>.P<hr/>
+    <b>Red :</b> This is a <a class="alert-link">link</a>.<hr/>
     </div>
     <div class="alert alert-success" id="announcement">
     <button type="button" class="close" data-dismiss="alert">x</button>
@@ -74,7 +70,8 @@
     <b>Purple :</b> This is a <a class="alert-link">link</a>.<hr/>
     </div>
     -->
-    <h1 class="text-center" id="noscript">Oops! The game doesn't seem to load... If your connection is being slow, you can wait some more. Otherwise, please make sure JavaScript is enabled, and try again. If you are using an add-on like NoScript, please whitelist <u>pie3636.github.io</u> in order to play the game.</h1>
+    <noscript><h1 class="text-center">Oops! The game doesn't seem to load... If your connection is being slow, you can wait some more. Otherwise, please make sure JavaScript is enabled, and try again. If you are using an add-on like NoScript, please whitelist <u>pie3636.github.io</u> in order to play the game.</h1></noscript>
+    <h1 class="text-center" id="loading">Loading...</h1>
     <div class="row" id="play">
         <div class="col-md-8 split-left" id="actions">		
             <!--
@@ -272,10 +269,10 @@
 
     <nav class="navbar navbar-default navbar-fixed-bottom container-fluid" role="navigation" id="logger">
         <span id="l1">Here go the logs. Everytime something interesting happens, it will appear here.</span><br />
-        <span id="l2">In case you don't understand what's going on, don't worry, you're just completely dumb.</span><br />
+        <span id="l2">You can check the full logs by clicking the tab "Logs" up there in the navigation bar ↑</span><br />
         <span id="l3">I'd like to thanks <strike>Antoine</strike> Fulji for the beta-testing, he is very talented at finding bugs. No, seriously, check him out, this guy is awesome :D</span><br />
         <span id="l4">Need help? Check out the <a href="https://www.reddit.com/r/firewatcher/wiki/">wiki</a>! Have any suggestions? Feel free to send me an <a href="mailto:pie3636@gmail.com">email</a> or to visit the <a href="https://www.reddit.com/r/firewatcher/">subreddit</a>.</span><br />
-        <span id="l5">That's it for now! Hope you'll have as much fun playing this as I had coding it ;) - pie3636</span><br /> 
+        <span id="l5">That's it for now! Hope you'll have as much fun playing this as I had coding it ;) - pie3636</span><br />
     </nav>
 </div>
 
