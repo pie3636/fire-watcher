@@ -12,6 +12,7 @@ function load() {
     gD.stats.sessionTime = 0;
     var saveTheme = gD.options.darkTheme;
     unsetUseLinks("branches");
+    unsetUseLinks("shells");
     $("#actions").html("<div style='margin-left:15px'>Time left : <span id='time'>0</span><br /><br /></div><hr/>");
     $("#upgrades").html("<!--<p class='text-center'>--><p>Upgrades :</p>");
     $("#upgradesBought").html("");
@@ -53,9 +54,9 @@ function load() {
         gD.announcements.update.dismissed = true;
         $("#updateAnnouncement").hide();
     });
-    for (i in gD.inventory) {
+    for (var i in gD.inventory) {
         if (gD.inventory[i].unlocked) {
-            $("#inv_" + i).show()
+            $("#inv_" + i).show();
             $("#inv_" + i + "_info").tooltip().hover(themeTooltip);
         } else {
             $("#inv_" + i).hide();       
@@ -63,24 +64,6 @@ function load() {
     }
     $("#timeFormatting").val(String(gD.options.formatting.time));
     $("#resourcesFormatting").val(String(gD.options.formatting.resources))
-}
-
-function setUseLinks(i) {
-    for (var k = 0; k < $("#inv_" + i + "_use").children().length; k++) { // Buy on click
-        var j = $("#inv_" + i + "_use").children()[k].id;
-        $("#" + j).show().click(function(_i, _j) {
-            return function() {
-                game.inventory[_i].buy(_j.split("_")[2]);
-            };
-        }(i, j));
-    }
-}
-
-function unsetUseLinks(i) {
-    for (var k = 0; k < $("#inv_" + i + "_use").children().length; k++) { // Buy on click
-        var j = $("#inv_" + i + "_use").children()[k].id;
-        $("#" + j).show().off("click");
-    }
 }
 
 function loadRec(save, data) {

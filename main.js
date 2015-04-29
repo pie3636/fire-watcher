@@ -3,7 +3,8 @@
 function tick() {
     gD.time -= gD.timeSpeed * gD.tickDuration/1000;
     gD.stats.playTime += gD.tickDuration/1000;
-    gD.stats.   sessionTime += gD.tickDuration/1000;
+    gD.stats.ticks++;
+    gD.stats.sessionTime += gD.tickDuration/1000;
     $("#time").html(timify(gD.time, true, 0, 4, 3));
     for (var i in actions) {
         var justUnlocked = !gD.actions[i].unlocked && compare(actions[i].unlock, gD);
@@ -129,7 +130,11 @@ function tick() {
         setStats("#stats", gD.stats);        
     } else if (gD.currentTab == "inv") {
         $("#time2").html(timify(gD.time, true, 0, 4, 3));
-        $("#inv_branches_value").html(timify(gD.inventory.branches.value, false, 1, 1, 3) + "<br />");
+        for (var i in gD.inventory) {
+        if (gD.inventory[i].unlocked) {
+            $("#inv_" + i + "_value").html(timify(gD.inventory[i].value, false, 1, 1, 3) + "<br />");
+        }
+    }
     }
     game.onLoad = false;
 }
@@ -151,9 +156,7 @@ function buyUpgrade(upgrade, unit) {
                     break;
                 case "upgrade":
                     $("#upgradesBought").append($("#" + upgrade)[0].outerHTML.replace(/ \(.*\)/, "")); //TODO : Add other cases?
-                    $("#" + upgrade).tooltip('hide');
-                    $("#" + upgrade).remove();
-                    $("#" + upgrade).tooltip().mouseup(toBlur).hover(themeTooltip);
+                    $("#" + upgrade).tooltip('hide').remove().tooltip().mouseup(toBlur).hover(themeTooltip);
                     gD.stats.totalUpgrades++;
                     break;
                 case "noDisplay":

@@ -18,20 +18,19 @@ var game = {
     },
     inventory: {
         branches: {
-            buy: function(str) { // TODO : Generalize function
-                var n = (str == "all" ? gD.inventory.branches.value : str);
-                if (n <= gD.inventory.branches.value && n) {
-                    gD.inventory.branches.value -= n;
-                    var gain = gD.actions.exploreTheBeach.branchesPower * n;
-                    log("Earnt " + timify(gain, true, 0, 3, 0) + "!");
-                    gainTime(gain);
-                    if(n == 37) {
-                        gD.event.branches37 = true;
-                    }
-                } else {
-                    log("Not enough branches!");
+            use: function(n) { // TODO : Generalize function
+                var gain = gD.actions.exploreTheBeach.branchesPower * n;
+                log("Earnt " + timify(gain, true, 0, 3, 0) + "!");
+                gainTime(gain);
+                if(n == 37) {
+                    gD.event.branches37 = true;
                 }
             },
+        },
+        shells: {
+            use: function(n) {
+                log("DONE");
+            }
         }
     }
 };
@@ -50,7 +49,8 @@ var gD = {
         }
     },
     inventory: {
-        branches : {},
+        branches: {},
+        shells: {}
     },
     event: {
         branches37: false
@@ -69,6 +69,7 @@ var gD = {
             minBranches: 1,
             maxBranches: 5,
             branchesPower: 10,
+            shellChance: 0.1
         },
         monkey: {
             factor: 1.1,
@@ -95,6 +96,7 @@ var gD = {
         totalAchievements: 0,
         playTime: 0,
         timeGained: 0,
+        ticks: 0,
         uses: {
             fanTheFlames: 0
         }
@@ -120,7 +122,7 @@ var actions = {
         show: {
             type: "action",
             tooltip: "Blow air on the fire to make it last a bit longer",
-            inside: "Increases the fire duration by <b><span id='firePower'>" + gD.actions.fanTheFlames.power + " seconds</span></b>."
+            inside: "Increase the fire duration by <b><span id='firePower'>" + gD.actions.fanTheFlames.power + " seconds</span></b>."
         },
         effect: function(i) {
             i = set(i, 1);
@@ -141,7 +143,7 @@ var actions = {
             type: "action",
             nocenter: true,
             tooltip: "Take some time to fetch brushwood on the beach, increasing the duration of the fire",
-            inside: "Takes <b><span id='fetchBrushwoodLoss'></span></b> to gather brushwood and makes the fire last an additional <b><span id='fetchBrushwoodGain'></span></b>."
+            inside: "Take <b><span id='fetchBrushwoodLoss'></span></b> to gather brushwood and make the fire last an additional <b><span id='fetchBrushwoodGain'></span></b>."
         },
         effect: function() {
             gainTime(300 - gD.actions.fetch_Brushwood.fatigue);
@@ -167,26 +169,39 @@ var actions = {
         show: {
             type: "action",
             tooltip: "Explore the immediate surroundings of the fire, and collect what could be useful",
-            inside: "Takes <b><span id='exploreTheBeachLoss'>" + timify(300, true, 0, 2, 0) + "</span></b> to explore the beach and possibly find loot.<br />"
+            inside: "Take <b><span id='exploreTheBeachLoss'>" + timify(300, true, 0, 2, 0) + "</span></b> to explore the beach and possibly find loot.<br />"
         },
         effect: function() {
             var branchesFound = intRandom(gD.actions.exploreTheBeach.minBranches, gD.actions.exploreTheBeach.maxBranches);
-            gD.inventory.branches.unlocked = true;
             gD.inventory.branches.value += branchesFound;
-            log("You found " + timify(branchesFound, false, 0, 1, 3) + " branches! Total : " + timify(gD.inventory.branches.value, false, 1, 1, 3));
+            var strValue = timify(gD.inventory.branches.value, false, 1, 1, 3);
+            log("You found " + timify(branchesFound, false, 0, 1, 3) + " branches! Total : " + strValue);
+            if (Math.random() < gD.actions.exploreTheBeach.shellChance) {
+                if (!gD.inventory.shells.value) {
+                    gD.inventory.shells.unlocked = true;
+                    $("#inv_shells").show();
+                    $("#inv_shells_info").tooltip().hover(themeTooltip);
+                }
+                gD.inventory.shells.value++;
+                var strValue = timify(gD.inventory.shells.value, false, 1, 1, 3);
+                log("You found a shell! Total : " + strValue);
+            }
         },
         tick: function() {
             $("#inv_branches_more").html(timify(gD.actions.exploreTheBeach.branchesPower, true, 0, 2, 0));
+            $("#inv_shell_more").html(gD.actions.exploreTheBeach.shellChance * 100 + " %");
         },
         doUnlock: function() {
+            gD.inventory.branches.unlocked = true;
             $("#inv_branches").show();
             $("#inv_branches_info").tooltip().hover(themeTooltip);
             setUseLinks("branches");
+            setUseLinks("shells");
         }
     },
     /* ============================================================ UNITS ============================================================ */
     monkey: {
-        unlock: {time: 600},
+        unlock: {time: 600, actions: {forestExploration: {unlocked: true}}},
         cost: {time: 10},
         getCost: function(j) {
             j = Math.min(j, 4); // Just in case, lol
@@ -216,8 +231,8 @@ var actions = {
                         actions.fanTheFlames.effect(gD.actions.monkey.click);
                     }
                 }
-            } else {
-                actions.fanTheFlames.effect(gD.actions.monkey.number/1e2 * gD.tickDuration/1e3 * gD.actions.monkey.click);
+            } else if (!(gD.stats.ticks % (Math.floor(1000/gD.tickDuration)))) {
+                actions.fanTheFlames.effect(gD.actions.monkey.number/1e2 * gD.tickDuration/1e3 * gD.actions.monkey.click * Math.floor(1000/gD.tickDuration));
             }
         }
     },
@@ -277,7 +292,15 @@ var actions = {
             gD.actions.monkey.click *= 2;
         }
     },
-    twistrike: {
+    forestExploration: {
+        unlock: {time: 2500},
+        cost: {time: 15000},
+        show: {
+            type: "upgrade",
+            tooltip: "Venture in the forest to find creatures, and hire them"
+        },
+    },
+    bananaTrees: {
         unlock: {actions: {monkey: {number: 100}}},
         cost: {time: 27000},
         show: {
@@ -303,7 +326,7 @@ var actions = {
         unlock: {event: {branches37: true}},
         show: {
             type: "achievement",
-            tooltip: "Using exactly 37 branches at once. This achievement does nothing at all"
+            tooltip: "Using exactly 37 branches at once"
         }
     },
     b31: {

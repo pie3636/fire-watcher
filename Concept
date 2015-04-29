@@ -4,11 +4,25 @@ Fatigue : f
 t -= 1/s
 f -= 2/s
 
-Fan the flames              No requirement              No cost                    t + 5s                       T
-Fetch brushwood             100s                        t -= 60s + f/2             t + 5m - f/2, f + 60         T
-Pyramid fire                100s                        t -= 10m                   Fan_the_flames * 2           U
-Fire mastery                50 Fan_the_flames           t -= 500s                  Fan_the_fire += 0.001/use    U
-Explore the beach           300s                        t -= 300s                  1~5 branches (10s)           T
-Three hundred seconds       300s played                 No cost                    dt *= 0.9                    A
-Misunderstanding            37 branches used at once    No cost                    maxBranches *= 3             A
-Interstellar                13.8e9 yr                   No cost                    Nothing                      A
+Fan the flames              No requirement              No cost                    t + 5s                                   T
+Pyramid fire                100s                        600s                       fanTheFlames * 2                         U
+Campfire                    50 fantheFlames             500s                       fanTheFlames += 0.001/use                U
+Bonfire                     250 fantheFlames            2000s                      fanTheFlames += 0.001/use                U
+Fire mastery                1000 fantheFlames           10000s                     fanTheFlames += 0.002/use                U
+
+Fetch brushwood             100s                        60s + f/2                  t + 5m - f/2, f + 60                     T
+
+Explore the beach           300s                        300s                       1~5 branches (10s), 10% ink              T
+Misunderstanding            37 branches used at once    No cost                    Nothing                                  A
+b31                         1111 fanTheFlames           No cost                    maxBranches *= 3                         A
+
+Forest exploration          2500s                       15000s                     Unlocks monkeys                          U
+Monkey                      600s, forestExploration     10/1.1                     fanTheFlames 1%/tick, regular if >100    N
+Twistrike                   25 monkeys                  5000s                      monkeys * 2                              U
+Banana trees                100 monkeys                 27000s                     monkeys factor -> 1.05                   U
+
+Three hundred seconds       300s played                 No cost                    dt *= 0.9                                A
+Interstellar                13.8e9 yr                   No cost                    Nothing                                  A
+
+Hey dood                    60s                         No cost                    Message                                  D
+

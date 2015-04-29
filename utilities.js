@@ -34,6 +34,38 @@ function setGreyout(upgrade, unit)  {
     }
 }
 
+function use(item, str) {
+    var n = (str == "all" ? gD.inventory[item].value : str);
+    if (n <= gD.inventory[item].value && n) {
+        gD.inventory[item].value -= n;
+        return n;
+    } else {
+        log("Not enough " + item + "!");
+        return 0;
+    }
+}
+
+function setUseLinks(i) {
+    for (var k = 0; k < $("#inv_" + i + "_use").children().length; k++) { // Buy on click
+        var j = $("#inv_" + i + "_use").children()[k].id;
+        $("#" + j).show().click(function(_i, _j) {
+            return function() {
+                var tmp = use(_i, _j.split("_")[2]);
+                if (tmp) {
+                    game.inventory[_i].use(tmp);
+                }
+            };
+        }(i, j));
+    }
+}
+
+function unsetUseLinks(i) {
+    for (var k = 0; k < $("#inv_" + i + "_use").children().length; k++) { // Buy on click
+        var j = $("#inv_" + i + "_use").children()[k].id;
+        $("#" + j).show().off("click");
+    }
+}
+
 function strDiv(i, j) {
     return '<div id="' + i + 'Div" class="row" style="margin-left:' + j + 'px">';
 }
