@@ -195,7 +195,7 @@ var actions = {
         repeatable: true,
         show: {
             type: "unit",
-            tooltip: "A monkey found in the forest. Each has a 1% chance to click every second. Get 1000 of them and they'll click more regularly."
+            tooltip: "A monkey found in the forest. Each has a 1% chance to click every second. Get 100 of them and they'll click more regularly."
         },
         effect: function(j) {
             if (j && gD.actions.monkey.maxBuy) {
@@ -204,20 +204,20 @@ var actions = {
             var str = timify(gD.actions.monkey.number, false, 1, 1, 3);
             $("#monkeyNumber").html(str);
             $("#monkeyCost").html(timify(sumPrices(actions.monkey.cost.time, gD.actions.monkey.factor, gD.actions.monkey.number, 1), true, 1, 2, 0));
-            $("#monkeyProduction").html(gD.actions.monkey.number < 1000 ? "Variable" : str);
+            $("#monkeyProduction").html(gD.actions.monkey.number < 100 ? "Variable" : str);
         },
         tick: function() {
             gD.actions.monkey.maxBuy = sumPrices(actions.monkey.cost.time, gD.actions.monkey.factor, gD.actions.monkey.number, 0, gD.time, true, true);
             $("#monkey4").html("Max (" + gD.actions.monkey.maxBuy + ")").mouseup(toBlur);
-            if (gD.actions.monkey.number < 1000) {
+            if (gD.actions.monkey.number < 100) {
                 for (var i = 1; i <= gD.actions.monkey.number; i++) {
-                    if (Math.random() <= 0.001)
+                    if (Math.random() <= 0.01)
                     {
                         actions.fanTheFlames.effect(gD.actions.monkey.click);
                     }
                 }
             } else {
-                actions.fanTheFlames.effect(gD.actions.monkey.number/1e3 * gD.tickDuration/1e3 * gD.actions.monkey.click);
+                actions.fanTheFlames.effect(gD.actions.monkey.number/1e2 * gD.tickDuration/1e3 * gD.actions.monkey.click);
             }
         }
     },
@@ -275,6 +275,17 @@ var actions = {
         },
         effect: function() {
             gD.actions.monkey.click *= 2;
+        }
+    },
+    twistrike: {
+        unlock: {actions: {monkey: {number: 100}}},
+        cost: {time: 27000},
+        show: {
+            type: "upgrade",
+            tooltip: "Monkeys are way cheaper"
+        },
+        effect: function() {
+            gD.actions.monkey.factor = 1.05;
         }
     },
     /* ============================================================ ACHIEVEMENTS ============================================================ */

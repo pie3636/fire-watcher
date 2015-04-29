@@ -150,7 +150,7 @@ function buyUpgrade(upgrade, unit) {
                     $("#" + upgrade + "HR").remove();
                     break;
                 case "upgrade":
-                    $("#upgradesBought").append($("#" + upgrade)[0].outerHTML.replace(/ (.*)/, 0)); //TODO : Add other cases?
+                    $("#upgradesBought").append($("#" + upgrade)[0].outerHTML.replace(/ \(.*\)/, "")); //TODO : Add other cases?
                     $("#" + upgrade).tooltip('hide');
                     $("#" + upgrade).remove();
                     $("#" + upgrade).tooltip().mouseup(toBlur).hover(themeTooltip);
