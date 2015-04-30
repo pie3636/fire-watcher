@@ -158,7 +158,7 @@ var actions = {
             actions.fetch_Brushwood.cost.time = 60 + fatigue;
             var color = (fatigue < 120 ? "#080" : "#A00"); // Cost < Gain
             $("#fetchBrushwoodLoss").html(timify(actions.fetch_Brushwood.cost.time, true, 0, 2, 0)).attr("style", "color:" + color);
-            $("#fetchrushwoodGain").html(timify(300 - fatigue, true, 0, 2, 0)).attr("style", "color:" + color);
+            $("#fetchBrushwoodGain").html(timify(300 - fatigue, true, 0, 2, 0)).attr("style", "color:" + color);
         }
     },
     exploreTheBeach: {
