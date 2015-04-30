@@ -288,7 +288,7 @@ var actions = {
         cost: {time: 2400},
         show: {
             type: "upgrade",
-            tooltip: "Monkeys' are twice as efficient"
+            tooltip: "Monkeys are twice as efficient"
         },
         effect: function() {
             gD.actions.monkey.click *= 2;
@@ -310,7 +310,7 @@ var actions = {
         cost: {time: 1500},
         show: {
             type: "upgrade",
-            tooltip: "Venture in the forest to find creatures, and hire them"
+            tooltip: "Venture into the forest to find creatures, and hire them"
         },
         effect: function() {
             log("Now all you need is a little <i>time</i>");
