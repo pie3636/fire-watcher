@@ -140,8 +140,7 @@ var actions = {
         cost: {time: 60},
         repeatable: true,
         show: {
-            type: "action",
-            nocenter: true,
+            type: "action", 
             tooltip: "Take some time to fetch brushwood on the beach, increasing the duration of the fire",
             inside: "Take <b><span id='fetchBrushwoodLoss'></span></b> to gather brushwood and make the fire last an additional <b><span id='fetchBrushwoodGain'></span></b>."
         },
@@ -159,7 +158,7 @@ var actions = {
             actions.fetch_Brushwood.cost.time = 60 + fatigue;
             var color = (fatigue < 120 ? "#080" : "#A00"); // Cost < Gain
             $("#fetchBrushwoodLoss").html(timify(actions.fetch_Brushwood.cost.time, true, 0, 2, 0)).attr("style", "color:" + color);
-            $("#fetchBrushwoodGain").html(timify(300 - fatigue, true, 0, 2, 0)).attr("style", "color:" + color);
+            $("#fetchrushwoodGain").html(timify(300 - fatigue, true, 0, 2, 0)).attr("style", "color:" + color);
         }
     },
     exploreTheBeach: {
@@ -216,10 +215,10 @@ var actions = {
             if (j) {
                 gD.actions.monkey.number += (j == 4 ? gD.actions.monkey.maxBuy : Math.pow(10, j - 1));
             }
-            var str = timify(gD.actions.monkey.number, false, 1, 1, 3);
+            var str = timify(gD.actions.monkey.number, false, 1, 1, 0);
             $("#monkeyNumber").html(str);
             $("#monkeyCost").html(timify(sumPrices(actions.monkey.cost.time, gD.actions.monkey.factor, gD.actions.monkey.number, 1), true, 1, 2, 0));
-            $("#monkeyProduction").html(timify(gD.actions.monkey.number < 100 ? "Variable" : gD.actions.monkey.number/1e2 * gD.actions.monkey.click, false, 0, 1, 2) + " clicks/s");
+            $("#monkeyProduction").html(gD.actions.monkey.number < 100 ? "Variable" : timify(gD.actions.monkey.number/1e2 * gD.actions.monkey.click, false, 0, 1, 2) + " clicks/s");
         },
         tick: function() {
             gD.actions.monkey.maxBuy = sumPrices(actions.monkey.cost.time, gD.actions.monkey.factor, gD.actions.monkey.number, 0, gD.time, true, true);
@@ -234,6 +233,9 @@ var actions = {
             } else if (!(gD.stats.ticks % (Math.floor(1000/gD.tickDuration)))) {
                 actions.fanTheFlames.effect(gD.actions.monkey.number * gD.tickDuration/1e5 * gD.actions.monkey.click * Math.floor(1000/gD.tickDuration));
             }
+        },
+        doUnlock: function() {
+            log("Congrats! You unlocked monkeys with tremendous fanning abilities!");
         }
     },
     /* ============================================================ UPGRADES ============================================================ */
@@ -297,7 +299,7 @@ var actions = {
         cost: {time: 9600},
         show: {
             type: "upgrade",
-            tooltip: "Monkeys' are twice as efficient"
+            tooltip: "Monkeys are twice as efficient"
         },
         effect: function() {
             gD.actions.monkey.click *= 2;
@@ -310,6 +312,9 @@ var actions = {
             type: "upgrade",
             tooltip: "Venture in the forest to find creatures, and hire them"
         },
+        effect: function() {
+            log("Now all you need is a little <i>time</i>");
+        }
     },
     bananaTrees: {
         unlock: {actions: {monkey: {number: 100}}},
@@ -340,11 +345,11 @@ var actions = {
             tooltip: "Using exactly 37 branches at once"
         }
     },
-    b31: {
+    b15: {
         unlock: {stats: {uses: {fanTheFlames: 1111}}},
         show: {
             type: "achievement",
-            tooltip: "You earn more than 11.111 seconds each time you fan the flames! Increases branches gain",
+            tooltip: "You've fanned the flames 1,111 times! Increases branches gain",
             title: "31"
         },
         effect: function() {

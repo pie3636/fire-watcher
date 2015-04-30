@@ -153,13 +153,13 @@ function timify(out, timeLike, shortness, precision, digits, space, extraZeros, 
         }
         var cur = (i ? Math.floor(out % div) : out % div);
         var cur2 = (out % div).toFixed(digits);
-        if (extraZeros && i != n && out >= div) {
+        if (extraZeros && i != n && out >= div && i) {
             for (var j = 4; j >= 1; j--) {
                 var k = Math.pow(10, j);
                 str2 += (cur < k && k < div ? "0" : "");
             }
         }
-        var add = ((cur || keepZeros) != 0 ? str2 + cur + (choice || i != 5 || cur < 2 || shortness ? (space ? " " : "") + (choice == 3 ? data[i] : data[i][Math.min(shortness, N - (typeof data[i][N] === 'string' ? 0 : 1))]) + (choice || cur <= 1 || shortness || cur < 2 && i == n ? "" : "s") : (space ? " " : "") + "millennia") + (i && extraSpace ? " " : "") : ""); // The '!= 0' is mandatory, for some reason
+        var add = ((cur && cur > 1e-3 || choice || keepZeros) != 0 ? str2 + cur + (choice || i != 5 || cur < 2 || shortness ? (space ? " " : "") + (choice == 3 ? data[i] : data[i][Math.min(shortness, N - (typeof data[i][N] === 'string' ? 0 : 1))]) + (choice || cur <= 1 || shortness || cur < 2 && i == n ? "" : "s") : (space ? " " : "") + "millennia") + (i && extraSpace ? " " : "") : ""); // The '!= 0' is mandatory, for some reason
         var add2 = add.replace(cur, cur2);
         str = add + str;
         if (cur || fullPrecision) {

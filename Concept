@@ -14,7 +14,7 @@ Fetch brushwood             100s                        60s + f/2               
 
 Explore the beach           300s                        300s                       1~5 branches (10s), 10% ink              T
 Misunderstanding            37 branches used at once    No cost                    Nothing                                  A
-b31                         1111 fanTheFlames           No cost                    maxBranches *= 3                         A
+b15                         1111 fanTheFlames           No cost                    maxBranches *= 3                         A
 
 Forest exploration          900s                        1500s                      Unlocks monkeys                          U
 Monkey                      300s, forestExploration     10/1.1                     fanTheFlames 1%/tick, regular if >100    N
