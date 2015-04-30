@@ -43,10 +43,10 @@ function tick() {
                             <div class="col-md-2 top6">\
                                 <span' + strTooltip(i) + ' id="' + i + 'Info">' + name + 's</span> : <span id="' + i + 'Number">0</span>\
                             </div>\
-                            <div class="col-md-4 top6">\
+                            <div class="col-md-3 top6">\
                                 Cost : <span id="' + i + 'Cost">' + cost(actions[i].getCost(1), true) + '</span>\
                             </div>\
-                            <div class="col-md-2 top6">\
+                            <div class="col-md-3 top6">\
                                 Production : <span id="' + i + 'Production">0</span>\
                             </div>\
                             <div class="col-md-4">\

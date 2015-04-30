@@ -1,5 +1,5 @@
 var game = {
-    version: "v0.7.0",
+    version: "v0.7.1",
     onLoad: false, // Restore purchases
     onImport: false, // Load from import
     onReset: false, // Load from initValues
@@ -219,7 +219,7 @@ var actions = {
             var str = timify(gD.actions.monkey.number, false, 1, 1, 3);
             $("#monkeyNumber").html(str);
             $("#monkeyCost").html(timify(sumPrices(actions.monkey.cost.time, gD.actions.monkey.factor, gD.actions.monkey.number, 1), true, 1, 2, 0));
-            $("#monkeyProduction").html(gD.actions.monkey.number < 100 ? "Variable" : str);
+            $("#monkeyProduction").html(timify(gD.actions.monkey.number < 100 ? "Variable" : gD.actions.monkey.number/1e2 * gD.actions.monkey.click, false, 0, 1, 2) + " clicks/s");
         },
         tick: function() {
             gD.actions.monkey.maxBuy = sumPrices(actions.monkey.cost.time, gD.actions.monkey.factor, gD.actions.monkey.number, 0, gD.time, true, true);
@@ -232,7 +232,7 @@ var actions = {
                     }
                 }
             } else if (!(gD.stats.ticks % (Math.floor(1000/gD.tickDuration)))) {
-                actions.fanTheFlames.effect(gD.actions.monkey.number/1e2 * gD.tickDuration/1e3 * gD.actions.monkey.click * Math.floor(1000/gD.tickDuration));
+                actions.fanTheFlames.effect(gD.actions.monkey.number * gD.tickDuration/1e5 * gD.actions.monkey.click * Math.floor(1000/gD.tickDuration));
             }
         }
     },
