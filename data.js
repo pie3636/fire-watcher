@@ -222,7 +222,7 @@ var actions = {
         },
         tick: function() {
             gD.actions.monkey.maxBuy = sumPrices(actions.monkey.cost.time, gD.actions.monkey.factor, gD.actions.monkey.number, 0, gD.time, true, true);
-            $("#monkey4").html("Max (" + gD.actions.monkey.maxBuy + ")").mouseup(toBlur);
+            $("#monkey4").html("Max (" + gD.actions.monkey.maxBuy + ")");
             if (gD.actions.monkey.number < 100 && !(gD.stats.ticks % (Math.floor(1000/gD.tickDuration)))) {
                 for (var i = 1; i <= gD.actions.monkey.number; i++) {
                     if (Math.random() <= 0.01)
@@ -235,7 +235,7 @@ var actions = {
             }
         },
         doUnlock: function() {
-            log("Congrats! You unlocked monkeys with tremendous fanning abilities!");
+            log("You did it, congrats! You unlocked monkeys with tremendous fanning abilities!");
         }
     },
     /* ============================================================ UPGRADES ============================================================ */
