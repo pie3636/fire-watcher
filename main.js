@@ -1,10 +1,15 @@
 //TODO: More stats (prestigeTime...), hasOwnProperty/booleans 0-1 -> optimisation, progress (bars?), log highlighting transition? (bitstorm), compatibility on version update, timify, cost
 
 function tick() {
-    gD.time -= gD.timeSpeed * gD.tickDuration/1000;
-    gD.stats.playTime += gD.tickDuration/1000;
+    game.realTime = new Date - game.lastDate;
+    if (game.realTime < 2 * gD.tickDuration) {
+        game.realTime = gD.tickDuration;
+    }
+    game.lastDate = new Date;
+    gD.time -= gD.timeSpeed * game.realTime/1000;
+    gD.stats.playTime += game.realTime/1000;
     gD.stats.ticks++;
-    gD.stats.sessionTime += gD.tickDuration/1000;
+    gD.stats.sessionTime += game.realTime/1000;
     $("#time").html(timify(gD.time, true, 0, 4, 3));
     for (var i in actions) {
         var justUnlocked = !gD.actions[i].unlocked && compare(actions[i].unlock, gD);

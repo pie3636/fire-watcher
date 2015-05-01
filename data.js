@@ -7,6 +7,8 @@ var game = {
     latestLog: 5,
     numLogs: 5,
     latestFullLog: 0,
+    lastDate: new Date,
+    realTime: 50,
     newSave: {},
     operator: {
         EQ: 1, // =
@@ -35,7 +37,7 @@ var game = {
     }
 };
 var gD = {
-    tickDuration: 50,
+    tickDuration: 50, // game.realTime
     time: 60,
     sessionTime: 0,
     timeSpeed: 1,
@@ -109,7 +111,7 @@ var gD = {
  * -> unlock : {time: 50} ~ {time: {operator: game.operator.GE,             value: 50, isConsumed: true}}
  * show : Object [type, tooltip, inside, nocenter, name][title]             Items to be displayed. Types : action, upgrade, achievement
  * effect [unit] : function                                                 On buying
-* tick : function                                                           On tick
+ * tick : function                                                          On tick
  * doUnlock : function                                                      On unlock
  * repeatable : Boolean                                                     Peristent
  * nocenter : Boolean                                                       Multiline (action)
@@ -153,7 +155,7 @@ var actions = {
         tick: function() {
             var fatigue = gD.actions.fetch_Brushwood.fatigue;
             if (fatigue >= 0) {
-                gD.actions.fetch_Brushwood.fatigue -= gD.tickDuration/1000;
+                gD.actions.fetch_Brushwood.fatigue -= game.realTime/1000;
             }
             actions.fetch_Brushwood.cost.time = 60 + fatigue;
             var color = (fatigue < 120 ? "#080" : "#A00"); // Cost < Gain
@@ -223,15 +225,15 @@ var actions = {
         tick: function() {
             gD.actions.monkey.maxBuy = sumPrices(actions.monkey.cost.time, gD.actions.monkey.factor, gD.actions.monkey.number, 0, gD.time, true, true);
             $("#monkey4").html("Max (" + gD.actions.monkey.maxBuy + ")");
-            if (gD.actions.monkey.number < 100 && !(gD.stats.ticks % (Math.floor(1000/gD.tickDuration)))) {
+            if (gD.actions.monkey.number < 100 && !(gD.stats.ticks % (Math.floor(1000/game.realTime)))) {
                 for (var i = 1; i <= gD.actions.monkey.number; i++) {
                     if (Math.random() <= 0.01)
                     {
                         actions.fanTheFlames.effect(gD.actions.monkey.click);
                     }
                 }
-            } else if (!(gD.stats.ticks % (Math.floor(1000/gD.tickDuration)))) {
-                actions.fanTheFlames.effect(gD.actions.monkey.number * gD.tickDuration/1e5 * gD.actions.monkey.click * Math.floor(1000/gD.tickDuration));
+            } else if (!(gD.stats.ticks % (Math.floor(1000/game.realTime)))) {
+                actions.fanTheFlames.effect(gD.actions.monkey.number * game.realTime/1e5 * gD.actions.monkey.click * Math.floor(1000/game.realTime));
             }
         },
         doUnlock: function() {
