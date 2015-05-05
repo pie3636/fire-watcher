@@ -184,7 +184,7 @@ function timify(out, timeLike, shortness, precision, digits, space, extraZeros, 
     extraZeros = set(extraZeros, false); // choice == 0 && !shortness
     digits = set(digits, 3);
     shortness = set(shortness, 0);
-    space = set(space, shortness <= 1 && choice != 3 || shortness == 0);
+    space = set(space, shortness <= 1);
     keepZeros = set(keepZeros, false);
     var timeUnits = [["second", "sec", "s", 60], ["minute", "min", "m", 60], ["hour", "hr", "h", 24], ["day", "day", "d", 31], ["month", "month", "M", 12], ["year", "yr", "y", 1e3], ["millennium", "mil", "E", 1e3], ["thousands of millennia", "kmil", "kE", 1e3], ["millions of millennia", "Mmil", "ME"]];
     var SIUnits = [/*["yocto", "y"], ["zocto", "z"], ["atto", "a"], ["femto", "f"], ["pico", "p"], ["nano", "n"], ["micro", "µ"], ["milli", "m"], */["", ""], ["kilo", "k"], ["mega", "M"], ["giga", "G"], ["tera", "T"], ["peta", "P"], ["exa", "E"], ["zetta", "Z"], ["yotta", "Y"]];
