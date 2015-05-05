@@ -157,7 +157,7 @@ var actions = {
         },
         tick: function() {
             var fatigue = gD.actions.fetch_Brushwood.fatigue;
-            gD.actions.fetch_Brushwood.fatigue = Math.max(0, fatigue - game.realTime/1000, 2);
+            gD.actions.fetch_Brushwood.fatigue = Math.max(0, floorx(fatigue - game.realTime/1000, 2));
             actions.fetch_Brushwood.cost.time = 60 + fatigue;
             var color = (fatigue < 120 ? "#080" : "#A00"); // Cost < Gain
             $("#fetchBrushwoodLoss").html(timify(actions.fetch_Brushwood.cost.time, true, 0, 2, 0)).attr("style", "color:" + color);
