@@ -48,6 +48,7 @@ function load() {
         gD.currentTab = "opt";
         if (localStorage.getItem("save") != localStorage.getItem("initValues")) {
             clearLogs();
+            clearFullLogs();
             log("Game loaded.");
         }
     }
@@ -207,6 +208,7 @@ function logDurationSetting() {
 
 function clearFullLogs() {
     $("#fullLogs").html("");
+    game.latestFullLog = 0;
 }
 
 function resizeFullLogs() {
