@@ -2,10 +2,13 @@ function save() {
     localStorage.setItem("save", JSON.stringify(gD));
     var str = (gD.options.autoSave ? "Auto" : "Manual");
     if (!game.latestLogSave) {
-        log("Game saved (x1)");
-        game.latestLogSave = true;
-    } else {
+        log("Game saved");
+        game.latestLogSave = 2;
+    } else if (game.latestLogSave == 1) {
         $("#l1").html($("#l1").html().replace(/\(x\d*\)/, function(n) {return "(x" + (Number(n.slice(2).slice(0, -1)) + 1) + ")"}));
+    } else {
+        $("#l1").html($("#l1").html().replace(/$/, " (x2)"));
+        game.latestLogSave = 1;
     }
     if(typeof _gaq !== 'undefined') { // Prevent logger failure
         _gaq.push(['_trackEvent', 'Fire Watcher', 'Save']);
@@ -19,7 +22,9 @@ function reload() {
 
 function load() {
     game.onLoad = true; // Restore actions on next tick
-    gD.stats.sessionTime = 0;
+    if (!game.onReload) {
+        gD.stats.sessionTime = 0;
+    }
     var saveTheme = gD.options.darkTheme;
     unsetUseLinks("branches");
     unsetUseLinks("shells");
@@ -170,7 +175,6 @@ function log(str, secondary) {
    $("#fullLogs").html(date + str + "\n" + $("#fullLogs").html().replace(/<\/i>/, "").replace(/<i>/, ""));
     game.latestFullLog++;
     resizeFullLogs();
-    game.latestLogSave = false;
 }
 
 function unhighlightLastLog() {

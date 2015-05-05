@@ -6,7 +6,7 @@ var game = {
     onReload: false,
     logTimeout: {},
     latestLog: 5,
-    latestLogSave: false,
+    latestLogSave: 0,
     numLogs: 5,
     latestFullLog: 0,
     lastDate: new Date,
