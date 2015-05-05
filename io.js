@@ -174,6 +174,7 @@ function log(str, secondary) {
     }
    $("#fullLogs").html(date + str + "\n" + $("#fullLogs").html().replace(/<\/i>/, "").replace(/<i>/, ""));
     game.latestFullLog++;
+    game.latestLogSave = 0;
     resizeFullLogs();
 }
 
