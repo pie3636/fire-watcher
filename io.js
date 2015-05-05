@@ -20,7 +20,7 @@ function reload() {
     load();
 }
 
-function load() {
+function load(hide) {
     game.onLoad = true; // Restore actions on next tick
     if (!game.onReload) {
         gD.stats.sessionTime = 0;
@@ -36,7 +36,9 @@ function load() {
         gD = JSON.parse(localStorage.getItem("initValues"));
         gD.currentTab = "opt"; // Needed to change tab
         changeTab("play");
-        log("Game resetted!");
+        if (!hide) {
+            log("Game resetted!");
+        }
     } else if (game.onImport) {
         loadRec(game.newSave, gD);
         gD.currentTab = "opt";
@@ -148,7 +150,7 @@ function importSave() {
     $("#containerImport").focus();
     if (importSaveRec()) {
         game.onReset = true; // Set minimal values
-        load();
+        load(true);
         game.onImport = true;
         load();
     }  
