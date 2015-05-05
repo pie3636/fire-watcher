@@ -49,7 +49,7 @@ function load() {
         if (localStorage.getItem("save") != localStorage.getItem("initValues")) {
             clearLogs();
             clearFullLogs();
-            log("Game loaded.");
+            log("Game loaded");
         }
     }
     game.onReset = false;
