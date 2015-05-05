@@ -189,7 +189,7 @@ function timify(out, timeLike, shortness, precision, digits, space, extraZeros, 
     var timeUnits = [["second", "sec", "s", 60], ["minute", "min", "m", 60], ["hour", "hr", "h", 24], ["day", "day", "d", 31], ["month", "month", "M", 12], ["year", "yr", "y", 1e3], ["millennium", "mil", "E", 1e3], ["thousands of millennia", "kmil", "kE", 1e3], ["millions of millennia", "Mmil", "ME"]];
     var SIUnits = [/*["yocto", "y"], ["zocto", "z"], ["atto", "a"], ["femto", "f"], ["pico", "p"], ["nano", "n"], ["micro", "µ"], ["milli", "m"], */["", ""], ["kilo", "k"], ["mega", "M"], ["giga", "G"], ["tera", "T"], ["peta", "P"], ["exa", "E"], ["zetta", "Z"], ["yotta", "Y"]];
     var mathUnits = [["", ""],  ["thousand", "K"],  ["million", "M"],  ["billion", "B"],  ["trillion", "T"],  ["quadrillion", "Qa", "Q"],  ["quintillion", "Qi"],  ["sextillion", "Sx", "S"],  ["septillion", "Sp"],  ["octillion", "Oc", "O"],  ["nonillion", "No", "N"],  ["decillion", "Dc", "D"]];
-    var alphaUnits = /*"zyxwvutsrqponmlkjihgfedcba*/"ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    var alphaUnits = /*"zyxwvutsrqponmlkjihgfedcba*/" ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     var outsave = 1; // save out after each loop
     var data, sec; // units, unit for last iteration (s/sec/second)
     var outsave2 = out; // save
@@ -214,14 +214,14 @@ function timify(out, timeLike, shortness, precision, digits, space, extraZeros, 
             break;
         case 1:
             data = SIUnits;
-            start = 1;//e24;
+            //start = 1e24;
             break;
         case 2:
             data = mathUnits;
             break;
         case 3:
             data = alphaUnits;
-            start = 1;//e78;
+            //start = 1e78;
             break;
         case 4:
             return floorx(out, digits).toExponential() + (timeLike ? " " + sec : "");
