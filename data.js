@@ -1,5 +1,5 @@
 var game = {
-    version: "v0.7.2",
+    version: "v0.7.3",
     onLoad: false, // Restore purchases
     onImport: false, // Load from import
     onReset: false, // Load from initValues
