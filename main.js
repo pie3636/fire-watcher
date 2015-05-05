@@ -18,9 +18,6 @@ function tick() {
         var tab = ["1", "2", "3", "4"]; // 1, 10, 100, max
         if (normalTick || restoreStats) { // If new action unlocked or unlocked in loaded game or bought in loaded game (to add to stats)
             gD.actions[i].unlocked = true;
-            if (typeof actions[i].doUnlock !== 'undefined') {
-                actions[i].doUnlock();
-            }
             if (actions[i].repeatable) {
                 gD.stats.totalActions++;
             }
@@ -97,6 +94,9 @@ function tick() {
                     }
                     break;
             }
+            if (typeof actions[i].doUnlock !== 'undefined' && (!actions[i].noUnlockOnLoad || justUnlocked)) {
+                actions[i].doUnlock();
+            }
             if (actions[i].show.type == "action" || actions[i].show.type == "upgrade" || actions[i].show.type == "achievement") { // Fix to prevent constant focus after clicking, TODO : Optimize
                 $("#" + i).tooltip().mouseup(toBlur).hover(themeTooltip); // Changes tooltip theme as needed
                 if (normalTick && actions[i].show.type != "achievement") {
@@ -108,7 +108,7 @@ function tick() {
                 }
             } else if (actions[i].show.type == "unit") {
                 for (var j in tab) {
-                    $("#" + i + j).mouseup(toBlur);
+                    $("#" + i +  tab[j]).mouseup(toBlur);
                     if (normalTick) {
                         $("#" + i + tab[j]).on('click', function(_i, _j){
                             return function() {

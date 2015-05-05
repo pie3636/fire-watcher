@@ -76,6 +76,7 @@ function set(x, val) {
 function setFormatting() {
     var str = this.id.split(/(?=[A-Z])/)[0];
     gD.options.formatting[str] = $("#" + this.id + " option:selected").prevAll().size();
+    reload();
     log(str.textify() + " setting changed!");
 }
 
@@ -120,6 +121,10 @@ function gainTime(n)
 
 function cost(data, hideParen) {
     return (hideParen ? '' : '(') + timify(data.time, true, 1, 2, 0) + (hideParen ? '' : ')');
+}
+
+function floorx(data, digits) {
+    return Math.floor(Math.pow(10, digits)*data)/Math.pow(10, digits);
 }
 
 String.prototype.textify = function() { // camelCaseObject,AnotherAnd_Escaping_or_Not__ -> Camel case object, another and Escapingor Not_
@@ -176,12 +181,12 @@ function timify(out, timeLike, shortness, precision, digits, space, extraZeros, 
     choice = set(choice, gD.options.formatting[(timeLike ? "time" : "resources")] + (timeLike ? 0 : 1));
     precision = set(precision, 3);
     extraSpace = set(extraSpace, true);
-    extraZeros = set(extraZeros, choice == 0 && !shortness);
+    extraZeros = set(extraZeros, false); // choice == 0 && !shortness
     digits = set(digits, 3);
     shortness = set(shortness, 0);
     space = set(space, shortness <= 1 && choice != 3 && choice != 2 || shortness == 0);
     keepZeros = set(keepZeros, false);
-    var timeUnits = [["second", "sec", "s", 60], ["minute", "min", "m", 60], ["hour", "hr", "h", 24], ["day", "day", "d", 365], ["year", "yr", "y", 1e3], ["millennium", "mil", "M", 1e3], ["thousands of millennia", "kmil", "kM", 1e3], ["millions of millennia", "Mmil", "MM"]];
+    var timeUnits = [["second", "sec", "s", 60], ["minute", "min", "m", 60], ["hour", "hr", "h", 24], ["day", "day", "d", 31], ["month", "month", "M", 12], ["year", "yr", "y", 1e3], ["millennium", "mil", "E", 1e3], ["thousands of millennia", "kmil", "kE", 1e3], ["millions of millennia", "Mmil", "ME"]];
     var SIUnits = [["yocto", "y"], ["zocto", "z"], ["atto", "a"], ["femto", "f"], ["pico", "p"], ["nano", "n"], ["micro", "µ"], ["milli", "m"], ["", ""], ["kilo", "k"], ["mega", "M"], ["giga", "G"], ["tera", "T"], ["peta", "P"], ["exa", "E"], ["zetta", "Z"], ["yotta", "Y"]];
     var mathUnits = [["", ""],  ["thousand", "K"],  ["million", "M"],  ["billion", "B"],  ["trillion", "T"],  ["quadrillion", "Qa", "Q"],  ["quintillion", "Qi"],  ["sextillion", "Sx", "S"],  ["septillion", "Sp"],  ["octillion", "Oc", "O"],  ["nonillion", "No", "N"],  ["decillion", "Dc", "D"]];
     var alphaUnits = "zyxwvutsrqponmlkjihgfedcba ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -192,8 +197,16 @@ function timify(out, timeLike, shortness, precision, digits, space, extraZeros, 
     var pos = []; // successive string lengths
     var subs = []; // unit without and with precision
     var p = 0; // effective steps
-    if (out < 0) {
-        out *= -1;
+    switch (shortness) {
+        case 0:
+            sec = "seconds";
+            break;
+        case 1:
+            sec = "sec";
+            break;
+        default:
+            sec = "s";
+            break;
     }
     switch (choice) {
         case 0:
@@ -211,23 +224,16 @@ function timify(out, timeLike, shortness, precision, digits, space, extraZeros, 
             start = 1e78;
             break;
         case 4:
-            return out.toExponential();
-            break;
-    }
-    switch (shortness) {
-        case 0:
-            sec = "seconds";
-            break;
-        case 1:
-            sec = "sec";
-            break;
-        default:
-            sec = "s";
+            return floorx(out, digits).toExponential() + (timeLike ? " " + sec : "");
             break;
     }
     if (!out) {
         return (0).toFixed(digits) + (timeLike ? " " + sec : "");
+    } else if (out < 0) {
+        out *= -1;
     }
+    
+    out = out.toFixed(digits);
     sec = (timeLike && choice ? (choice >= 1 && space || choice == 3 ? " " : "") + sec : "")
     var str = "";
     var n = data.length - 1;
@@ -249,7 +255,7 @@ function timify(out, timeLike, shortness, precision, digits, space, extraZeros, 
                 str2 += (cur < k && k < div ? "0" : "");
             }
         }
-        var add = ((cur && cur > 1e-3 || choice || keepZeros) != 0 ? str2 + cur + (choice || i != 5 || cur < 2 || shortness ? (space ? " " : "") + (choice == 3 ? data[i] : data[i][Math.min(shortness, N - (typeof data[i][N] === 'string' ? 0 : 1))]) + (choice || cur <= 1 || shortness || cur < 2 && i == n ? "" : "s") : (space ? " " : "") + "millennia") + (i && extraSpace ? " " : "") : ""); // The '!= 0' is mandatory, for some reason
+        var add = ((cur && cur > 1e-3 || choice || keepZeros) != 0 ? str2 + cur + (choice || i != 6 || cur < 2 || shortness ? (space ? " " : "") + (choice == 3 ? data[i] : data[i][Math.min(shortness, N - (typeof data[i][N] === 'string' ? 0 : 1))]) + (choice || cur <= 1 || shortness || cur < 2 && i == n ? "" : "s") : (space ? " " : "") + "millennia") + (i && extraSpace ? " " : "") : ""); // The '!= 0' is mandatory, for some reason
         var add2 = add.replace(cur, cur2);
         str = add + str;
         if (cur || fullPrecision) {

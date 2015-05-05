@@ -1,10 +1,20 @@
 function save() {
     localStorage.setItem("save", JSON.stringify(gD));
     var str = (gD.options.autoSave ? "Auto" : "Manual");
-    log("Game saved");
+    if (!game.latestLogSave) {
+        log("Game saved (x1)");
+        game.latestLogSave = true;
+    } else {
+        $("#l1").html($("#l1").html().replace(/\(x\d*\)/, function(n) {return "(x" + (Number(n.slice(2).slice(0, -1)) + 1) + ")"}));
+    }
     if(typeof _gaq !== 'undefined') { // Prevent logger failure
         _gaq.push(['_trackEvent', 'Fire Watcher', 'Save']);
     }
+}
+
+function reload() {
+    game.onReload = true;
+    load();
 }
 
 function load() {
@@ -27,6 +37,7 @@ function load() {
         gD.currentTab = "opt";
         changeTab("play");
         log("Succesfully imported savefile.")
+    } else if (game.onReload) {
     } else {
         loadRec(JSON.parse(localStorage.getItem("save")), gD);
         gD.currentTab = "opt";
@@ -159,6 +170,7 @@ function log(str, secondary) {
    $("#fullLogs").html(date + str + "\n" + $("#fullLogs").html().replace(/<\/i>/, "").replace(/<i>/, ""));
     game.latestFullLog++;
     resizeFullLogs();
+    game.latestLogSave = false;
 }
 
 function unhighlightLastLog() {

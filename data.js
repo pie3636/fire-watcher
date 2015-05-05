@@ -1,10 +1,12 @@
 var game = {
-    version: "v0.7.1",
+    version: "v0.7.2",
     onLoad: false, // Restore purchases
     onImport: false, // Load from import
     onReset: false, // Load from initValues
+    onReload: false,
     logTimeout: {},
     latestLog: 5,
+    latestLogSave: false,
     numLogs: 5,
     latestFullLog: 0,
     lastDate: new Date,
@@ -116,6 +118,7 @@ var gD = {
  * repeatable : Boolean                                                     Peristent
  * nocenter : Boolean                                                       Multiline (action)
  * isUpgrade : Boolean                                                      In case of unhandled show type
+ * noUnLockOnLoad : Boolean                                                 Prevents doUnlock() from being called on load
  */
  
 var actions = {
@@ -155,7 +158,7 @@ var actions = {
         tick: function() {
             var fatigue = gD.actions.fetch_Brushwood.fatigue;
             if (fatigue >= 0) {
-                gD.actions.fetch_Brushwood.fatigue -= game.realTime/1000;
+                gD.actions.fetch_Brushwood.fatigue = floorx(fatigue - game.realTime/1000    , 2);
             }
             actions.fetch_Brushwood.cost.time = 60 + fatigue;
             var color = (fatigue < 120 ? "#080" : "#A00"); // Cost < Gain
@@ -170,7 +173,7 @@ var actions = {
         show: {
             type: "action",
             tooltip: "Explore the immediate surroundings of the fire, and collect what could be useful",
-            inside: "Take <b><span id='exploreTheBeachLoss'>" + timify(300, true, 0, 2, 0) + "</span></b> to explore the beach and possibly find loot.<br />"
+            inside: "Take <b><span id='exploreTheBeachLoss'></span></b> to explore the beach and possibly find loot.<br />"
         },
         effect: function() {
             var branchesFound = intRandom(gD.actions.exploreTheBeach.minBranches, gD.actions.exploreTheBeach.maxBranches);
@@ -193,6 +196,7 @@ var actions = {
             $("#inv_shell_more").html(gD.actions.exploreTheBeach.shellChance * 100 + " %");
         },
         doUnlock: function() {
+            $("#exploreTheBeachLoss").html(timify(300, true, 0, 2, 0)); 
             gD.inventory.branches.unlocked = true;
             $("#inv_branches").show();
             $("#inv_branches_info").tooltip().hover(themeTooltip);
@@ -204,6 +208,7 @@ var actions = {
     monkey: {
         unlock: {time: 300, actions: {forestExploration: {bought: true}}},
         cost: {time: 10},
+        noUnlockOnLoad: true,
         getCost: function(j) {
             j = Math.min(j, 4); // Just in case, lol
             return {time: sumPrices(actions.monkey.cost.time, gD.actions.monkey.factor, gD.actions.monkey.number, Math.pow(10, j - 1), gD.time, (j == 4))};
@@ -352,7 +357,7 @@ var actions = {
         show: {
             type: "achievement",
             tooltip: "You've fanned the flames 1,111 times! Increases branches gain",
-            title: "31"
+            title: "15"
         },
         effect: function() {
             gD.actions.exploreTheBeach.maxBranches *= 3;
