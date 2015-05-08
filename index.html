@@ -30,12 +30,16 @@
             <a class="navbar-brand" href="#" id="version"><span class="glyphicon glyphicon-fire" aria-hidden="true"></span> Fire Watcher </a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
-            <ul class="nav navbar-nav">
+            <ul class="nav navbar-nav navbar-left">
                 <li class="active"><a id="nav_play" href="#" onclick="changeTab('play')">Main</a></li>
                 <li><a href="#" id="nav_inv" onclick="changeTab('inv')">Inventory</a></li>
                 <li><a href="#" id="nav_opt" onclick="changeTab('opt')">Options</a></li>
                 <li><a href="#" id="nav_stats" onclick="changeTab('stats')">Stats</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
                 <li><a href="#" id="nav_logs" onclick="changeTab('logs')">Logs</a></li>
+                <li><a href="#" id="nav_help" onclick="changeTab('help')">Help</a></li>
+                <li><a href="#" id="nav_changelog" onclick="changeTab('changelog')">Changelog</a></li>
             </ul>
         </div>
     </div>
@@ -46,8 +50,9 @@
     <div class="alert alert-info" id="updateAnnouncement" style="display: none">
     <button type="button" class="close" id="updateAnnouncementClose">x</button>
     <b>Announcement :</b> <span id="updateAnnouncementVersion"></span> is out!<br />
-        - Fixed more bugs<br />
-        - Big content update coming soon<br />
+        - Added changelogs and help<br />
+        - Big content update coming soon! (No, seriously, it's coming)<br />
+        You can also check the <a href="#" class="alert-link" onclick="changeTab('changelog')">changelog</a> for more information.
     <!--
     <div class="alert alert-danger" style="margin-bottom: 0px; margin-top: 10px">
         You will need to reset your save in order to play correctly!
@@ -83,30 +88,9 @@
     <noscript><h1 class="text-center">Oops! The game doesn't seem to load... If your connection is being slow, you can wait some more. Otherwise, please make sure JavaScript is enabled, and try again. If you are using an add-on like NoScript, please whitelist <u>pie3636.github.io</u> in order to play the game.</h1></noscript>
     <h1 class="text-center" id="loading">Loading...</h1>
     <div class="row" id="play">
-        <div class="col-md-8 split-left" id="actions">		
-            <!--
-            <div class="row" style="margin-left:0px">
-                <div class="col-md-3 col-md-center">
-                    Watchers : <span id="watchers">0</span>
-                </div>
-                <div class="col-md-2 col-md-center">
-                    Cost : <span id="watcherCost">10</span>
-                </div>
-                <div class="col-md-3 col-md-center">
-                    Production : <span id="watcherProduction">0</span>
-                </div>
-                <div class="col-md-4">
-                    <div class="btn-group float-right">
-                        <button onclick="buyWatcher(1)" type="button" class="btn btn-default" id="buyWatcher1" data-toggle="tooltip" data-placement="top" title="Cost : 10" data-container="body">Buy 1</button>
-                        <button onclick="buyWatcher(10)" type="button" class="btn btn-default" id="buyWatcher2" data-toggle="tooltip" data-placement="top" title="Cost : 0" data-container="body">Buy 10</button>
-                        <button onclick="buyWatcher(100)" type="button" class="btn btn-default" id="buyWatcher3" data-toggle="tooltip" data-placement="top" title="Cost : 0" data-container="body">Buy 100</button>
-                    </div>
-                </div>
-            </div>
-            <hr />
-            -->   
+        <div class="col-md-8 split-left" id="actions">
         </div>
-        <div class="col-md-4" id="upgrades">
+        <div class="col-md-4" id="upgrades" data-spy="affix" data-offset-top="121">
         </div>
     </div>
     
@@ -227,11 +211,6 @@
                 <br />
             <button id="clearLogs" type="button" class="btn btn-default top6" data-toggle="tooltip" data-placement="bottom" title="Clear the logs" data-container="body">Clear logs</button>
             </div>
-            <hr />
-            <div class="text-center">
-                Game made in 2015 by pie3636, beta-testing and bugtracking by Fulji<br />
-                <a href="https://www.reddit.com/r/firewatcher/wiki/">Wiki</a> − <a href="mailto:pie3636@gmail.com">E-mail</a> − <a href="https://www.reddit.com/r/firewatcher/">Reddit</a> − <a href="https://github.com/pie3636/fire-watcher">Source</a> − <a href="https://github.com/pie3636/fire-watcher/issues">Bugtracker</a><br />
-            </div>
         </div>
     </div>
     
@@ -264,11 +243,98 @@
     
     <div class="row" id="logs" style="display:none">
         <div class="col-md-12"style="margin-left:-15px">
-            <textarea id="fullLogs" readonly class="form-control" style="margin-left: 15px; border: 1px solid #ccc; height:70vh"></textarea>
+            <textarea id="fullLogs" readonly class="form-control" style="margin-left: 15px; border: 1px solid #ccc; height:45vh"></textarea>
             <button id="clearFullLogs" type="button" class="btn btn-default top15 center-block" data-toggle="tooltip" data-placement="bottom" title="Clear the logs" data-container="body">Clear logs</button>
         </div>
     </div>
+    
+    
+    <div class="row" id="help" style="display:none">
+        <div class="col-md-12">
+        Everytime something interesting happens, it will appear in the full logs.   You can check those by clicking the 'Logs' tab up there in the navigation bar ↑<br />
+        I'd like to thanks Fulji for the beta-testing, he is very talented at finding bugs. No, seriously, check him out, this guy is awesome :D<br />
+        Need help? Check out the <a href="https://www.reddit.com/r/firewatcher/wiki">wiki</a>! Have any suggestions? Feel free to send me an <a href="pie3636@gmail.com">e-mail</a> or to visit the <a href="https://www.reddit.com/r/firewatcher">subreddit</a>.<br /><br />
+        That's it for now! Hope you'll have as much fun playing this as I had coding it ;) - pie3636<br />
+        <hr/>
+        </div>
+        <div class="text-center">
+                Game made in 2015 by pie3636, beta-testing and bugtracking by Fulji<br />
+                <a href="https://www.reddit.com/r/firewatcher/wiki/">Wiki</a> − <a href="mailto:pie3636@gmail.com">E-mail</a> − <a href="https://www.reddit.com/r/firewatcher/">Reddit</a> − <a href="https://github.com/pie3636/fire-watcher">Source</a> − <a href="https://github.com/pie3636/fire-watcher/issues">Bugtracker</a><br />
+        </div>
+    </div>
+    
+    
+    <div class="row" id="changelog" style="display:none">
+        <div class="col-md-12">
+        <h5>v0.7.3 - 05/08/2015 :</h5>
+        - Added changelogs and help
+        <hr/><h5>v0.7.3 - 05/06/2015 :</h5>
+        - Fixed more bugs
+        <hr/><h5>v0.7.2 - 05/05/2015 :</h5>
+        - Fixed 7 bugs<br />
+        - "Game saved!" alerts are now stackable<br />
+        - Big content update coming soon
+        <hr/><h5>v0.7.1 - 05/01/2015 :</h5>
+        - Fixed a bug in announcements
+        <hr/><h4>v0.7.0 - 04/29/2015 :</h4>
+        - Added units (implemented monkeys)!<br />
+        - New upgrades, achievements and items
+        <hr/><h5>v0.6.3 - 04/28/2015 :</h5>
+        - Display formatting is done<br />
+        - Animations
+        <hr/><h5>v0.6.2 - 04/27/2015 :</h5>
+        - Display formatting in progress : Last step before the content update!
+        <hr/><h5>v0.6.1 - 04/27/2015 :</h5>
+        - Added another achievement (Interstellar)
+        <hr/><h4>v0.6.0 - 04/26/2015 :</h4>
+        - Added inventory<br />
+        - <u>Explore the beach</u> now actually does something<br />
+        - Misc. optimizations
+        <hr/><h4>v0.5.0 - 04/20/2015 :</h4>
+        - Announcements management<br />
+        - Updates bought now available in stats<br />
+        - Achievement and event systems implemented (one of each available so far)
+        <hr/><h5>v0.4.7 - 04/20/2015 :</h5>
+        - Updates bought now available in stats!
+        <hr/><h5>v0.4.6 - 04/20/2015 :</h5>
+        - Better logs, including separate tab<br />
+        - Annoucements management
+        <hr/><h5>v0.4.5 - 04/18/2015 :</h5>
+        - Improved theme support<br />
+        - Customizable logs!
+        <hr/><h5>v0.4.4 - 04/17/2015 :</h5>
+        - Customizable autosave!
+        <hr/><h5>v0.4.3 - 04/15/2015 :</h5>
+        - Improved logger compatibility<br/>
+        - Added basic stats and display functions
+        <hr/><h5>v0.4.2 - 04/15/2015 :</h5>
+        - Tweaked the options tab<br/>
+        - Added the stats menu (to be continued)
+        <hr/><h5>v0.4.1 - 04/12/2015 :</h5>
+        - Bugfixes
+        <hr/><h5>v0.4.0 - 04/12/2015 :</h5>
+        - Added logs<br />
+        - Import, export, delete save, reset
+        <hr/><h5>v0.3.7 - 04/12/2015 :</h5>
+        - Greying out buttons when not affordable<br />
+        - Improved theme support
+        <hr/><h5>v0.3.5 - 04/12/2015 :</h5>
+        - Added save and load functions
+        <hr/><h5>v0.3.3 - 04/12/2015 :</h5>
+        - Rewrote tabs system
+        <hr/><h5>v0.3.1 - 04/6/2015 :</h5>
+        - Added options<br />
+        - Dark theme support
+        <hr/><h4>v0.3.0 - 04/5/2015 :</h4>
+        - Switched to intelligent JSON storage<br />
+        - Added tabs
+        <hr/><h4>v0.2.0 - 04/3/2015 :</h4>
+        - First upgrades and concept<br />
 
+
+       </div>
+    </div>
+    
 
     <div id="exportGame" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="Export game" aria-hidden="true">
       <div class="modal-dialog">

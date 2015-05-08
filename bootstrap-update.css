@@ -136,6 +136,14 @@ b {
     margin-bottom: 1px;
 }
 
+.navbar-brand {
+    position: absolute;
+    width: 100%;
+    left: 0;
+    text-align: center;
+    margin: auto;
+}
+
 input[type="number"] {
     color: #000;
     width: 53px;
@@ -263,6 +271,7 @@ input:invalid {
 .alert-purple   .alert-link {
   color: #541355;
 }
+
 /************************************************************* DARK THEME *************************************************************/
 
 .split-left2 {

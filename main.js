@@ -356,12 +356,6 @@ $(function () {
     $('#importGame').on('shown.bs.modal', function() {
         $('#containerImport').focus();
     });
-    
-    log("Here go the logs. Everytime something interesting happens, it will appear here.", true);
-    log("You can check the full logs by clicking the 'Logs' tab up there in the navigation bar ↑", true);
-    log("I'd like to thanks Fulji for the beta-testing, he is very talented at finding bugs. No, seriously, check him out, this guy is awesome :D", true);
-    log("Need help? Check out the wiki at https://www.reddit.com/r/firewatcher/wiki! Have any suggestions? Feel free to send me an e-mail at pie3636@gmail.com or to visit the subreddit at https://www.reddit.com/r/firewatcher", true);
-    log("That's it for now! Hope you'll have as much fun playing this as I had coding it ;) - pie3636", true);
 });
 
 window.setInterval(tick, gD.tickDuration);
@@ -375,6 +369,26 @@ window.setInterval(tick, gD.tickDuration);
   }
   return message;
 }*/
+
+$(window).scroll(function () {
+    var mtHeight = $('#navbar').height(),
+        mbHeight = $('#upgrades').height(),
+        scroll = $(this).scrollTop() + mtHeight + mbHeight,
+        topDist = $("#actions").position();
+    if (scroll > topDist.top) {
+        $('#upgrades').css({
+            "position": "fixed",
+            "top": mtHeight,
+            "right": 0
+        });
+    } else {
+        $('#upgrades').css({
+            "position": "relative",
+            "top": "auto",
+            "right": "auto"
+        });
+    }
+});
 
 (function($) {
     $.eventReport = function(selector, root) {
