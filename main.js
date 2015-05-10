@@ -69,7 +69,9 @@ function tick() {
                         $("#upgradesBought").append(
                             strButton(i, name));
                             $("#" + i).css("margin-right", 10).css("margin-bottom", 5);
-                            gD.stats.totalUpgrades++;
+                            if (!actions[i].noStats) {
+                                gD.stats.totalUpgrades++;
+                            }
                     }
                     break;
                 case "achievement":
@@ -164,7 +166,9 @@ function buyUpgrade(upgrade, unit) {
                         $("#upgradesBought").append($("#" + upgrade)[0].outerHTML.replace(/ \(.*\)/, "")); //TODO : Add other cases?
                     }
                     $("#" + upgrade).tooltip('hide').remove().tooltip().mouseup(toBlur).hover(themeTooltip);
-                    gD.stats.totalUpgrades++;
+                    if (!actions[i].noStats) {
+                        gD.stats.totalUpgrades++;
+                    }
                     break;
                 case "noDisplay":
                     break;
@@ -342,7 +346,7 @@ $(function () {
     $("#resourcesFormatting").change(setFormatting);
     
     $("#actionsUnlockedTotal").html(count("action") + count("unit")); //TODO : split?
-    $("#upgradesUnlockedTotal").html(count("upgrade"));
+    $("#upgradesUnlockedTotal").html(count("upgrade") - count("noStats"));
     $("#achievementsUnlockedTotal").html(count("achievement"));
     
     $('.modal').on('show.bs.modal', centerModal);

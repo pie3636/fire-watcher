@@ -358,9 +358,6 @@ var actions = {
         unlock: {},
         noStats: true,
         show: {
-            type: "noDisplay"
-        },
-        show: {
             type: "upgrade",
             tooltip: "Burn, fire, burn!"
         },

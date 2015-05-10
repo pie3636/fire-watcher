@@ -104,7 +104,7 @@ function intRandom(min, max) {
 function count(str) {
     var total = 0;
     for (var i in actions) {
-        if (actions[i].show.type == str) { //TODO : Change eventually, or global variable
+        if (actions[i].show.type == str || actions[i][str]) { //TODO : Change eventually, or global variable
             total++;
         }
     }
