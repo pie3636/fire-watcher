@@ -6,7 +6,7 @@ function tick() {
         game.realTime = gD.tickDuration;
     }
     game.lastDate = new Date;
-    gD.time -= gD.timeSpeed * game.realTime/1000;
+    gD.time -= gD.timeSpeed * game.timeMultiplier * game.realTime/1000;
     gD.stats.playTime += game.realTime/1000;
     gD.stats.ticks++;
     gD.stats.sessionTime += game.realTime/1000;
@@ -65,7 +65,7 @@ function tick() {
                                 strButton(i, name + ' ' + cost(actions[i].cost)));
                         $("#" + i).css("margin-right", 10).css("margin-bottom", 5);
                     }
-                    if (restoreStats) {
+                    if (restoreStats && !actions[i].noStats) {
                         $("#upgradesBought").append(
                             strButton(i, name));
                             $("#" + i).css("margin-right", 10).css("margin-bottom", 5);
@@ -160,7 +160,9 @@ function buyUpgrade(upgrade, unit) {
                     $("#" + upgrade + "HR").remove();
                     break;
                 case "upgrade":
-                    $("#upgradesBought").append($("#" + upgrade)[0].outerHTML.replace(/ \(.*\)/, "")); //TODO : Add other cases?
+                    if (!actions[upgrade].noStats) {
+                        $("#upgradesBought").append($("#" + upgrade)[0].outerHTML.replace(/ \(.*\)/, "")); //TODO : Add other cases?
+                    }
                     $("#" + upgrade).tooltip('hide').remove().tooltip().mouseup(toBlur).hover(themeTooltip);
                     gD.stats.totalUpgrades++;
                     break;
@@ -371,14 +373,13 @@ window.setInterval(tick, gD.tickDuration);
 }*/
 
 $(window).scroll(function () {
-    var mtHeight = $('#navbar').height(),
-        mbHeight = $('#upgrades').height(),
-        scroll = $(this).scrollTop() + mtHeight + mbHeight,
+    var mtHeight = $('#navbar').height(),   
+        scroll = $(this).scrollTop() + mtHeight + 10,
         topDist = $("#actions").position();
     if (scroll > topDist.top) {
         $('#upgrades').css({
             "position": "fixed",
-            "top": mtHeight,
+            "top": mtHeight + 10,
             "right": 0
         });
     } else {

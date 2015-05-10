@@ -11,6 +11,7 @@ var game = {
     latestFullLog: 0,
     lastDate: new Date,
     realTime: 50,
+    timeMultiplier: 1,
     newSave: {},
     operator: {
         EQ: 1, // =
@@ -67,7 +68,11 @@ var gD = {
             maxBuy: 0
         },
         fetch_Brushwood: {
-            fatigue: 0
+            fatigue: 0,
+            fatiguePerUse: 30,
+            maxFatigue: 300,
+            maxGain: 300,
+            baseTime: 60
         },
         exploreTheBeach: {
             minBranches: 1,
@@ -79,6 +84,13 @@ var gD = {
             factor: 1.1,
             number: 0,
             click: 1
+        },
+        sparklingEmbers: {
+            bought: true,
+            power: 0.5,
+            duration: 0,
+            maxDuration: 10000,
+            probability: 0.014  
         }
     },
     options: {
@@ -130,13 +142,15 @@ var actions = {
             inside: "Increase the fire duration by <b><span id='firePower'>" + gD.actions.fanTheFlames.power + " seconds</span></b>."
         },
         effect: function(i) {
+            var _ = gD.actions.fanTheFlames;
             i = set(i, 1);
-            var gain = gD.actions.fanTheFlames.power + gD.actions.fanTheFlames.usesPower * gD.stats.uses.fanTheFlames;
+            var gain = _.power + _.usesPower * gD.stats.uses.fanTheFlames;
             gainTime(i*gain);
             gD.stats.uses.fanTheFlames += i;
         },
         tick: function() {
-            var gain = gD.actions.fanTheFlames.power + gD.actions.fanTheFlames.usesPower * gD.stats.uses.fanTheFlames;
+            var _ = gD.actions.fanTheFlames;
+            var gain = _.power + _.usesPower * gD.stats.uses.fanTheFlames;
             $("#firePower").html(timify(gain, true, 0, 2, 3));
         }
     },
@@ -150,18 +164,20 @@ var actions = {
             inside: "Take <b><span id='fetchBrushwoodLoss'></span></b> to gather brushwood and make the fire last an additional <b><span id='fetchBrushwoodGain'></span></b>."
         },
         effect: function() {
-            gainTime(300 - gD.actions.fetch_Brushwood.fatigue);
+            var _ = gD.actions.fetch_Brushwood;
+            gainTime(_.maxGain - _.fatigue);
             $(".animate").remove();
-            animate(300 - gD.actions.fetch_Brushwood.fatigue - actions.fetch_Brushwood.cost.time, gD.currentTab == "opt");
-            gD.actions.fetch_Brushwood.fatigue = Math.min(300, gD.actions.fetch_Brushwood.fatigue + 30);
+            animate(_.maxGain - _.fatigue - actions.fetch_Brushwood.cost.time, gD.currentTab == "opt");
+            _.fatigue = Math.min(_.maxFatigue, _.fatigue + _.fatiguePerUse);
         },
         tick: function() {
-            var fatigue = gD.actions.fetch_Brushwood.fatigue;
-            gD.actions.fetch_Brushwood.fatigue = Math.max(0, floorx(fatigue - game.realTime/1000, 2));
-            actions.fetch_Brushwood.cost.time = 60 + fatigue;
-            var color = (fatigue < 120 ? "#080" : "#A00"); // Cost < Gain
-            $("#fetchBrushwoodLoss").html(timify(actions.fetch_Brushwood.cost.time, true, 0, 2, 0)).attr("style", "color:" + color);
-            $("#fetchBrushwoodGain").html(timify(300 - fatigue, true, 0, 2, 0)).attr("style", "color:" + color);
+            var _ = gD.actions.fetch_Brushwood;
+            var X = actions.fetch_Brushwood;
+            _.fatigue = Math.max(0, floorx(_.fatigue - game.realTime/1000, 2));
+            X.cost.time = _.baseTime + _.fatigue;
+            var color = (X.cost.time < _.maxGain - _.fatigue ? "#080" : "#A00"); // Cost < Gain
+            $("#fetchBrushwoodLoss").html(timify(X.cost.time, true, 0, 2, 0)).attr("style", "color:" + color);
+            $("#fetchBrushwoodGain").html(timify(_.maxGain - _.fatigue, true, 0, 2, 0)).attr("style", "color:" + color);
         }
     },
     exploreTheBeach: {
@@ -174,24 +190,27 @@ var actions = {
             inside: "Take <b><span id='exploreTheBeachLoss'></span></b> to explore the beach and possibly find loot.<br />"
         },
         effect: function() {
-            var branchesFound = intRandom(gD.actions.exploreTheBeach.minBranches, gD.actions.exploreTheBeach.maxBranches);
-            gD.inventory.branches.value += branchesFound;
-            var strValue = timify(gD.inventory.branches.value, false, 1, 1, 3);
+            var _ = gD.actions.exploreTheBeach;
+            var I = gD.inventory;
+            var branchesFound = intRandom(_.minBranches, _.maxBranches);
+            I.branches.value += branchesFound;
+            var strValue = timify(I.branches.value, false, 1, 1, 3);
             log("You found " + timify(branchesFound, false, 0, 1, 3) + " branches! Total : " + strValue);
-            if (Math.random() < gD.actions.exploreTheBeach.shellChance) {
-                if (!gD.inventory.shells.value) {
-                    gD.inventory.shells.unlocked = true;
+            if (Math.random() < _.shellChance) {
+                if (!I.shells.value) {
+                    I.shells.unlocked = true;
                     $("#inv_shells").show();
                     $("#inv_shells_info").tooltip().hover(themeTooltip);
                 }
-                gD.inventory.shells.value++;
-                var strValue = timify(gD.inventory.shells.value, false, 1, 1, 3);
+                I.shells.value++;
+                var strValue = timify(I.shells.value, false, 1, 1, 3);
                 log("You found a shell! Total : " + strValue);
             }
         },
         tick: function() {
-            $("#inv_branches_more").html(timify(gD.actions.exploreTheBeach.branchesPower, true, 0, 2, 0));
-            $("#inv_shell_more").html(gD.actions.exploreTheBeach.shellChance * 100 + " %");
+            var _ = gD.actions.exploreTheBeach;
+            $("#inv_branches_more").html(timify(_.branchesPower, true, 0, 2, 0));
+            $("#inv_shell_more").html(_.shellChance * 100 + " %");
         },
         doUnlock: function() {
             $("#exploreTheBeachLoss").html(timify(300, true, 0, 2, 0)); 
@@ -207,36 +226,39 @@ var actions = {
         unlock: {time: 300, actions: {forestExploration: {bought: true}}},
         cost: {time: 10},
         noUnlockOnLoad: true,
-        getCost: function(j) {
-            j = Math.min(j, 4); // Just in case, lol
-            return {time: sumPrices(actions.monkey.cost.time, gD.actions.monkey.factor, gD.actions.monkey.number, Math.pow(10, j - 1), gD.time, (j == 4))};
-        },
         repeatable: true,
+        getCost: function(j) {
+            var _ = gD.actions.monkey;
+            j = Math.min(j, 4); // Just in case, lol
+            return {time: sumPrices(actions.monkey.cost.time, _.factor, _.number, Math.pow(10, j - 1), gD.time, (j == 4))};
+        },
         show: {
             type: "unit",
             tooltip: "A monkey found in the forest. Each has a 1% chance to click every second. Get 100 of them and they'll click more regularly."
         },
         effect: function(j) {
+            var _ = gD.actions.monkey;
             if (j) {
-                gD.actions.monkey.number += (j == 4 ? gD.actions.monkey.maxBuy : Math.pow(10, j - 1));
+                _.number += (j == 4 ? _.maxBuy : Math.pow(10, j - 1));
             }
-            var str = timify(gD.actions.monkey.number, false, 1, 1, 0);
+            var str = timify(_.number, false, 1, 1, 0);
             $("#monkeyNumber").html(str);
-            $("#monkeyCost").html(timify(sumPrices(actions.monkey.cost.time, gD.actions.monkey.factor, gD.actions.monkey.number, 1), true, 1, 2, 0));
-            $("#monkeyProduction").html(gD.actions.monkey.number < 100 ? "Variable" : timify(gD.actions.monkey.number/1e2 * gD.actions.monkey.click, false, 0, 1, 2) + " clicks/s");
+            $("#monkeyCost").html(timify(sumPrices(actions.monkey.cost.time, _.factor, _.number, 1), true, 1, 2, 0));
+            $("#monkeyProduction").html(_.number < 100 ? "Variable" : timify(_.number/1e2 * _.click, false, 0, 1, 2) + " clicks/s");
         },
         tick: function() {
-            gD.actions.monkey.maxBuy = sumPrices(actions.monkey.cost.time, gD.actions.monkey.factor, gD.actions.monkey.number, 0, gD.time, true, true);
-            $("#monkey4").html("Max (" + gD.actions.monkey.maxBuy + ")");
-            if (gD.actions.monkey.number < 100 && !(gD.stats.ticks % (Math.floor(1000/game.realTime)))) {
-                for (var i = 1; i <= gD.actions.monkey.number; i++) {
+            var _ = gD.actions.monkey;
+            _.maxBuy = sumPrices(actions.monkey.cost.time, _.factor, _.number, 0, gD.time, true, true);
+            $("#monkey4").html("Max (" + _.maxBuy + ")");
+            if (_.number < 100 && !(gD.stats.ticks % (Math.floor(1000/game.realTime)))) {
+                for (var i = 1; i <= _.number; i++) {
                     if (Math.random() <= 0.01)
                     {
-                        actions.fanTheFlames.effect(gD.actions.monkey.click);
+                        actions.fanTheFlames.effect(_.click);
                     }
                 }
             } else if (!(gD.stats.ticks % (Math.floor(1000/game.realTime)))) {
-                actions.fanTheFlames.effect(gD.actions.monkey.number * game.realTime/1e5 * gD.actions.monkey.click * Math.floor(1000/game.realTime));
+                actions.fanTheFlames.effect(_.number * game.realTime/1e5 * _.click * Math.floor(1000/game.realTime));
             }
         },
         doUnlock: function() {
@@ -318,7 +340,7 @@ var actions = {
             tooltip: "Venture into the forest to find creatures, and hire them"
         },
         effect: function() {
-            log("Now all you need is a little <i>time</i>");
+            log("Now all you need is a little <i>time</i>...");
         }
     },
     bananaTrees: {
@@ -330,6 +352,36 @@ var actions = {
         },
         effect: function() {
             gD.actions.monkey.factor = 1.05;
+        }
+    },
+    sparklingEmbers: {
+        unlock: {},
+        noStats: true,
+        show: {
+            type: "noDisplay"
+        },
+        show: {
+            type: "upgrade",
+            tooltip: "Burn, fire, burn!"
+        },
+        effect: function() {
+            var _ = gD.actions.sparklingEmbers;
+            log("Sparkling embers activated! Time decay is decreased for " + timify(_.maxDuration/1000, true, 0, 3, 0) + "!");
+            game.timeMultiplier = _.power;
+            _.duration = _.maxDuration;
+        },
+        tick: function() {
+            var _ = gD.actions.sparklingEmbers;
+            _.duration = Math.max(0, _.duration - game.realTime);
+            if (!_.duration) {
+                game.timeMultiplier = 1;
+            }
+            if (Math.random() < invProbaPerSec(_.probability)) {
+                if (_.bought) {
+                    _.bought = false;
+                    _.unlocked = false;
+                }
+            }
         }
     },
     /* ============================================================ ACHIEVEMENTS ============================================================ */
@@ -390,6 +442,6 @@ var actions = {
         effect: function() {
             log("This is just a test, but if you see it, it means you've spent at least 60 seconds playing. Given the fact that there's basically nothing to do, either you're a bugtracker, or you must be really bored.");
         }
-    }
+    },
 };
 

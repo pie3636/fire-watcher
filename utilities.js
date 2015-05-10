@@ -58,6 +58,10 @@ function sumPrices(base, factor, owned, number, resource, isMax, more) { // If i
     return (more ? i - owned - 1 : sum);
 }
 
+function invProbaPerSec(n) {
+        return 1-Math.exp(Math.log(1-n)*game.realTime/1000);
+}
+
 function use(item, str) {
     var n = (str == "all" ? gD.inventory[item].value : str);
     if (n <= gD.inventory[item].value && n) {
@@ -120,7 +124,7 @@ function gainTime(n)
 /* ====================================================================== FORMATTING ====================================================================== */
 
 function cost(data, hideParen) {
-    return (hideParen ? '' : '(') + timify(data.time, true, 1, 2, 0) + (hideParen ? '' : ')');
+    return (data ? (hideParen ? '' : '(') + timify(data.time, true, 1, 2, 0) + (hideParen ? '' : ')') : "");
 }
 
 function floorx(data, digits) {
@@ -227,8 +231,8 @@ function timify(out, timeLike, shortness, precision, digits, space, extraZeros, 
             return floorx(out, digits).toExponential() + (timeLike ? " " + sec : "");
             break;
     }
-    if (!out) {
-        return (0).toFixed(digits) + (timeLike ? " " + sec : "");
+    if (0 <= out && out < 1) {
+        return (out).toFixed(digits) + (timeLike ? " " + (sec == "seconds" ? "second" : sec) : "");
     } else if (out < 0) {
         out *= -1;
     }

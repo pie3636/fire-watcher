@@ -60,35 +60,40 @@ hr {
     margin-top: 15px;
 }
 
+.text-glow2 {
+    color: orange;
+    text-shadow: rgb(255, 127, 80) 1px 0px 10px;
+}
+
 .text-glow {
-   font-size:4em;
-   color: #FFFFFF;
+    color: blue;
+    text-shadow: rgb(80, 0, 255) 1px 0px 10px;
+}
+
+.text-glow-spread {
+   font-size:1em;
+   color: orange;
    font-family:Arial;
 }
 
-.text-glow:hover, .text-glow:focus, .text-glow:active {
+.text-glow-spread:hover, .text-glow-spread:focus, .text-glow-spread:active {
    -webkit-stroke-width: 5.3px;
    -webkit-stroke-color: #FFFFFF;
    -webkit-fill-color: #FFFFFF;
    text-shadow: 1px 0px 20px yellow;
-   -webkit-transition: width 0.3s; /*Safari & Chrome*/
+   -webkit-transition: width 0.3s;
    transition: width 0.3s;
-   -moz-transition: width 0.3s; /* Firefox 4 */
-   -o-transition: width 0.3s; /* Opera */
-}
-   
-.text-glow a {
-   -webkit-transition: all 0.3s ease-in; /*Safari & Chrome*/
-   transition: all 0.3s ease-in;
-   -moz-transition: all 0.3s ease-in; /* Firefox 4 */
-   -o-transition: all 0.3s ease-in; /* Opera */
-   text-decoration:none;
-   color:white;
+   -moz-transition: width 0.3s;
+   -o-transition: width 0.3s;
 }
 
-.text-gold-glow {
-    color: #FFA500;
-    text-shadow: 1px 0px 10px #FF7F50;
+.text-glow-spread a {
+   -webkit-transition: all 0.3s ease-in;
+   transition: all 0.3s ease-in;
+   -moz-transition: all 0.3s ease-in;
+   -o-transition: all 0.3s ease-in;
+   text-decoration:none;
+   color:white;
 }
 
 b {
