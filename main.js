@@ -65,13 +65,18 @@ function tick() {
                                 strButton(i, name + ' ' + cost(actions[i].cost)));
                         $("#" + i).css("margin-right", 10).css("margin-bottom", 5);
                     }
-                    if (restoreStats && !actions[i].noStats) {
+                    if (restoreStats) {
+                        if (!actions[i].noStats) {
                         $("#upgradesBought").append(
                             strButton(i, name));
                             $("#" + i).css("margin-right", 10).css("margin-bottom", 5);
                             if (!actions[i].noStats) {
                                 gD.stats.totalUpgrades++;
                             }
+                        }
+                        if (actions[i].onLoad) {
+                            actions[i].effect();
+                        }
                     }
                     break;
                 case "achievement":
@@ -104,7 +109,7 @@ function tick() {
                 if (normalTick && actions[i].show.type != "achievement") {
                     $("#" + i).on('click', function(_i){
                         return function() {
-                            buyUpgrade(_i);
+                            buyUpgrade(_i, 0);
                         };
                     }(i));
                 }
@@ -148,7 +153,7 @@ function tick() {
 
 function buyUpgrade(upgrade, unit) {
     unit = set(unit, false);
-    if (!gD.actions[upgrade].bought && (unit && gD.actions[upgrade].maxBuy && compare(actions[upgrade].getCost(unit), gD, true) || !unit && compare(actions[upgrade].cost, gD, true))) { // First condition isn't mandatory
+    if (!gD.actions[upgrade].bought && (unit && gD.actions[upgrade].maxBuy && compare(actions[upgrade].getCost(unit), gD, true) || !unit && compare(actions[upgrade].cost, gD, true, false, upgrade=="planks"))) { // First condition isn't mandatory
         if (typeof actions[upgrade].effect !== 'undefined') {
             actions[upgrade].effect((actions[upgrade].show.type == "unit" ? unit : undefined));
         }
@@ -166,7 +171,7 @@ function buyUpgrade(upgrade, unit) {
                         $("#upgradesBought").append($("#" + upgrade)[0].outerHTML.replace(/ \(.*\)/, "")); //TODO : Add other cases?
                     }
                     $("#" + upgrade).tooltip('hide').remove().tooltip().mouseup(toBlur).hover(themeTooltip);
-                    if (!actions[i].noStats) {
+                    if (!actions[upgrade].noStats) {
                         gD.stats.totalUpgrades++;
                     }
                     break;
@@ -181,10 +186,11 @@ function buyUpgrade(upgrade, unit) {
     }
 }
 
-function compare(cost, data, doSub, subStep) { // Returns (cost <= data), data -= cost if doSub, subStep means toplevel (nested objects)
+function compare(cost, data, doSub, subStep, a) { // Returns (cost <= data), data -= cost if doSub, subStep means toplevel (nested objects)
     var ret = true;
     if(!subStep) {
         for (var i in cost) {
+        if (a) console.log(i, typeof data[i]);
             switch (typeof data[i]) {
                 case "number":
                     if (typeof cost[i] === "number") {
@@ -228,7 +234,7 @@ function compare(cost, data, doSub, subStep) { // Returns (cost <= data), data -
                     ret = cost[i] == data[i];
                     break;
                 case "object":
-                    ret = compare(cost[i], data[i], false); // doSub == false => compare only
+                    ret = compare(cost[i], data[i], false, subStep, a); // doSub == false => compare only
                     break;
                 case "undefined":
                 default:
@@ -241,19 +247,19 @@ function compare(cost, data, doSub, subStep) { // Returns (cost <= data), data -
         for (var i in cost) {
             switch (typeof cost[i]) {
                 case "number":
-                    if (typeof data[i] === "number" || cost[i].isConsumed) {
+                    //if (typeof data[i] === "number" || cost[i].isConsumed) {
                         data[i] -= cost[i];
                         if (i == "time" && cost[i]) {
                             animate(-cost[i], gD.currentTab == "opt");
                         }
-                    }
+                    //}
                     break;
                 case "object":
-                    ret = compare(cost[i], data[i], true, true); // Transmit doSub, skip first step
+                    ret = compare(cost[i], data[i], true, true, a); // Transmit doSub, skip first step
                 case "boolean":
-                    if (typeof data[i] === "object" || cost[i].isConsumed) {
+                    /*if (typeof data[i] === "object" || cost[i].isConsumed) {
                         data[i] = !data[i];
-                    }
+                    }*/
                 case "undefined":
                 default:
                     break;
@@ -269,6 +275,7 @@ function changeTab(newTab) {
     $("#" + gD.currentTab).hide();
     $("#" + newTab).show();
     gD.currentTab = newTab;
+    scroll();
 }
 
 function setTheme() {
@@ -307,7 +314,12 @@ $(function () {
         }
     }
     for (var i in gD.inventory) {
-        gD.inventory[i] = {unlocked: false, value: 0};
+        if (gD.inventory.hasOwnProperty(i)) {
+            gD.inventory[i].unlocked = false;
+            gD.inventory[i].value = 0;
+        } else {
+            gD.inventory[i] = {unlocked: false, value: 0};
+        }
     }
     localStorage.setItem("initValues", JSON.stringify(gD));
     for(var i = 1; i <= game.numLogs; i++) {
@@ -376,24 +388,7 @@ window.setInterval(tick, gD.tickDuration);
   return message;
 }*/
 
-$(window).scroll(function () {
-    var mtHeight = $('#navbar').height(),   
-        scroll = $(this).scrollTop() + mtHeight + 10,
-        topDist = $("#actions").position();
-    if (scroll > topDist.top) {
-        $('#upgrades').css({
-            "position": "fixed",
-            "top": mtHeight + 10,
-            "right": 0
-        });
-    } else {
-        $('#upgrades').css({
-            "position": "relative",
-            "top": "auto",
-            "right": "auto"
-        });
-    }
-});
+$(window).scroll(scroll);
 
 (function($) {
     $.eventReport = function(selector, root) {

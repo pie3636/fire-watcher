@@ -26,8 +26,9 @@ function load(hide) {
         gD.stats.sessionTime = 0;
     }
     var saveTheme = gD.options.darkTheme;
-    unsetUseLinks("branches");
+    unsetUseLinks("branches"); //TODO : Loop
     unsetUseLinks("shells");
+    unsetUseLinks("planks");
     $("#actions").html("<div style='margin-left:15px'>Time left : <span id='time'>0</span><br /><br /></div><hr/>");
     $("#upgrades").html("<!--<p class='text-center'>--><p>Upgrades :</p>");
     $("#upgradesBought").html("");
@@ -78,7 +79,7 @@ function load(hide) {
             $("#inv_" + i).show();
             $("#inv_" + i + "_info").tooltip().hover(themeTooltip);
         } else {
-            $("#inv_" + i).hide();       
+            $("#inv_" + i).hide();
         }
     }
     $("#timeFormatting").val(String(gD.options.formatting.time));

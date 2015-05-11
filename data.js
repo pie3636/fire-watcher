@@ -1,5 +1,5 @@
 var game = {
-    version: "v0.7.4",
+    version: "v0.7.5",
     onLoad: false, // Restore purchases
     onImport: false, // Load from import
     onReset: false, // Load from initValues
@@ -36,6 +36,11 @@ var game = {
             use: function(n) {
                 log("DONE");
             }
+        },
+        planks: {
+            craft: function(str) {
+                log("HEHE");
+            }
         }
     }
 };
@@ -54,8 +59,9 @@ var gD = {
         }
     },
     inventory: {
-        branches: {},
-        shells: {}
+        branches: {use: true},
+        shells: {use: true},
+        planks: {craft: true}
     },
     event: {
         branches37: false
@@ -119,6 +125,22 @@ var gD = {
     }
 };
 
+var utilities = {
+    use: function(item, str) {
+        var n = (str == "all" ? gD.inventory[item].value : str);
+        if (n <= gD.inventory[item].value && n) {
+            gD.inventory[item].value -= n;
+            return n;
+        } else {
+            log("Not enough " + item + "!");
+            return 0;
+        }
+    },
+    craft: function(item, str) {
+        return str;
+    },
+}
+
 
 
 /* unlock, cost, getCost(unit) : Object [~gD]                               Costs of unlocking and buying, default: {operator: game.operator.GE, value: cost[î], isConsumed: true}
@@ -131,6 +153,7 @@ var gD = {
  * nocenter : Boolean                                                       Multiline (action)
  * isUpgrade : Boolean                                                      In case of unhandled show type
  * noUnLockOnLoad : Boolean                                                 Prevents doUnlock() from being called on load
+ * onLoad : Boolean                                                         Call effect() on load
  */
  
 var actions = {
@@ -277,6 +300,30 @@ var actions = {
             gD.actions.fanTheFlames.power *= 2;
         }
     },
+    dryFirewood: {
+        unlock: {time: 888},
+        cost: {time: 7777},
+        show: {
+            type: "upgrade",
+            tooltip: "Fanning the flames is twice as efficient"
+        },
+        effect: function() {
+            gD.actions.fanTheFlames.power *= 2;
+        }
+    },
+    planks: {
+        unlock: {time: 1500},
+        cost: {time: 1780, inventory: {branches: {value: 50}}},
+        onLoad: true,
+        show: {
+            type: "upgrade",
+            tooltip: "Hey! What if I tried sawing that wood?"
+        },
+        effect: function() {
+            setUseLinks("planks");
+            $("#inv_planks").show();
+        }
+    },
     campfire: {
         unlock: {stats: {uses: {fanTheFlames: 50}}},
         cost: {time: 500},
@@ -310,6 +357,39 @@ var actions = {
             gD.actions.fanTheFlames.usesPower += 0.002;
         }
     },
+    xiuhtecuhtli: {
+        unlock: {stats: {uses: {fanTheFlames: 10000}}},
+        cost: {time: 120000},
+        show: {
+            type: "upgrade",
+            tooltip: "Just try to pronounce it. Fan the flames gains 0.003 power with each use"
+        },
+        effect: function() {
+            gD.actions.fanTheFlames.usesPower += 0.003;
+        }
+    },
+    kagutsuchi: {
+        unlock: {stats: {uses: {fanTheFlames: 100000}}},
+        cost: {time: 1750000},
+        show: {
+            type: "upgrade",
+            tooltip: "May your inner flame shine forevermore. Fan the flames gains 0.005 power with each use"
+        },
+        effect: function() {
+            gD.actions.fanTheFlames.usesPower += 0.005;
+        }
+    },
+    forestExploration: {
+        unlock: {time: 900},
+        cost: {time: 1500},
+        show: {
+            type: "upgrade",
+            tooltip: "Venture into the forest to find creatures, and hire them"
+        },
+        effect: function() {
+            log("Now all you need is a little <i>time</i>...");
+        }
+    },
     twistrike: {
         unlock: {actions: {monkey: {number: 20}}},
         cost: {time: 2400},
@@ -330,17 +410,6 @@ var actions = {
         },
         effect: function() {
             gD.actions.monkey.click *= 2;
-        }
-    },
-    forestExploration: {
-        unlock: {time: 900},
-        cost: {time: 1500},
-        show: {
-            type: "upgrade",
-            tooltip: "Venture into the forest to find creatures, and hire them"
-        },
-        effect: function() {
-            log("Now all you need is a little <i>time</i>...");
         }
     },
     bananaTrees: {
@@ -386,11 +455,69 @@ var actions = {
         unlock: {stats: {playTime:300}},
         show: {
             type: "achievement",
-            tooltip: "Playing for 5 minutes! Time decay is decreased by 10%"
+            tooltip: "Playing for 5 minutes! Time decay is decreased by 10% (don't expect that to happen too often)"
         },
         effect: function() {
             gD.timeSpeed *= 0.9;
         }
+    },
+    dedication: {
+        unlock: {stats: {playTime:3600}},
+        show: {
+            type: "achievement",
+            tooltip: "This achievement is pie3636 approved. Time decay -10%"
+        },
+        effect: function() {
+            gD.timeSpeed *= 0.9;
+        }
+    },
+    woahDude: {
+        unlock: {stats: {playTime:36000}},
+        show: {
+            type: "achievement",
+            tooltip: "It's not *that* hard, if you're idle. Time decay -10%"
+        },
+        effect: function() {
+            gD.timeSpeed *= 0.9;
+        }
+    },
+    addicted: {
+        unlock: {stats: {playTime:360000}},
+        show: {
+            type: "achievement",
+            tooltip: "You literally spent more time playing this game than me coding it. Kudos to you! Time decay -10%"
+        },
+        effect: function() {
+            gD.timeSpeed *= 0.9;
+        }
+    },
+    two_PiRadians: {
+        unlock: {stats: {timeGained:3600}},
+        show: {
+            type: "achievement",
+            tooltip: "Tick tock goes the clock..."
+        },
+    },
+    fullTimeJob: {
+        unlock: {stats: {timeGained:86400}},
+        show: {
+            type: "achievement",
+            tooltip: "You might be working overtime"
+        },
+    },
+    delayedSevenfold: {
+        unlock: {stats: {timeGained:604800}},
+        show: {
+            type: "achievement",
+            tooltip: "Alright, guys. The fire should be alright for a while"
+        },
+    },
+    julianYear: {
+        unlock: {stats: {timeGained:31557600}},
+        show: {
+            type: "achievement",
+            tooltip: "No leap seconds!"
+        },
     },
     misunderstanding: {
         unlock: {event: {branches37: true}},
@@ -415,9 +542,6 @@ var actions = {
         show: {
             type: "achievement",
             tooltip: "13.8 billion years? That's the age of the Universe!"
-        },
-        effect: function() {
-            //TODO
         }
     },
     negatron: {
@@ -425,9 +549,6 @@ var actions = {
         show: {
             type: "achievement",
             tooltip: "This makes no sense at all..."
-        },
-        effect: function() {
-            //TODO
         }
     },
     /* ============================================================ MISCELLANEOUS ============================================================ */
@@ -437,7 +558,7 @@ var actions = {
             type: "noDisplay"
         },
         effect: function() {
-            log("This is just a test, but if you see it, it means you've spent at least 60 seconds playing. Given the fact that there's basically nothing to do, either you're a bugtracker, or you must be really bored.");
+            log("Hello! You've been playing for a minute. <i>Voilà!</i>");
         }
     },
 };

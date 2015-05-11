@@ -14,16 +14,22 @@ function strDiv(i, j) {
 }
 
 function setUseLinks(i) {
-    for (var k = 0; k < $("#inv_" + i + "_use").children().length; k++) { // Buy on click
-        var j = $("#inv_" + i + "_use").children()[k].id;
-        $("#" + j).show().click(function(_i, _j) {
-            return function() {
-                var tmp = use(_i, _j.split("_")[2]);
-                if (tmp) {
-                    game.inventory[_i].use(tmp);
-                }
-            };
-        }(i, j));
+    var act = ["use", "craft"]; // Each inventory item has potential methods
+    for (var t in act) {
+        if (game.inventory[i][act[t]]) { // If the item has the action
+            for (var k = 0; k < $("#inv_" + i + "_" + act[t]).children().length; k++) { // Iterate over the divs
+                var j = $("#inv_" + i + "_" + act[t]).children()[k].id; // Get the link
+                $("#" + j).show().click(function(_i, _j, _t) { // On click
+                    return function() {
+                        var tmp = utilities[act[_t]](_i, _j.split("_")[2]); // Call pre-computing requirements
+                        if (tmp) {
+                            game.inventory[_i][act[_t]](tmp); // On success, do action
+                        }
+                        return false;
+                    };
+                }(i, j, t)); // Closure
+            }
+        }
     }
 }
 
@@ -60,17 +66,6 @@ function sumPrices(base, factor, owned, number, resource, isMax, more) { // If i
 
 function invProbaPerSec(n) {
         return 1-Math.exp(Math.log(1-n)*game.realTime/1000);
-}
-
-function use(item, str) {
-    var n = (str == "all" ? gD.inventory[item].value : str);
-    if (n <= gD.inventory[item].value && n) {
-        gD.inventory[item].value -= n;
-        return n;
-    } else {
-        log("Not enough " + item + "!");
-        return 0;
-    }
 }
 
 function set(x, val) {
@@ -124,7 +119,7 @@ function gainTime(n)
 /* ====================================================================== FORMATTING ====================================================================== */
 
 function cost(data, hideParen) {
-    return (data ? (hideParen ? '' : '(') + timify(data.time, true, 1, 2, 0) + (hideParen ? '' : ')') : "");
+    return (data ? (hideParen ? '' : '(') + timify(data.time, true, 1, 2, 0) + (data.inventory ? (data.inventory.branches ? ", " + data.inventory.branches.value + " branches" : "") : "") + (hideParen ? '' : ')') : ""); // TODO : Uuuurgh
 }
 
 function floorx(data, digits) {
@@ -282,6 +277,21 @@ function timify(out, timeLike, shortness, precision, digits, space, extraZeros, 
 }
 
 /* ====================================================================== DISPLAY ====================================================================== */
+
+function scroll() {
+    var height = $('#navbar').height();
+    if ($(this).scrollTop() + height + 10 > $("#actions").position().top) {
+        $('#upgrades').css({
+            "position": "fixed",
+            "top": height + 10,
+            "right": 0});
+    } else {
+        $('#upgrades').css({
+            "position": "relative",
+            "top": "auto",
+            "right": "auto"});
+    }
+}
 
 function tooltip(id, title, show) {
     show = (typeof show === 'undefined' ? true : show);
