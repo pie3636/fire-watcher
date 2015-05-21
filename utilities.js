@@ -106,14 +106,39 @@ function count(str) {
     return total;
 }
 
-function gainTime(n)
-{
+function gainTime(n) {
     gD.time += n;
     gD.stats.timeGained += n;
     if (n && (gD.currentTab == "inv" || gD.currentTab == "play")) {
         animate(n, gD.currentTab == "inv");
     }
-    
+}
+
+function scramble(str) {
+    var out = '', src = str.split(''), n;
+    while (src.length > 1) {
+        n = Math.floor(Math.random() * src.length);
+        out += src[n];
+        src.splice(n, 1);
+    }
+    out += src[0];
+    return out;
+}
+
+function runeEncode(ins) {
+    var out = '';
+    for (i = 0; i < ins.length; i++) {
+        out += game.codeDest[game.codeSource.indexOf(ins[i])];
+    }
+    return out;
+}
+
+function runeDecode(ins) {
+    var out = '';
+    for (i = 0; i < ins.length; i++) {
+        out += game.codeSource[game.codeDest.indexOf(ins[i])];
+    }
+    return out;
 }
 
 /* ====================================================================== FORMATTING ====================================================================== */
