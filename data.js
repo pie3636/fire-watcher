@@ -453,7 +453,7 @@ var actions = {
         cost: {time: 84000, inventory: {planks: {value: 5}}},
         show: {
             type: "upgrade",
-            tooltip: "Extra long handle, extra fish"
+            tooltip: "Extra long handle, extra shells"
         },
         effect: function() {
             gD.actions.exploreTheBeach.shellChance += 0.3;
