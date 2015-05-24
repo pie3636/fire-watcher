@@ -331,8 +331,8 @@ function tooltip(id, title, show) {
     }
 }
 
-function animate(num, stats) {
-    var id = "#time" + (stats ? "2" : "");
+function animate(num) {
+    var id = "#time";
     var element = $("<div class='animate'/>");
     element.addClass("text-" + (num < 0 ? "danger" : "success") + (gD.options.darkTheme ? "2" : "")).html((num >= 0 ? "+" : "") + timify(num, true, 0, 2, 3));
     $('body').append(element);

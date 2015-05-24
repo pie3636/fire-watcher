@@ -52,11 +52,12 @@ sparklingEmbers: {
                 if (n < 100) {
                     for (var i = 1; i <= n; i++) {
                         if (Math.random() <= gD.inventory.shells.inkChance) {
-                            gain++;
+                            gain += _.production;
                         }
                     }
-                } else if (!(gD.stats.ticks % (Math.floor(1e3/game.realTime)))) {
-                    gain = n * game.realTime/1e3/_.inkChance * _.production * Math.floor(1e3/game.realTime);
+                } else {
+                    gain = n * _.inkChance * _.production;
+                    console.log(gain);
                 }
                 gD.inventory.ink.value += gain;
                 log("You found " + (gain ? gain : "no") + " ink sac" + (gain != 1 ? "s" : "") + ".");
@@ -457,7 +458,7 @@ var actions = {
     },
     telescopicHandNet: {
         unlock: {inventory: {shells: {value: 20}}},
-        cost: {time: 84000, inventory: {planks: {value: 5}}},
+        cost: {time: 84000, inventory: {planks: {value: 15}}},
         show: {
             type: "upgrade",
             tooltip: "Extra long handle, extra shells"
@@ -582,7 +583,7 @@ var actions = {
         cost: {time: 2400},
         show: {
             type: "upgrade",
-            tooltip: "Monkeys are twice as efficient"
+            tooltip: "Monkey clicks give double time"
         },
         effect: function() {
             gD.actions.monkey.click *= 2;
@@ -593,7 +594,7 @@ var actions = {
         cost: {time: 9600},
         show: {
             type: "upgrade",
-            tooltip: "Monkeys are twice as efficient"
+            tooltip: "Monkey clicks give double time"
         },
         effect: function() {
             gD.actions.monkey.click *= 2;
@@ -604,7 +605,7 @@ var actions = {
         cost: {time: 1270000},
         show: {
             type: "upgrade",
-            tooltip: "Monkeys are way cheaper"
+            tooltip: "Monkeys are a lot cheaper"
         },
         effect: function() {
             gD.actions.monkey.factor = 1.05;

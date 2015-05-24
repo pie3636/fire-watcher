@@ -255,7 +255,7 @@ function compare(cost, data, doSub, subStep, a) { // Returns (cost <= data), dat
                     //if (typeof data[i] === "number" || cost[i].isConsumed) {
                         data[i] -= cost[i];
                         if (i == "time" && cost[i]) {
-                            animate(-cost[i], gD.currentTab == "opt");
+                            animate(-cost[i]);
                         }
                     //}
                     break;
