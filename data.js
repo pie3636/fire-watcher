@@ -469,10 +469,10 @@ var actions = {
     },
     shellFarm: {
         unlock: {inventory: {shells: {value: 60}}},
-        cost: {time: 135000},
+        cost: {time: 135000, {inventory: {branches: {value: 60}}}},
         show: {
             type: "upgrade",
-            tooltip: "Start a shell farm. Your now happy and fed shells have a higher chance to produce ink"
+            tooltip: "Start a shell farm using rods. Your now happy and fed shells have a higher chance to produce ink"
         },
         effect: function() {
             gD.inventory.shells.inkChance += 0.1;
@@ -480,7 +480,7 @@ var actions = {
     },
     shellFactory: {
         unlock: {inventory: {shells: {value: 220}}},
-        cost: {time: 2976000},
+        cost: {time: 2976000, {inventory: {planks: {value: 250}}}},
         show: {
             type: "upgrade",
             tooltip: "Though not very modern, this factory will allow you to optimize ink extraction. Increases ink chance"
