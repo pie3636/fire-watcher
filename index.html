@@ -50,10 +50,9 @@
     <div class="alert alert-info" id="updateAnnouncement" style="display: none">
     <button type="button" class="close" id="updateAnnouncementClose">x</button>
     <b>Announcement :</b> <span id="updateAnnouncementVersion"></span> is out!<br />
-        - The game is now open source under copyleft license CC-BY-SA<br />
-        - Made logs more visible<br />
-        - Added some new upgrades and inventory items (many more to come tomorrow)<br />
-        - Note that I have done little to no balancing so far, but any feedback is appreciated!<br />
+        - More upgrades and balancing (in progress)<br />
+        - Fixes a bunch of bugs<br />
+        - Added shelter and extensions<br />
         You can also check the <a href="#" class="alert-link" onclick="changeTab('changelog')">changelog</a> for more information.
     
     <div class="alert alert-warning" style="margin-bottom: 0px; margin-top: 10px">
@@ -306,6 +305,9 @@
                 <b>Upgrades purchased (<span id="stats_totalUpgrades"></span> of <span id="upgradesUnlockedTotal"></span>) :</b><br/>
                 <div style="margin-left:15px" class="top6" id="upgradesBought"></div>
                 <hr />
+                <b>Shelter extensions (<span id="stats_totalExtensions"></span> of <span id="extensionsUnlockedTotal"></span>) :</b><br/>
+                <div style="margin-left:15px" class="top6" id="extensionsBought"></div>
+                <hr />
                 <b>Achievements (<span id="stats_totalAchievements"></span> of <span id="achievementsUnlockedTotal"></span>) :</b><br/>
                 <div style="margin-left:15px" class="top6" id="achievements"></div>
             </div>
@@ -349,6 +351,10 @@
     
     <div class="row" id="changelog" style="display:none; margin-left: 5px; margin-right: 5px">
         <div class="col-md-12">
+        <h5>v0.7.8 - 05/25/2015 :</h5>
+        - More upgrades and balancing (in progress)<br />
+        - Fixes a bunch of bugs<br />
+        - Added shelter and extensions<br />
         <hr/><h5>v0.7.7 - 05/24/2015 :</h5>
         - A few typos and bugfixes<br />
         - 'Fetch Brushwood' shouldn't have formatting issues anymore<br />

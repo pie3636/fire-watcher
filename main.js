@@ -67,11 +67,14 @@ function tick() {
                     }
                     if (restoreStats) {
                         if (!actions[i].noStats) {
-                        $("#upgradesBought").append(
+                        $((actions[i].extension ? "#extensionsBought" : "#upgradesBought")).append(
                             strButton(i, name));
                             $("#" + i).css("margin-right", 10).css("margin-bottom", 5);
                             if (!actions[i].noStats) {
                                 gD.stats.totalUpgrades++;
+                                if (actions[i].extension) {
+                                    gD.stats.totalExtensions++;
+                                }
                             }
                         }
                         if (actions[i].onLoad) {
@@ -155,11 +158,12 @@ function tick() {
     }
     }
     game.onLoad = false;
+    console.log(game.realTime);
 }
 
 function buyUpgrade(upgrade, unit) {
     unit = set(unit, false);
-    if (!gD.actions[upgrade].bought && (unit && gD.actions[upgrade].maxBuy && compare(actions[upgrade].getCost(unit), gD, true) || !unit && compare(actions[upgrade].cost, gD, true, false, upgrade=="planks"))) { // First condition isn't mandatory
+    if (!gD.actions[upgrade].bought && (unit && gD.actions[upgrade].maxBuy && compare(actions[upgrade].getCost(unit), gD, true) || !unit && compare(actions[upgrade].cost, gD, true, false))) { // First condition isn't mandatory
         if (typeof actions[upgrade].effect !== 'undefined') {
             actions[upgrade].effect((actions[upgrade].show.type == "unit" ? unit : undefined));
         }
@@ -174,11 +178,15 @@ function buyUpgrade(upgrade, unit) {
                     break;
                 case "upgrade":
                     if (!actions[upgrade].noStats) {
-                        $("#upgradesBought").append($("#" + upgrade)[0].outerHTML.replace(/ \(.*\)/, "")); //TODO : Add other cases?
+                        $((actions[upgrade].extension ? "#extensionsBought" : "#upgradesBought")).append($("#" + upgrade)[0].outerHTML.replace(/ \(.*\)/, "")); //TODO : Add other cases?
                     }
-                    $("#" + upgrade).tooltip('hide').remove().tooltip().mouseup(toBlur).hover(themeTooltip);
+                    $("#" + upgrade).tooltip('hide').remove(); // Don't join!
+                    $("#" + upgrade).tooltip().mouseup(toBlur).hover(themeTooltip);
                     if (!actions[upgrade].noStats) {
                         gD.stats.totalUpgrades++;
+                        if (actions[upgrade].extension) {
+                            gD.stats.totalExtensions++;
+                        }
                     }
                     break;
                 case "noDisplay":
@@ -192,7 +200,7 @@ function buyUpgrade(upgrade, unit) {
     }
 }
 
-function compare(cost, data, doSub, subStep, a) { // Returns (cost <= data), data -= cost if doSub, subStep means toplevel (nested objects)
+function compare(cost, data, doSub, subStep) { // Returns (cost <= data), data -= cost if doSub, subStep means toplevel (nested objects)
     var ret = true;
     if(!subStep) {
         for (var i in cost) {
@@ -239,7 +247,7 @@ function compare(cost, data, doSub, subStep, a) { // Returns (cost <= data), dat
                     ret = cost[i] == data[i];
                     break;
                 case "object":
-                    ret = compare(cost[i], data[i], false, subStep, a); // doSub == false => compare only
+                    ret = compare(cost[i], data[i], false, subStep); // doSub == false => compare only
                     break;
                 case "undefined":
                 default:
@@ -260,7 +268,7 @@ function compare(cost, data, doSub, subStep, a) { // Returns (cost <= data), dat
                     //}
                     break;
                 case "object":
-                    ret = compare(cost[i], data[i], true, true, a); // Transmit doSub, skip first step
+                    ret = compare(cost[i], data[i], true, true); // Transmit doSub, skip first step
                 case "boolean":
                     /*if (typeof data[i] === "object" || cost[i].isConsumed) {
                         data[i] = !data[i];
@@ -368,6 +376,7 @@ $(function () {
     $("#actionsUnlockedTotal").html(count("action") + count("unit")); //TODO : split?
     $("#upgradesUnlockedTotal").html(count("upgrade") - count("noStats"));
     $("#achievementsUnlockedTotal").html(count("achievement"));
+    $("#extensionsUnlockedTotal").html(count("upgrade", true)  - count("noStats"));
     
     $('.modal').on('show.bs.modal', centerModal);
     $(window).on("resize", function() {

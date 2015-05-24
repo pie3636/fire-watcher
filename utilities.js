@@ -1,7 +1,7 @@
 /* ====================================================================== HTML ====================================================================== */
 
 function strTooltip(i) {
-    return ' data-toggle="tooltip" data-placement="bottom" title="' + actions[i].show.tooltip + '"';
+    return ' data-toggle="tooltip" data-placement="bottom" title="' + (actions[i].extension ? "Shelter extension - " : "") + actions[i].show.tooltip + '"';
 }
 
 function strButton(i, j, k, t) {
@@ -96,10 +96,10 @@ function intRandom(min, max) {
     return 1 + Math.round(Math.random()*(max-min));
 }
 
-function count(str) {
+function count(str, ext) {
     var total = 0;
     for (var i in actions) {
-        if (actions[i].show.type == str || actions[i][str]) { //TODO : Change eventually, or global variable
+        if (actions[i].show.type == (str || actions[i][str]) && (!ext || actions[i].extension)) { //TODO : Change eventually, or global variable
             total++;
         }
     }

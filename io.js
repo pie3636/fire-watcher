@@ -32,6 +32,7 @@ function load(hide) {
     $("#actions").html("<div style='margin-left:15px'>Time left : <span id='time'>0</span><br /><br /></div><hr/>");
     $("#upgrades").html("<!--<p class='text-center'>--><p>Upgrades :</p>");
     $("#upgradesBought").html("");
+    $("#extensionsBought").html("");
     $("#achievements").html("");
     if (game.onReset) {
         gD = JSON.parse(localStorage.getItem("initValues"));
@@ -70,6 +71,7 @@ function load(hide) {
     gD.stats.totalActions = 0; // Computed at next nick
     gD.stats.totalUpgrades = 0;
     gD.stats.totalAchievements = 0;
+    gD.stats.totalExtensions = 0;
     $("#updateAnnouncementClose").click(function() {
         gD.announcements.update.dismissed = true;
         $("#updateAnnouncement").hide();

@@ -11,7 +11,7 @@ sparklingEmbers: {
     probability: 0.014
 */
     var game = {
-    version: "v0.7.7",
+    version: "v0.7.8",
     onLoad: false, // Restore purchases
     onImport: false, // Load from import
     onReset: false, // Load from initValues
@@ -75,7 +75,7 @@ sparklingEmbers: {
                 }
                 I.value -= Number(n) * _.branchesCost;
                 _.value += Number(n);
-                log("You crafted " + (n ? n : "no") + " branche" + (n != 1 ? "s" : "") + ".");
+                log("You crafted " + (n ? n : "no") + " plank" + (n != 1 ? "s" : "") + ".");
             }
         }
     }
@@ -155,6 +155,7 @@ var gD = {
         totalActions: 0,
         totalUpgrades: 0,
         totalAchievements: 0,
+        totalExtensions: 0,
         playTime: 0,
         timeGained: 0,
         ticks: 0,
@@ -182,17 +183,18 @@ var utilities = {
 
 
 
-/* unlock, cost, getCost(unit) : Object [~gD]                               Costs of unlocking and buying, default: {operator: game.operator.GE, value: cost[î], isConsumed: true}
- * -> unlock : {time: 50} ~ {time: {operator: game.operator.GE,             value: 50, isConsumed: true}}
- * show : Object [type, tooltip, inside, nocenter, name][title]             Items to be displayed. Types : action, upgrade, achievement
- * effect [unit] : function                                                 On buying
- * tick : function                                                          On tick
- * doUnlock : function                                                      On unlock
- * repeatable : Boolean                                                     Peristent
- * nocenter : Boolean                                                       Multiline (action)
- * isUpgrade : Boolean                                                      In case of unhandled show type
- * noUnLockOnLoad : Boolean                                                 Prevents doUnlock() from being called on load
- * onLoad : Boolean                                                         Call effect() on load
+/* unlock, cost, getCost(unit) : Object [~gD]                                   Costs of unlocking and buying, default: {operator: game.operator.GE, value: cost[î], isConsumed: true}
+ * -> unlock : {time: 50} ~ {time: {operator: game.operator.GE,                 value: 50, isConsumed: true}}
+ * show : Object [type, tooltip, inside, nocenter, name][title]                 Items to be displayed. Types : action, upgrade, achievement
+ * effect [unit] : function                                                     On buying
+ * tick : function                                                              On tick
+ * doUnlock : function                                                          On unlock
+ * repeatable : Boolean                                                         Peristent
+ * nocenter : Boolean                                                           Multiline (action)
+ * isUpgrade : Boolean                                                          In case of unhandled show type
+ * noUnLockOnLoad : Boolean                                                     Prevents doUnlock() from being called on load
+ * onLoad : Boolean                                                             Call effect() on load
+ * extension : Boolean                                                          Is a shelter extension
  */
  
 var actions = {
@@ -365,6 +367,17 @@ var actions = {
             gD.actions.fanTheFlames.power *= 10;
         }
     },
+    shelter: {
+        unlock: {time: 17000},
+        cost: {time: 86400, inventory: {planks: {value: 150}}},
+        show: {
+            type: "upgrade",
+            tooltip: "Build a small shelter to sleep at night, and move the fire there. Halves time decay and allows extensions to be built later"
+        },
+        effect: function() {
+            gD.timeSpeed *= 0.5;
+        }
+    },
     smallLogs: {
         unlock: {time: 10000},
         cost: {time: 12345},
@@ -469,7 +482,7 @@ var actions = {
     },
     shellFarm: {
         unlock: {inventory: {shells: {value: 60}}},
-        cost: {time: 135000, {inventory: {branches: {value: 60}}}},
+        cost: {time: 135000, inventory: {branches: {value: 1000}}},
         show: {
             type: "upgrade",
             tooltip: "Start a shell farm using rods. Your now happy and fed shells have a higher chance to produce ink"
@@ -478,13 +491,15 @@ var actions = {
             gD.inventory.shells.inkChance += 0.1;
         }
     },
-    shellFactory: {
+    shellter: {
         unlock: {inventory: {shells: {value: 220}}},
-        cost: {time: 2976000, {inventory: {planks: {value: 250}}}},
+        cost: {time: 2976000, inventory: {planks: {value: 25}, branches: {value: 50}}, actions: {shelter: {bought: true}}},
         show: {
             type: "upgrade",
-            tooltip: "Though not very modern, this factory will allow you to optimize ink extraction. Increases ink chance"
+            name: "Shellter",
+            tooltip: "Add a room with a workench and a few wooden tools to ease ink extraction from shells. Increases ink chance"
         },
+        extension: true,
         effect: function() {
             gD.inventory.shells.inkChance += 0.15;
         }
