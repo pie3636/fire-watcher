@@ -11,7 +11,7 @@ sparklingEmbers: {
     probability: 0.014
 */
     var game = {
-    version: "v0.7.6",
+    version: "v0.7.7",
     onLoad: false, // Restore purchases
     onImport: false, // Load from import
     onReset: false, // Load from initValues
