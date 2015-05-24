@@ -35,7 +35,7 @@ function setUseLinks(i) {
 
 function unsetUseLinks(i) {
     for (var k = 0; k < $("#inv_" + i + "_use").children().length; k++) {
-        var j = $("#inv_" + i + "_use").children()[k].id;
+        var j = $("#inv_" + i + "_use").children()[k].children[0].id;
         $("#" + j).show().off("click");
     }
 }

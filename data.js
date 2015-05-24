@@ -413,7 +413,7 @@ var actions = {
         onLoad: true,
         show: {
             type: "upgrade",
-            tooltip: "Hey! What if I tried sawing that wood?"
+            tooltip: "Hey! What if I tried sawing that wood? Unlocks planks crafting in the Inventory tab"
         },
         effect: function() {
             setUseLinks("planks");
@@ -499,11 +499,12 @@ var actions = {
             gD.inventory.shells.production *= 3;
         }
     },
-    GMOShells: {
+    gmoShells: {
         unlock: {inventory: {shells: {value: 330}}},
         cost: {time: 15000000},
         show: {
             type: "upgrade",
+            title: "GMO shells",
             tooltip: "Why wait for evolution to kick in when you have GMOs? Increases ink production tenfold"
         },
         effect: function() {
