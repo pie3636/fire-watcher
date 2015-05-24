@@ -4,9 +4,9 @@ function strTooltip(i) {
     return ' data-toggle="tooltip" data-placement="bottom" title="' + actions[i].show.tooltip + '"';
 }
 
-function strButton(i, j, k) {
+function strButton(i, j, k, t) {
     k = set(k, i);
-    return '<button id=' + i + ' type="button" class="btn btn-default' + (gD.options.darkTheme ? "2" : "") + (k ? strTooltip(k) : "") + ' data-container="body">' + j + '</button>';
+    return '<button id=' + i + ' type="button" class="btn btn-default' + (gD.options.darkTheme ? "2" : "") + (k && t != 1 ? strTooltip(k) : "") + ' data-container="body">' + j + '</button>';
 }
 
 function strDiv(i, j) {
@@ -142,6 +142,11 @@ function runeDecode(ins) {
 }
 
 /* ====================================================================== FORMATTING ====================================================================== */
+
+function numberLines(id) {
+    return Math.round($(id).height()/parseInt($(id).css('line-height').replace("px","")))
+}
+
 
 function cost(data, hideParen) {
     return (data ? (hideParen ? '' : '(') + timify(data.time, true, 1, 2, 0) + (data.inventory ? (data.inventory.branches ? ", " + data.inventory.branches.value + " branches" : "") + (data.inventory.planks ? ", " + data.inventory.planks.value + " planks" : "") : "") + (hideParen ? '' : ')') : ""); // TODO : Uuuurgh

@@ -33,7 +33,7 @@ function tick() {
                                 <div class="col-md-3 col-md-center' + (actions[i].show.nocenter ? ' top3' : '') + '">\
                                     ' + strButton(i, name) + '\
                                 </div>\
-                                <div class="col-md-9' + (actions[i].show.nocenter ? '' : ' top6') + '">\
+                                <div class="col-md-9' + (actions[i].show.nocenter ? '' : ' top6') + '" id="' + i + 'Inside">\
                                     ' + actions[i].show.inside + '\
                                 </div>\
                             </div>' + strHR);
@@ -52,7 +52,7 @@ function tick() {
                                 Production : <span id="' + i + 'Production">0</span>\
                             </div>\
                             <div class="col-md-4">\
-                                <div class="btn-group float-right">' + strButton(i + "1", "Buy 1", i) + strButton(i + "2", "10", i) + strButton(i + "3", "100", i) + strButton(i + "4", "Max (0)", i) + '\
+                                <div class="btn-group float-right">' + strButton(i + "1", "Buy 1", i, 1) + strButton(i + "2", "10", i, 1) + strButton(i + "3", "100", i, 1) + strButton(i + "4", "Max (0)", i, 1) + '\
                                 </div>\
                             </div>\
                         </div>' + strHR);

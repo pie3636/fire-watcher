@@ -59,7 +59,7 @@ sparklingEmbers: {
                     gain = n * game.realTime/1e3/_.inkChance * _.production * Math.floor(1e3/game.realTime);
                 }
                 gD.inventory.ink.value += gain;
-                log("You found " + (gain ? gain : "no") + " ink sacs.");
+                log("You found " + (gain ? gain : "no") + " ink sac" + (gain != 1 ? "s" : "") + ".");
             }
         },
         planks: {
@@ -74,6 +74,7 @@ sparklingEmbers: {
                 }
                 I.value -= Number(n) * _.branchesCost;
                 _.value += Number(n);
+                log("You crafted " + (n ? n : "no") + " branche" + (n != 1 ? "s" : "") + ".");
             }
         }
     }
@@ -233,11 +234,18 @@ var actions = {
         tick: function() {
             var _ = gD.actions.fetch_Brushwood;
             var X = actions.fetch_Brushwood;
+            var I = "#fetch_BrushwoodInside";
             _.fatigue = Math.max(0, floorx(_.fatigue - _.decay * game.realTime/1000, 2));
             X.cost.time = _.baseTime + _.fatigue;
             var color = (X.cost.time < _.maxGain - _.fatigue ? "#080" : "#A00"); // Cost < Gain
             $("#fetchBrushwoodLoss").html(timify(X.cost.time, true, 0, 2, 0)).attr("style", "color:" + color);
             $("#fetchBrushwoodGain").html(timify(_.maxGain - _.fatigue, true, 0, 2, 0)).attr("style", "color:" + color);
+            if (numberLines(I) > 1 && $(I).hasClass("top6")) {
+                $(I).removeClass("top6");
+            }
+            if (numberLines(I) == 1 && !$(I).hasClass("top6")) {
+                $(I).addClass("top6");
+            }
         }
     },
     exploreTheBeach: {
@@ -315,7 +323,7 @@ var actions = {
                     }
                 }
             } else if (!(gD.stats.ticks % (Math.floor(1e3/game.realTime)))) {
-                actions.fanTheFlames.effect(_.number * game.realTime/1e3 * gD.inventory.monkey.clickProbability * _.click * Math.floor(1e3/game.realTime));
+                actions.fanTheFlames.effect(_.number * game.realTime/1e3 * _.clickProbability * _.click * Math.floor(1e3/game.realTime));
             }
         },
         doUnlock: function() {
@@ -328,7 +336,7 @@ var actions = {
         cost: {time: 600},
         show: {
             type: "upgrade",
-            tooltip: "Fanning the flames is twice as efficient"
+            tooltip: "Doubles the base power of 'Fan the flames'"
         },
         effect: function() {
             gD.actions.fanTheFlames.power *= 2;
@@ -339,7 +347,7 @@ var actions = {
         cost: {time: 7777},
         show: {
             type: "upgrade",
-            tooltip: "Fanning the flames is twice as efficient"
+            tooltip: "Doubles the base power of 'Fan the flames'"
         },
         effect: function() {
             gD.actions.fanTheFlames.power *= 2;
@@ -350,7 +358,7 @@ var actions = {
         cost: {time: 190000},
         show: {
             type: "upgrade",
-            tooltip: "Fanning the flames is ten times as efficient"
+            tooltip: "Doubles the base power of 'Fan the flames'"
         },
         effect: function() {
             gD.actions.fanTheFlames.power *= 10;
@@ -373,8 +381,8 @@ var actions = {
         }
     },
     timber: {
-        unlock: {time: 54600},
-        cost: {time: 77800},
+        unlock: {time: 900},
+        cost: {time: 1200},
         show: {
             type: "upgrade",
             tooltip: "Going deeper inside the wood, you end up finding bigger and bigger trunks and logs. Brushwood fetching is ten times more efficient."
@@ -389,15 +397,14 @@ var actions = {
         }
     },
     longSunsetWalks: {
-        unlock: {time: 48000},
-        cost: {time: 50000},
+        unlock: {time: 480000},
+        cost: {time: 500000},
         show: {
             type: "upgrade",
             tooltip: "You're roaming farther away from home. Increases the number of branches you can carry" //TODO But takes longer -> Cost :/
         },
         effect: function() {
-            var _ = gD.actions.exploreTheBeach;
-            _.maxBranches *= 10;
+            gD.actions.exploreTheBeach.maxBranches *= 3;
         },
     },
     planks: {
@@ -602,11 +609,12 @@ var actions = {
             gD.actions.monkey.factor = 1.05;
         }
     },
-    inspiredBy_Shakespeare: {
+    shakespeare: {
         unlock: {actions: {monkey: {number: 75}}},
         cost: {time: 97000},
         show: {
             type: "upgrade",
+            title: "Shakespeare's plays",
             tooltip: "Monkeys click more often"
         },
         effect: function() {
@@ -744,7 +752,7 @@ var actions = {
         unlock: {actions: {monkey: {number: 20}}},
         show: {
             type: "achievement",
-            tooltip: "You now have enough monkeys to idle without losing time"
+            tooltip: "For a while, you've been having enough monkeys to idle without losing time"
         }
     },
     /* ============================================================ MISCELLANEOUS ============================================================ */
