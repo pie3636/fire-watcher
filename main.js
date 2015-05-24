@@ -1,4 +1,4 @@
-//TODO: More stats (prestigeTime...), hasOwnProperty/booleans 0-1 -> optimisation, progress (bars?), log highlighting transition? (bitstorm), compatibility on version update, timify, cost
+//TODO: More stats (prestigeTime...), hasOwnProperty/booleans 0-1 -> optimisation, progress (bars?), log highlighting transition? (bitstorm), compatibility on version update, cost
 
 function tick() {
     game.realTime = new Date - game.lastDate;
@@ -46,7 +46,7 @@ function tick() {
                                 <span' + strTooltip(i) + ' id="' + i + 'Info">' + name + 's</span> : <span id="' + i + 'Number">0</span>\
                             </div>\
                             <div class="col-md-3 top6">\
-                                Cost : <span id="' + i + 'Cost">' + cost(actions[i].getCost(1), true) + '</span>\
+                                Next cost : <span id="' + i + 'Cost">' + cost(actions[i].getCost(1), true) + '</span>\
                             </div>\
                             <div class="col-md-3 top6">\
                                 Production : <span id="' + i + 'Production">0</span>\
@@ -144,7 +144,13 @@ function tick() {
         $("#time2").html(timify(gD.time, true, 0, 4, 3));
         for (var i in gD.inventory) {
         if (gD.inventory[i].unlocked) {
-            $("#inv_" + i + "_value").html(timify(gD.inventory[i].value, false, 1, 1, 3) + "<br />");
+            $("#inv_" + i + "_value").html(timify(gD.inventory[i].value, false, 1, 1, 0));
+            $("#inv_" + i).show();
+            $("#inv_" + i + "_info").tooltip().hover(themeTooltip);
+            var tmp = $("#inv_" + i).parents()[0].id;
+            if (tmp.substring(0, 8) == "inv_raw_") {
+                $("#" + tmp).show();
+            }
         }
     }
     }
@@ -190,7 +196,6 @@ function compare(cost, data, doSub, subStep, a) { // Returns (cost <= data), dat
     var ret = true;
     if(!subStep) {
         for (var i in cost) {
-        if (a) console.log(i, typeof data[i]);
             switch (typeof data[i]) {
                 case "number":
                     if (typeof cost[i] === "number") {
@@ -281,6 +286,7 @@ function changeTab(newTab) {
 function setTheme() {
     var add = (gD.options.darkTheme ? "2" : "");
     var add2 = (add ? "" : "2");
+    var fg = (gD.options.darkTheme ? "#000" : "#FFF");
     if (gD.options.darkTheme) {
         $("#navbar, #logger").removeClass("navbar-inverse");
         $("hr").removeClass("HR2");
@@ -289,12 +295,14 @@ function setTheme() {
         $("hr").addClass("HR2");
     }
     $(".split-left" + add).removeClass("split-left" + add).addClass("split-left" + add2);
+    $(".split-right" + add).removeClass("split-right" + add).addClass("split-right" + add2);
     $(".btn-default" + add).not(document.getElementById("importNow")).removeClass("btn-default" + add).addClass("btn-default" + add2);
     $(".btn").removeClass("greyedOut" + (gD.options.darkTheme ? "2" : ""));
     $(".navbar-fixed-bottom").css("color", (gD.options.darkTheme ? "#777" : "9d9d9d")).css("text-shadow", (gD.options.darkTheme ? "0 1px 0 rgba(255, 255, 255, .25)" : "0 -1px 0 rgba(0, 0, 0, .25)"));
     $("#logger").css("background-color", (gD.options.darkTheme ? "#eee" : "#111"));
     $("#fullLogs").css("background-color", (gD.options.darkTheme ? "#eee" : "#111")).css("color", (gD.options.darkTheme ? "#555" : "#9d9d9d"));
-    $("body").css("background-color", (gD.options.darkTheme ? "#FFF" : "#000")).css("color", (gD.options.darkTheme ? "#000" : "#FFF"));
+    $("body").css("background-color", (gD.options.darkTheme ? "#FFF" : "#000")).css("color", fg);
+    $("#copyleft").html("<svg width='10' height='10'><circle cx='4.9' cy='5.1' r='4.4' style='fill:none;stroke:" + fg + ";stroke-width:1'/><path d='m 4.86,2.35 c -1.3,0 -2.39,0.91 -2.67,2.13 l 1.31,0 c 0.24,-0.52 0.76,-0.88 1.36,-0.88 0.83,0 1.5,0.67 1.5,1.5 0,0.83 -0.67,1.5 -1.5,1.5 -0.6,0 -1.12,-0.36 -1.36,-0.87 l -1.31,0 c 0.28,1.21 1.37,2.12 2.67,2.12 1.52,0 2.75,-1.23 2.75,-2.75 0,-1.52 -1.23,-2.75 -2.75,-2.75 z' style='fill:" + fg + "'/></svg>");
     for (var i = 1; i <= game.numLogs; i++) {
         if ($("#l" + i).css("font-weight") == "bold") {
             $("#l" + i).css("color", (gD.options.darkTheme ? "#08F" : "#FF0"));

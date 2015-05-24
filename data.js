@@ -1,10 +1,23 @@
-var game = {
-    version: "v0.7.5",
+/*      
+exploreTheBeach: {
+    minBranches: 1,
+    maxBranches: 5, // ERLKÖNIIIIIIIIIIIIIIIIIG
+    branchesPower: 10,
+},
+sparklingEmbers: {
+    power: 0.5,
+    duration: 0,
+    maxDuration: 10000,
+    probability: 0.014
+*/
+    var game = {
+    version: "v0.7.6",
     onLoad: false, // Restore purchases
     onImport: false, // Load from import
     onReset: false, // Load from initValues
     onReload: false,
     logTimeout: {},
+    logFlashTimeout: 0,
     latestLog: 5,
     latestLogSave: 0,
     numLogs: 5,
@@ -27,19 +40,40 @@ var game = {
                 var gain = gD.actions.exploreTheBeach.branchesPower * n;
                 log("Earnt " + timify(gain, true, 0, 3, 0) + "!");
                 gainTime(gain);
-                if(n == 37) {
+                if (n == 37) {
                     gD.event.branches37 = true;
                 }
             },
         },
         shells: {
             use: function(n) {
-                log("DONE");
+                var _ = gD.inventory.shells;
+                var gain = 0;
+                if (n < 100) {
+                    for (var i = 1; i <= n; i++) {
+                        if (Math.random() <= gD.inventory.shells.inkChance) {
+                            gain++;
+                        }
+                    }
+                } else if (!(gD.stats.ticks % (Math.floor(1e3/game.realTime)))) {
+                    gain = n * game.realTime/1e3/_.inkChance * _.production * Math.floor(1e3/game.realTime);
+                }
+                gD.inventory.ink.value += gain;
+                log("You found " + (gain ? gain : "no") + " ink sacs.");
             }
         },
         planks: {
             craft: function(str) {
-                log("HEHE");
+                var _ = gD.inventory.planks;
+                var I = gD.inventory.branches
+                var n;
+                if (str == "all") {
+                    n = Math.floor(I.value/_.branchesCost);
+                } else {
+                    n = (str * _.branchesCost <= I.value ? str : 0);
+                }
+                I.value -= Number(n) * _.branchesCost;
+                _.value += Number(n);
             }
         }
     }
@@ -60,8 +94,9 @@ var gD = {
     },
     inventory: {
         branches: {use: true},
-        shells: {use: true},
-        planks: {craft: true}
+        shells: {use: true, inkChance: 0.1, production: 1},
+        planks: {craft: true, branchesCost: 50},
+        ink: {}
     },
     event: {
         branches37: false
@@ -78,7 +113,8 @@ var gD = {
             fatiguePerUse: 30,
             maxFatigue: 300,
             maxGain: 300,
-            baseTime: 60
+            baseTime: 60,
+            decay: 1
         },
         exploreTheBeach: {
             minBranches: 1,
@@ -89,14 +125,15 @@ var gD = {
         monkey: {
             factor: 1.1,
             number: 0,
-            click: 1
+            click: 1,
+            clickProbability: 0.01
         },
         sparklingEmbers: {
             bought: true,
             power: 0.5,
             duration: 0,
             maxDuration: 10000,
-            probability: 0.014  
+            probability: 0.01
         }
     },
     options: {
@@ -196,7 +233,7 @@ var actions = {
         tick: function() {
             var _ = gD.actions.fetch_Brushwood;
             var X = actions.fetch_Brushwood;
-            _.fatigue = Math.max(0, floorx(_.fatigue - game.realTime/1000, 2));
+            _.fatigue = Math.max(0, floorx(_.fatigue - _.decay * game.realTime/1000, 2));
             X.cost.time = _.baseTime + _.fatigue;
             var color = (X.cost.time < _.maxGain - _.fatigue ? "#080" : "#A00"); // Cost < Gain
             $("#fetchBrushwoodLoss").html(timify(X.cost.time, true, 0, 2, 0)).attr("style", "color:" + color);
@@ -220,11 +257,8 @@ var actions = {
             var strValue = timify(I.branches.value, false, 1, 1, 3);
             log("You found " + timify(branchesFound, false, 0, 1, 3) + " branches! Total : " + strValue);
             if (Math.random() < _.shellChance) {
-                if (!I.shells.value) {
-                    I.shells.unlocked = true;
-                    $("#inv_shells").show();
-                    $("#inv_shells_info").tooltip().hover(themeTooltip);
-                }
+                I.shells.unlocked = true;
+                I.ink.unlocked = true;
                 I.shells.value++;
                 var strValue = timify(I.shells.value, false, 1, 1, 3);
                 log("You found a shell! Total : " + strValue);
@@ -233,12 +267,13 @@ var actions = {
         tick: function() {
             var _ = gD.actions.exploreTheBeach;
             $("#inv_branches_more").html(timify(_.branchesPower, true, 0, 2, 0));
-            $("#inv_shell_more").html(_.shellChance * 100 + " %");
+            $("#inv_shell_more").html(gD.inventory.shells.inkChance * 100 + " %");
+            $("#inv_shell_more2").html(gD.inventory.shells.production);
+            $("#inv_planks_more").html(gD.inventory.planks.branchesCost);
         },
         doUnlock: function() {
-            $("#exploreTheBeachLoss").html(timify(300, true, 0, 2, 0)); 
+            $("#exploreTheBeachLoss").html(timify(300, true, 0, 2, 0));
             gD.inventory.branches.unlocked = true;
-            $("#inv_branches").show();
             $("#inv_branches_info").tooltip().hover(themeTooltip);
             setUseLinks("branches");
             setUseLinks("shells");
@@ -273,15 +308,14 @@ var actions = {
             var _ = gD.actions.monkey;
             _.maxBuy = sumPrices(actions.monkey.cost.time, _.factor, _.number, 0, gD.time, true, true);
             $("#monkey4").html("Max (" + _.maxBuy + ")");
-            if (_.number < 100 && !(gD.stats.ticks % (Math.floor(1000/game.realTime)))) {
+            if (_.number < 100 && !(gD.stats.ticks % (Math.floor(1e3/game.realTime)))) {
                 for (var i = 1; i <= _.number; i++) {
-                    if (Math.random() <= 0.01)
-                    {
+                    if (Math.random() <= _.clickProbability) {
                         actions.fanTheFlames.effect(_.click);
                     }
                 }
-            } else if (!(gD.stats.ticks % (Math.floor(1000/game.realTime)))) {
-                actions.fanTheFlames.effect(_.number * game.realTime/1e5 * _.click * Math.floor(1000/game.realTime));
+            } else if (!(gD.stats.ticks % (Math.floor(1e3/game.realTime)))) {
+                actions.fanTheFlames.effect(_.number * game.realTime/1e3 * gD.inventory.monkey.clickProbability * _.click * Math.floor(1e3/game.realTime));
             }
         },
         doUnlock: function() {
@@ -311,6 +345,61 @@ var actions = {
             gD.actions.fanTheFlames.power *= 2;
         }
     },
+    woodResin: {
+        unlock: {time: 16500},
+        cost: {time: 190000},
+        show: {
+            type: "upgrade",
+            tooltip: "Fanning the flames is ten times as efficient"
+        },
+        effect: function() {
+            gD.actions.fanTheFlames.power *= 10;
+        }
+    },
+    smallLogs: {
+        unlock: {time: 10000},
+        cost: {time: 12345},
+        show: {
+            type: "upgrade",
+            tooltip: "You found a spot with small logs you can carry to the fire. Makes brushwood fetching fifteen times as efficient."
+        },
+        effect: function() {
+            var _ = gD.actions.fetch_Brushwood;
+            _.maxGain *= 15;
+            _.maxFatigue *= 15;
+            _.fatiguePerUse *= 15;
+            _.decay *= 15
+            _.baseTime *= 15;
+        }
+    },
+    timber: {
+        unlock: {time: 54600},
+        cost: {time: 77800},
+        show: {
+            type: "upgrade",
+            tooltip: "Going deeper inside the wood, you end up finding bigger and bigger trunks and logs. Brushwood fetching is ten times more efficient."
+        },
+        effect: function() {
+            var _ = gD.actions.fetch_Brushwood;
+            _.maxGain *= 10;
+            _.maxFatigue *= 10;
+            _.fatiguePerUse *= 10;
+            _.decay *= 10
+            _.baseTime *= 10;
+        }
+    },
+    longSunsetWalks: {
+        unlock: {time: 48000},
+        cost: {time: 50000},
+        show: {
+            type: "upgrade",
+            tooltip: "You're roaming farther away from home. Increases the number of branches you can carry" //TODO But takes longer -> Cost :/
+        },
+        effect: function() {
+            var _ = gD.actions.exploreTheBeach;
+            _.maxBranches *= 10;
+        },
+    },
     planks: {
         unlock: {time: 1500},
         cost: {time: 1780, inventory: {branches: {value: 50}}},
@@ -322,6 +411,96 @@ var actions = {
         effect: function() {
             setUseLinks("planks");
             $("#inv_planks").show();
+            $("#inv_planks_info").tooltip().hover(themeTooltip);
+            gD.inventory.planks.unlocked = true;
+        }
+    },
+    betterTying: {
+        unlock: {inventory: {planks: {value: 10}}},
+        cost: {time: 145000},
+        show: {
+            type: "upgrade",
+            tooltip: "Tie the branches together with string, improving their quality and rentability"
+        },
+        effect: function() {
+            gD.inventory.planks.branchesCost -= 10;
+        }
+    },
+    vegetalGlue: {
+        unlock: {inventory: {planks: {value: 28}}},
+        cost: {time: 495000},
+        show: {
+            type: "upgrade",
+            tooltip: "Use natural resin to make branches stick together, making better planks and decreasing their cost"
+        },
+        effect: function() {
+            gD.inventory.planks.branchesCost -= 10;
+        }
+    },
+    handNet: {
+        unlock: {inventory: {shells: {value: 10}}},
+        cost: {time: 25000, inventory: {planks: {value: 1}}},
+        show: {
+            type: "upgrade",
+            tooltip: "This small hand net will greatly increase your odds of finding shells on the beach"
+        },
+        effect: function() {
+            gD.actions.exploreTheBeach.shellChance += 0.2;
+        }
+    },
+    telescopicHandNet: {
+        unlock: {inventory: {shells: {value: 20}}},
+        cost: {time: 84000, inventory: {planks: {value: 5}}},
+        show: {
+            type: "upgrade",
+            tooltip: "Extra long handle, extra fish"
+        },
+        effect: function() {
+            gD.actions.exploreTheBeach.shellChance += 0.3;
+        }
+    },
+    shellFarm: {
+        unlock: {inventory: {shells: {value: 60}}},
+        cost: {time: 135000},
+        show: {
+            type: "upgrade",
+            tooltip: "Start a shell farm. Your now happy and fed shells have a higher chance to produce ink"
+        },
+        effect: function() {
+            gD.inventory.shells.inkChance += 0.1;
+        }
+    },
+    shellFactory: {
+        unlock: {inventory: {shells: {value: 220}}},
+        cost: {time: 2976000},
+        show: {
+            type: "upgrade",
+            tooltip: "Though not very modern, this factory will allow you to optimize ink extraction. Increases ink chance"
+        },
+        effect: function() {
+            gD.inventory.shells.inkChance += 0.15;
+        }
+    },
+    healthyShellFood: {
+        unlock: {inventory: {shells: {value: 100}}},
+        cost: {time: 750000},
+        show: {
+            type: "upgrade",
+            tooltip: "What do they eat anyway? Shells produce three times as much ink"
+        },
+        effect: function() {
+            gD.inventory.shells.production *= 3;
+        }
+    },
+    GMOShells: {
+        unlock: {inventory: {shells: {value: 330}}},
+        cost: {time: 15000000},
+        show: {
+            type: "upgrade",
+            tooltip: "Why wait for evolution to kick in when you have GMOs? Increases ink production tenfold"
+        },
+        effect: function() {
+            gD.inventory.shells.production *= 10;
         }
     },
     campfire: {
@@ -414,13 +593,24 @@ var actions = {
     },
     bananaTrees: {
         unlock: {actions: {monkey: {number: 100}}},
-        cost: {time: 27000},
+        cost: {time: 1270000},
         show: {
             type: "upgrade",
             tooltip: "Monkeys are way cheaper"
         },
         effect: function() {
             gD.actions.monkey.factor = 1.05;
+        }
+    },
+    inspiredBy_Shakespeare: {
+        unlock: {actions: {monkey: {number: 75}}},
+        cost: {time: 97000},
+        show: {
+            type: "upgrade",
+            tooltip: "Monkeys click more often"
+        },
+        effect: function() {
+            gD.actions.monkey.clickProbability *= 2;
         }
     },
     sparklingEmbers: {
@@ -453,8 +643,7 @@ var actions = {
     /* ============================================================ ACHIEVEMENTS ============================================================ */
     threeHundredSeconds: {
         unlock: {stats: {playTime:300}},
-        show: {
-            type: "achievement",
+        show: {type: "achievement",
             tooltip: "Playing for 5 minutes! Time decay is decreased by 10% (don't expect that to happen too often)"
         },
         effect: function() {
@@ -551,6 +740,13 @@ var actions = {
             tooltip: "This makes no sense at all..."
         }
     },
+    procrastination: {
+        unlock: {actions: {monkey: {number: 20}}},
+        show: {
+            type: "achievement",
+            tooltip: "You now have enough monkeys to idle without losing time"
+        }
+    },
     /* ============================================================ MISCELLANEOUS ============================================================ */
     heyDood: {
         unlock: {stats: {playTime:60}},
@@ -558,7 +754,7 @@ var actions = {
             type: "noDisplay"
         },
         effect: function() {
-            log("Hello! You've been playing for a minute. <i>Voilà!</i>");
+            log("Hello! You've been playing for a minute. <i>Yep, that's all I wanted to say.   </i>");
         }
     },
 };

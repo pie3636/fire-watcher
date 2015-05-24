@@ -46,25 +46,26 @@
     </div>
 </nav>
 
-
 <div class="container-fluid" role="main" id="main">
     <div class="alert alert-info" id="updateAnnouncement" style="display: none">
     <button type="button" class="close" id="updateAnnouncementClose">x</button>
     <b>Announcement :</b> <span id="updateAnnouncementVersion"></span> is out!<br />
-        - Embers ( ͡° ͜ʖ ͡°)<br />
-        - Big content update coming soon! (No, seriously, it's coming)<br />
+        - The game is now open source under copyleft license CC-BY-SA<br />
+        - Made logs more visible<br />
+        - Added some new upgrades and inventory items (many more to come tomorrow)<br />
+        - Note that I have done little to no balancing so far, but any feedback is appreciated!<br />
         You can also check the <a href="#" class="alert-link" onclick="changeTab('changelog')">changelog</a> for more information.
+    
+    <div class="alert alert-warning" style="margin-bottom: 0px; margin-top: 10px">
+        It is recommended to reset your save in order to play correctly! While it is not absolutely necessary, some upgrades or inventory items might not unlock.
+    </div>
+    
+    </div>
     <!--
-    <div class="alert alert-danger" style="margin-bottom: 0px; margin-top: 10px">
-        You will need to reset your save in order to play correctly!
-    </div>
-    -->
-    </div>
     <div class="alert alert-purple">
     <button type="button" class="close" id="WIP" data-dismiss="alert">x</button>
         I'll be pushing the next update in a couple hours.
     </div>
-    <!--
     <div class="alert alert-info" id="announcement">
     <button type="button" class="close" data-dismiss="alert">x</button>
     <b>Blue :</b> This is a <a class="alert-link">link</a>.<hr/>
@@ -98,6 +99,8 @@
     
     <div class="row" id="inv" style="display:none">
         <div style="margin-left:30px">Time left : <span id='time2'>0</span><br /><br /></div>
+        
+        
             <div class="row" id="inv_branches" style="display:none; margin-left:15px; margin-right:15px">
                 <hr />
                 <div class="col-md-2">
@@ -105,22 +108,29 @@
                     Branches :
                     </span>
                 </div>
-                <div class="col-md-1">
+                <div class="col-md-2">
                     <span id="inv_branches_value">0</span>
                 </div>
                 <div class="col-md-3" id="inv_branches_use">
-                    <a href="#" id="inv_branches_1">Use 1</a>
-                    &nbsp;&nbsp;&nbsp;&nbsp;
-                    <a href="#" id="inv_branches_25">Use 25</a>
-                    &nbsp;&nbsp;&nbsp;&nbsp;
-                    <a href="#" id="inv_branches_1000">Use 1000</a>
-                    &nbsp;&nbsp;&nbsp;&nbsp;
-                    <a href="#" id="inv_branches_all">Use all</a>
+                    <div class="col-md-3" style="padding: 0">
+                        <a href="#" id="inv_branches_1">Use 1</a>
+                    </div>
+                    <div class="col-md-3" style="padding: 0">
+                        <a href="#" id="inv_branches_10">Use 10</a>
+                    </div>
+                    <div class="col-md-3" style="padding: 0">
+                        <a href="#" id="inv_branches_100">Use 100</a>
+                    </div>
+                    <div class="col-md-3" style="padding: 0">
+                        <a href="#" id="inv_branches_all">Use all</a>
+                    </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-5">
                     Each branch thrown into the fire will grant you an additional <b id="inv_branches_more" style="color:#080"></b>.
                 </div>
             </div>
+            
+            
             <div class="row" id="inv_shells" style="display:none; margin-left:15px; margin-right:15px">
                 <hr />
                 <div class="col-md-2">
@@ -128,45 +138,77 @@
                     Shells :
                     </span>
                 </div>
-                <div class="col-md-1">
+                <div class="col-md-2">
                     <span id="inv_shells_value">0</span>
                 </div>
                 <div class="col-md-3" id="inv_shells_use">
-                    <a href="#" id="inv_shells_1">Open 1</a>
-                    &nbsp;&nbsp;&nbsp;&nbsp;
-                    <a href="#" id="inv_shells_10">Open 10</a>
-                    &nbsp;&nbsp;&nbsp;&nbsp;
-                    <a href="#" id="inv_shells_100">Open 100</a>
-                    &nbsp;&nbsp;&nbsp;&nbsp;
-                    <a href="#" id="inv_shells_all">Open all</a>
+                    <div class="col-md-3" style="padding: 0">
+                        <a href="#" id="inv_shells_1">Open 1</a>
+                    </div>
+                    <div class="col-md-3" style="padding: 0">
+                        <a href="#" id="inv_shells_10">Open 10</a>
+                    </div>
+                    <div class="col-md-3" style="padding: 0">
+                        <a href="#" id="inv_shells_100">Open 100</a>
+                    </div>
+                    <div class="col-md-3" style="padding: 0">
+                        <a href="#" id="inv_shells_all">Open all</a>
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    Open a shell and you might find some ink inside. Ink chance : <b id="inv_shell_more" style="color:#080"></b>.
+                <div class="col-md-5">
+                    Open a shell and you might find some ink inside. Ink chance : <b id="inv_shell_more" style="color:#080"></b> to produce <b id="inv_shell_more2" style="color:#080"></b> ink.
                 </div>
             </div>
+            
+            
             <div class="row" id="inv_planks" style="display:none; margin-left:15px; margin-right:15px">
                 <hr />
                 <div class="col-md-2">
-                    <span id="inv_planks_info" data-toggle="tooltip" data-placement="bottom" title="A poorly crafted wooden plank, solid enough to build with">
+                    <span id="inv_planks_info" data-toggle="tooltip" data-placement="bottom" title="A poorly crafted wooden plank, hopefully solid enough to build with">
                     Planks :
                     </span>
                 </div>
-                <div class="col-md-1">
+                <div class="col-md-2">
                     <span id="inv_planks_value">0</span>
                 </div>
                 <div class="col-md-3" id="inv_planks_craft">
-                    <a href="#" id="inv_planks_1">Craft 1</a>
-                    &nbsp;&nbsp;&nbsp;&nbsp;
-                    <a href="#" id="inv_planks_10">Craft 10</a>
-                    &nbsp;&nbsp;&nbsp;&nbsp;
-                    <a href="#" id="inv_planks_100">Craft 100</a>
-                    &nbsp;&nbsp;&nbsp;&nbsp;
-                    <a href="#" id="inv_planks_all">Craft all</a>
+                    <div class="col-md-3" style="padding: 0">
+                        <a href="#" id="inv_planks_1">Craft 1</a>
+                    </div>
+                    <div class="col-md-3" style="padding: 0">
+                        <a href="#" id="inv_planks_10">Craft 10</a>
+                    </div>
+                    <div class="col-md-3" style="padding: 0">
+                        <a href="#" id="inv_planks_100">Craft 100</a>
+                    </div>
+                    <div class="col-md-3" style="padding: 0">
+                        <a href="#" id="inv_planks_all">Craft all</a>
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    Assemble <b id="inv_branches_more" style="color:#080"></b> branchess together to craft a plank.
+                <div class="col-md-5">
+                    Assemble <b id="inv_planks_more" style="color:#080"></b> branches together to craft a plank.
                 </div>
             </div>
+            
+            
+            <div class="row" id="inv_raw_1" style="display:none; margin-left:15px; margin-right:15px">
+                <hr />
+                <div id="inv_ink" style="display: none">
+                    <div class="col-md-2">
+                        <span id="inv_ink_info" data-toggle="tooltip" data-placement="bottom" title="A small sac of ink retrieved from a shell">
+                        Ink :
+                        </span>
+                    </div>
+                    <div class="col-md-2">
+                        <span id="inv_ink_value">0</span>
+                    </div>
+                </div>
+            </div>
+            <!--split-right-->
+            
+            
+            <br/>
+        </div>
     </div>
     
     
@@ -281,22 +323,36 @@
     
     <div class="row" id="help" style="display:none">
         <div class="col-md-12">
-        Everytime something interesting happens, it will appear in the full logs.   You can check those by clicking the 'Logs' tab up there in the navigation bar ↑<br />
+        <dl class="dl-horizontal">
+            <dt>Generalities</dt>
+            <dd>Do you need help with understanding the game? Check out the <a href="https://www.reddit.com/r/firewatcher/wiki">wiki</a>! Do you have any suggestions? Feel free to send me an <a href="pie3636@gmail.com">e-mail</a> or to visit the <a href="https://www.reddit.com/r/firewatcher">subreddit</a>.</dd>
+            <dt>Full logs</dt>
+            <dd>Everytime something interesting happens, it will appear in the full logs.  You can check those by clicking the 'Logs' tab up there in the navigation bar ↑</dd>
+            <dt>Tooltips</dt>
+            <dd>If you're not sure what an action or upgrade does, hover over it. There will always be a tooltip summing up the purpose of the item, and if you need more information, you can check the wiki (see below). For example, if you have unlocked monkeys, hovering over the word "Monkeys" will sum up give you a brief overview of what they do.</dd>
+        </dl>
         I'd like to thanks Fulji for the beta-testing, he is very talented at finding bugs. No, seriously, check him out, this guy is awesome :D<br />
-        Need help? Check out the <a href="https://www.reddit.com/r/firewatcher/wiki">wiki</a>! Have any suggestions? Feel free to send me an <a href="pie3636@gmail.com">e-mail</a> or to visit the <a href="https://www.reddit.com/r/firewatcher">subreddit</a>.<br /><br />
         That's it for now! Hope you'll have as much fun playing this as I had coding it ;) - pie3636<br />
         <hr/>
         </div>
         <div class="text-center">
-                Game made in 2015 by pie3636, beta-testing and bugtracking by Fulji<br />
-                <a href="https://www.reddit.com/r/firewatcher/wiki/">Wiki</a> − <a href="mailto:pie3636@gmail.com">E-mail</a> − <a href="https://www.reddit.com/r/firewatcher/">Reddit</a> − <a href="https://github.com/pie3636/fire-watcher">Source</a> − <a href="https://github.com/pie3636/fire-watcher/issues">Bugtracker</a><br />
+            <span id="copyleft"></span> pie3636, 2015 - Beta-testing and bugtracking by Fulji<br />
+            <a href="https://www.reddit.com/r/firewatcher/wiki/">Wiki</a> − <a href="mailto:pie3636@gmail.com">E-mail</a> − <a href="https://www.reddit.com/r/firewatcher/">Reddit</a> − <a href="https://github.com/pie3636/fire-watcher">Source</a> − <a href="https://github.com/pie3636/fire-watcher/issues">Bugtracker</a><br />
+        </div>
+        <br/>
+        <div class="text-center">
+        <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a>
         </div>
     </div>
     
     
     <div class="row" id="changelog" style="display:none">
         <div class="col-md-12">
-        <h5>v0.7.5 - 05/10/2015 :</h5>
+        <h5>v0.7.6 - 05/24/2015 :</h5>
+        - The game is now open source under copyleft license CC-BY-SA<br />
+        - Made logs more visible<br />
+        - Added some new upgrades and inventory items (many more to come tomorrow)<br />
+        <hr/><h5>v0.7.5 - 05/10/2015 :</h5>
         - Added a couple achievements, upgrades, and planks<br />
         - Added support for various crafting actions<br />
         - The code... It's so meta, even this acronym<br />

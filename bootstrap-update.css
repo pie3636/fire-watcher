@@ -33,6 +33,10 @@ body {
     border-right: solid 1px #eee;
 }
 
+.split-right {
+    border-left: solid 1px #eee;
+}
+
 hr {
     margin-top: 10px;
     margin-bottom: 10px;
@@ -281,6 +285,10 @@ input:invalid {
 
 .split-left2 {
     border-right: solid 1px #111;
+}
+
+.split-right2 {
+    border-left: solid 1px #111;
 }
 
 .HR2 {

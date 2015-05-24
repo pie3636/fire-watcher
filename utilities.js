@@ -18,7 +18,7 @@ function setUseLinks(i) {
     for (var t in act) {
         if (game.inventory[i][act[t]]) { // If the item has the action
             for (var k = 0; k < $("#inv_" + i + "_" + act[t]).children().length; k++) { // Iterate over the divs
-                var j = $("#inv_" + i + "_" + act[t]).children()[k].id; // Get the link
+                var j = $("#inv_" + i + "_" + act[t]).children()[k].children[0].id; // Get the link
                 $("#" + j).show().click(function(_i, _j, _t) { // On click
                     return function() {
                         var tmp = utilities[act[_t]](_i, _j.split("_")[2]); // Call pre-computing requirements
@@ -144,7 +144,7 @@ function runeDecode(ins) {
 /* ====================================================================== FORMATTING ====================================================================== */
 
 function cost(data, hideParen) {
-    return (data ? (hideParen ? '' : '(') + timify(data.time, true, 1, 2, 0) + (data.inventory ? (data.inventory.branches ? ", " + data.inventory.branches.value + " branches" : "") : "") + (hideParen ? '' : ')') : ""); // TODO : Uuuurgh
+    return (data ? (hideParen ? '' : '(') + timify(data.time, true, 1, 2, 0) + (data.inventory ? (data.inventory.branches ? ", " + data.inventory.branches.value + " branches" : "") + (data.inventory.planks ? ", " + data.inventory.planks.value + " planks" : "") : "") + (hideParen ? '' : ')') : ""); // TODO : Uuuurgh
 }
 
 function floorx(data, digits) {
@@ -331,7 +331,15 @@ function animate(num, stats) {
     var element = $("<div class='animate'/>");
     element.addClass("text-" + (num < 0 ? "danger" : "success") + (gD.options.darkTheme ? "2" : "")).html((num >= 0 ? "+" : "") + timify(num, true, 0, 2, 3));
     $('body').append(element);
-    element.css('position', 'absolute').offset({ left: $(id).offset().left, top: $(id).offset().top }).animate({ top: ($(id).offset().top + 30) + 'px' }).animate({ opacity: 0, top: ($(id).offset().top + 30) + 'px' }, 500, 'swing', function () {
+    element.css('position', 'absolute').offset({
+        left: $(id).offset().left,
+        top: $(id).offset().top
+    }).animate({
+        top: ($(id).offset().top + 30) + 'px'
+    }).animate({
+        opacity: 0,
+        top: ($(id).offset().top + 30) + 'px'
+    }, 500, 'swing', function () {
         $(this).remove();
     });
 }
