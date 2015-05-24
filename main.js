@@ -144,7 +144,7 @@ function tick() {
         $("#time2").html(timify(gD.time, true, 0, 4, 3));
         for (var i in gD.inventory) {
         if (gD.inventory[i].unlocked) {
-            $("#inv_" + i + "_value").html(timify(gD.inventory[i].value, false, 1, 1, 0));
+            $("#inv_" + i + "_value").html(timify(gD.inventory[i].value, false, 1, 1, 3));
             $("#inv_" + i).show();
             $("#inv_" + i + "_info").tooltip().hover(themeTooltip);
             var tmp = $("#inv_" + i).parents()[0].id;

@@ -257,7 +257,7 @@ function timify(out, timeLike, shortness, precision, digits, space, extraZeros, 
             break;
     }
     if (0 <= out && out < 1) {
-        return (out).toFixed(digits) + (timeLike ? " " + (sec == "seconds" ? "second" : sec) : "");
+        return out + (timeLike ? " " + (sec == "seconds" ? "second" : sec) : "");
     } else if (out < 0) {
         out *= -1;
     }
