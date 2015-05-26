@@ -101,14 +101,16 @@ var gD = {
         ink: {}
     },
     event: {
-        branches37: false
+        branches37: false,
+        kode: 0
     },
     actions: {
         fanTheFlames: {
             uses: 0,
             power: 5,
             usesPower: 0,
-            maxBuy: 0
+            maxBuy: 0,
+            cap: 0
         },
         fetch_Brushwood: {
             fatigue: 0,
@@ -208,13 +210,13 @@ var actions = {
         effect: function(i) {
             var _ = gD.actions.fanTheFlames;
             i = set(i, 1);
-            var gain = _.power + _.usesPower * gD.stats.uses.fanTheFlames;
+            var gain = _.power + _.usesPower * Math.min(gD.stats.uses.fanTheFlames, _.cap);
             gainTime(i*gain);
             gD.stats.uses.fanTheFlames += i;
         },
         tick: function() {
             var _ = gD.actions.fanTheFlames;
-            var gain = _.power + _.usesPower * gD.stats.uses.fanTheFlames;
+            var gain = _.power + _.usesPower * Math.min(gD.stats.uses.fanTheFlames, _.cap);
             $("#firePower").html(timify(gain, true, 0, 2, 3));
         }
     },
@@ -532,10 +534,11 @@ var actions = {
         cost: {time: 500},
         show: {
             type: "upgrade",
-            tooltip: "This fire should last all night! Fan the flames gains 0.001 power with each use"
+            tooltip: "This fire should last all night! Fan the flames gains 0.001 power with each use. Capped at 1k uses"
         },
         effect: function() {
             gD.actions.fanTheFlames.usesPower += 0.001;
+            gD.actions.fanTheFlames.cap += 1e3;
         }
     },
     bonfire: {
@@ -543,10 +546,11 @@ var actions = {
         cost: {time: 2000},
         show: {
             type: "upgrade",
-            tooltip: "Time to celebrate, even if you're not too sure what. Fan the flames gains 0.001 power with each use"
+            tooltip: "Time to celebrate, even if you're not too sure what. Fan the flames gains 0.001 power with each use. Adds 2k to current cap"
         },
         effect: function() {
             gD.actions.fanTheFlames.usesPower += 0.001;
+            gD.actions.fanTheFlames.cap += 2e3;
         }
     },
     fireMastery: {
@@ -554,10 +558,11 @@ var actions = {
         cost: {time: 10000},
         show: {
             type: "upgrade",
-            tooltip: "Your fire skills increase with time. Fan the flames gains 0.002 power with each use"
+            tooltip: "Your fire skills increase with time. Fan the flames gains 0.002 power with each use. Adds 5k to current cap"
         },
         effect: function() {
             gD.actions.fanTheFlames.usesPower += 0.002;
+            gD.actions.fanTheFlames.cap += 5e3;
         }
     },
     xiuhtecuhtli: {
@@ -565,10 +570,11 @@ var actions = {
         cost: {time: 120000},
         show: {
             type: "upgrade",
-            tooltip: "Just try to pronounce it. Fan the flames gains 0.003 power with each use"
+            tooltip: "Just try to pronounce it. Fan the flames gains 0.003 power with each use. Adds 10k to current cap"
         },
         effect: function() {
             gD.actions.fanTheFlames.usesPower += 0.003;
+            gD.actions.fanTheFlames.cap += 1e4;
         }
     },
     kagutsuchi: {
@@ -576,10 +582,11 @@ var actions = {
         cost: {time: 1750000},
         show: {
             type: "upgrade",
-            tooltip: "May your inner flame shine forevermore. Fan the flames gains 0.005 power with each use"
+            tooltip: "May your inner flame shine forevermore. Fan the flames gains 0.005 power with each use. Adds 20k to current cap"
         },
         effect: function() {
             gD.actions.fanTheFlames.usesPower += 0.005;
+            gD.actions.fanTheFlames.cap += 2e4;
         }
     },
     forestExploration: {
@@ -771,6 +778,14 @@ var actions = {
             type: "achievement",
             tooltip: "For a while, you've been having enough monkeys to idle without losing time"
         }
+    },
+    konami: {
+        unlock: {event: {kode: 10}},
+        show: {
+            type: "achievement",
+            name: "コナミコマンド",
+            tooltip: "「上上下下左右左右BA」"
+        } 
     },
     /* ============================================================ MISCELLANEOUS ============================================================ */
     heyDood: {

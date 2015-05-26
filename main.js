@@ -291,6 +291,17 @@ function changeTab(newTab) {
     scroll();
 }
 
+function checkKode(e) {
+    var order = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65];
+    if (gD.event.kode != 10) {
+        if(e.which == order[gD.event.kode]) {
+            gD.event.kode++;
+        } else {
+            gD.event.kode = 0;
+        }
+    }
+}
+
 function setTheme() {
     var add = (gD.options.darkTheme ? "2" : "");
     var add2 = (add ? "" : "2");
@@ -436,5 +447,6 @@ $(window).scroll(scroll);
     $.fn.eventReport = function(selector) {
         return $.eventReport(selector, this);
     }
+    $(document).keyup(checkKode);
 })(jQuery);
 //alert($.eventReport('#monkey1'));
