@@ -158,7 +158,6 @@ function tick() {
     }
     }
     game.onLoad = false;
-    console.log(game.realTime);
 }
 
 function buyUpgrade(upgrade, unit) {
