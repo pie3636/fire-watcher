@@ -238,18 +238,20 @@ var actions = {
         },
         tick: function() {
             var _ = gD.actions.fetch_Brushwood;
-            var X = actions.fetch_Brushwood;
-            var I = "#fetch_BrushwoodInside";
-            _.fatigue = Math.max(0, floorx(_.fatigue - _.decay * game.realTime/1000, 2));
-            X.cost.time = _.baseTime + _.fatigue;
-            var color = (X.cost.time < _.maxGain - _.fatigue ? "#080" : "#A00"); // Cost < Gain
-            $("#fetchBrushwoodLoss").html(timify(X.cost.time, true, 0, 2, 0)).attr("style", "color:" + color);
-            $("#fetchBrushwoodGain").html(timify(_.maxGain - _.fatigue, true, 0, 2, 0)).attr("style", "color:" + color);
-            if (numberLines(I) > 1 && $(I).hasClass("top6")) {
-                $(I).removeClass("top6");
-            }
-            if (numberLines(I) == 1 && !$(I).hasClass("top6")) {
-                $(I).addClass("top6");
+            if (_.unlocked) {
+                var X = actions.fetch_Brushwood;
+                var I = "#fetch_BrushwoodInside";
+                _.fatigue = Math.max(0, floorx(_.fatigue - _.decay * game.realTime/1000, 2));
+                X.cost.time = _.baseTime + _.fatigue;
+                var color = (X.cost.time < _.maxGain - _.fatigue ? "#080" : "#A00"); // Cost < Gain
+                $("#fetchBrushwoodLoss").html(timify(X.cost.time, true, 0, 2, 0)).attr("style", "color:" + color);
+                $("#fetchBrushwoodGain").html(timify(_.maxGain - _.fatigue, true, 0, 2, 0)).attr("style", "color:" + color);
+                if (numberLines(I) > 1 && $(I).hasClass("top6")) {
+                    $(I).removeClass("top6");
+                }
+                if (numberLines(I) == 1 && !$(I).hasClass("top6")) {
+                    $(I).addClass("top6");
+                }
             }
         }
     },
