@@ -144,7 +144,7 @@ function runeDecode(ins) {
 /* ====================================================================== FORMATTING ====================================================================== */
 
 function numberLines(id) {
-    return Math.round($(id).height()/parseInt($(id).css('line-height').replace("px","")))
+    return Math.round($(id).height()/parseInt($(id).css('line-height').replace("px","")));
 }
 
 
