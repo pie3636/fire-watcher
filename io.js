@@ -22,9 +22,6 @@ function reload() {
 
 function load(hide) {
     game.onLoad = true; // Restore actions on next tick
-    if (!game.onReload) {
-        gD.stats.sessionTime = 0;
-    }
     var saveTheme = gD.options.darkTheme;
     unsetUseLinks("branches"); //TODO : Loop
     unsetUseLinks("shells");
@@ -55,6 +52,9 @@ function load(hide) {
             clearFullLogs();
             log("Game loaded");
         }
+    }
+        if (!game.onReload) {
+        gD.stats.sessionTime = 0;
     }
     game.onReset = false;
     game.onImport = false;
@@ -221,9 +221,8 @@ function clearFullLogs() {
 
 function resizeFullLogs() {
     if (game.latestFullLog > gD.options.numFullLogs) {
-        $("#fullLogs").html($("#fullLogs").html().split("\n").splice(game.latestFullLog - gD.options.numFullLogs).join("\n")); // Remove first lines
+        $("#fullLogs").html($("#fullLogs").html().split("\n").splice(0, gD.options.numFullLogs).join("\n")); // Remove last lines
         game.latestFullLog = gD.options.numFullLogs;
-        
     }
 }
 

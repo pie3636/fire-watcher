@@ -99,7 +99,7 @@ function intRandom(min, max) {
 function count(str, ext) {
     var total = 0;
     for (var i in actions) {
-        if (actions[i].show.type == (str || actions[i][str]) && (!ext || actions[i].extension)) { //TODO : Change eventually, or global variable
+        if (actions[i].show.type == (str || actions[i][str]) && (!ext || actions[i].extension) && !actions[i].noStats) { //TODO : Change eventually, or global variable
             total++;
         }
     }

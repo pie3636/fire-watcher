@@ -1,16 +1,4 @@
-/*      
-exploreTheBeach: {
-    minBranches: 1,
-    maxBranches: 5, // ERLKÖNIIIIIIIIIIIIIIIIIG
-    branchesPower: 10,
-},
-sparklingEmbers: {
-    power: 0.5,
-    duration: 0,
-    maxDuration: 10000,
-    probability: 0.014
-*/
-    var game = {
+var game = {
     version: "v0.7.8",
     onLoad: false, // Restore purchases
     onImport: false, // Load from import
@@ -56,8 +44,7 @@ sparklingEmbers: {
                         }
                     }
                 } else {
-                    gain = n * _.inkChance * _.production;
-                    console.log(gain);
+                    gain = Math.floor(n * _.inkChance * _.production);
                 }
                 gD.inventory.ink.value += gain;
                 log("You found " + (gain ? gain : "no") + " ink sac" + (gain != 1 ? "s" : "") + ".");
@@ -75,7 +62,7 @@ sparklingEmbers: {
                 }
                 I.value -= Number(n) * _.branchesCost;
                 _.value += Number(n);
-                log("You crafted " + (n ? n : "no") + " plank" + (n != 1 ? "s" : "") + ".");
+                log("You crafted " + (n ?   n : "no") + " plank" + (n != 1 ? "s" : "") + ".");
             }
         }
     }
@@ -632,7 +619,9 @@ var actions = {
             tooltip: "Monkeys are a lot cheaper"
         },
         effect: function() {
+            var _ = gD.actions.monkey;
             gD.actions.monkey.factor = 1.05;
+            $("#monkeyCost").html(timify(sumPrices(actions.monkey.cost.time, _.factor, _.number, 1), true, 1, 2, 0));
         }
     },
     shakespeare: {
@@ -708,7 +697,7 @@ var actions = {
         unlock: {stats: {playTime:360000}},
         show: {
             type: "achievement",
-            tooltip: "You literally spent more time playing this game than me coding it. Kudos to you! Time decay -10%"
+            tooltip: "You probably spent more time playing this game than me coding it. Kudos to you! Time decay -10%"
         },
         effect: function() {
             gD.timeSpeed *= 0.9;
@@ -778,14 +767,14 @@ var actions = {
         unlock: {actions: {monkey: {number: 20}}},
         show: {
             type: "achievement",
-            tooltip: "For a while, you've been having enough monkeys to idle without losing time"
+            tooltip: "You should now have enough monkeys to idle without losing time"
         }
     },
     konami: {
         unlock: {event: {kode: 10}},
         show: {
             type: "achievement",
-            name: "コナミコマンド",
+            title: "コナミコマンド",
             tooltip: "「上上下下左右左右BA」"
         } 
     },
